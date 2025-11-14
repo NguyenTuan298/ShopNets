@@ -1,14 +1,7 @@
 <?php
-$host = 'localhost';  
-$dbname = 'shopnets';  
-$username = 'root';   
-$password = '';
+// Include the main config file
+require_once __DIR__ . '/../../config.php';
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    die("Lỗi kết nối: " . $e->getMessage());
-}
+// Use the centralized database connection
+$pdo = createPDOConnection();
 ?>

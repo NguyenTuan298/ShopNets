@@ -1,0 +1,45 @@
+# Environment files
+.env
+.env.local
+.env.production
+
+# Composer
+/vendor/
+composer.lock
+
+# Logs
+/logs/
+*.log
+
+# Cache
+/cache/
+/tmp/
+
+# Upload directories (keep structure but ignore content)
+admin/assets/images/uploads/*
+!admin/assets/images/uploads/.gitkeep
+user/assets/images/uploads/*
+!user/assets/images/uploads/.gitkeep
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Backup files
+*.bak
+*.backup
+*.sql.backup
+
+# Node modules (if any)
+node_modules/
+
+# Build files
+/build/
+/dist/

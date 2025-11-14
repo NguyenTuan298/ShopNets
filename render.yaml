@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: shopnets
+    env: php
+    plan: free
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php scripts/setup.php
+    startCommand: php -S 0.0.0.0:$PORT -t .
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shopnets-db
+          property: connectionString
+    domains:
+      - shopnets.onrender.com
+
+  - type: pserv
+    name: shopnets-db
+    env: mysql
+    plan: free
+    region: oregon
+    databaseName: shopnets
+    databaseUser: shopnets_user
