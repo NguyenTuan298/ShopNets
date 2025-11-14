@@ -1,19 +1,131 @@
+/* Categories Page Specific Styles */
+.content {
+  padding: 2rem;
+  width: 100%;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin-bottom: 2rem;
+}
+
+.content-header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.filter-card {
+  padding: 0 0 1rem 0;
+  margin-bottom: 1.25rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.filter-header {
+  padding: 1.5rem 1rem 1rem 1rem;
+  color: #000;
+  font-weight: 500;
+  font-size: 0.8125rem;
+}
+
+.filters-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0.875rem 0.5rem 0.875rem;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.data-table th {
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 3px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.data-table td {
+  padding: 1rem;
+  border-top: 1px solid #f3f4f6;
+  font-size: 0.875rem;
+  color: #111827;
+}
+
+.data-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #111827;
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.65rem 1.1rem;
+}
+
+.btn-primary:hover {
+  background: #000;
+}
+
+.btn img {
+  width: 18px;
+  height: 18px;
+}
+
 .categories-page .card-header h2 {
   font-size: 1.25rem;
   font-weight: 600;
   color: black;
   margin: 0;
-}
-
-.search-box input {
-  border: 1px solid #000;
-}
-
-.data-table th {
-  border-bottom: 3px solid #e5e7eb;
-}
-
-.search-box::before {
-  width: 20px;
-  height: 20px;
 }

@@ -57,53 +57,53 @@ function getStatusText($status) {
       </div>
 
       <section class="stats">
-        <div class="card <?= ($filters['status'] === 'pending') ? 'active' : '' ?>">
-          <div class="card-header">
+        <div class="orders-card <?= ($filters['status'] === 'pending') ? 'active' : '' ?>">
+          <div class="orders-card-header">
             <span>Pending Orders</span>
             <span class="icon">
               <i class="fas fa-clock"></i>
             </span>
           </div>
-          <div class="card-subtitle">Awaiting Confirmation</div>
-          <div class="card-value blue"><?= $stats['pending'] ?></div>
+          <div class="orders-card-subtitle">Awaiting Confirmation</div>
+          <div class="orders-card-value blue"><?= $stats['pending'] ?></div>
         </div>
 
-        <div class="card <?= ($filters['status'] === 'shipped') ? 'active' : '' ?>">
-          <div class="card-header">
+        <div class="orders-card <?= ($filters['status'] === 'shipped') ? 'active' : '' ?>">
+          <div class="orders-card-header">
             <span>Shipped Orders</span>
             <span class="icon">
               <i class="fas fa-truck"></i>
             </span>
           </div>
-          <div class="card-subtitle">On Delivery</div>
-          <div class="card-value orange"><?= $stats['shipped'] ?></div>
+          <div class="orders-card-subtitle">On Delivery</div>
+          <div class="orders-card-value orange"><?= $stats['shipped'] ?></div>
         </div>
 
-        <div class="card <?= ($filters['status'] === 'delivered') ? 'active' : '' ?>">
-          <div class="card-header">
+        <div class="orders-card <?= ($filters['status'] === 'delivered') ? 'active' : '' ?>">
+          <div class="orders-card-header">
             <span>Completed Orders</span>
             <span class="icon">
               <i class="fas fa-check-circle"></i>
             </span>
           </div>
-          <div class="card-subtitle">Successfully Delivered</div>
-          <div class="card-value green"><?= $stats['delivered'] ?></div>
+          <div class="orders-card-subtitle">Successfully Delivered</div>
+          <div class="orders-card-value green"><?= $stats['delivered'] ?></div>
         </div>
 
-        <div class="card <?= ($filters['status'] === 'cancelled') ? 'active' : '' ?>">
-          <div class="card-header">
+        <div class="orders-card <?= ($filters['status'] === 'cancelled') ? 'active' : '' ?>">
+          <div class="orders-card-header">
             <span>Cancelled Orders</span>
             <span class="icon">
               <i class="fas fa-times-circle"></i>
             </span>
           </div>
-          <div class="card-subtitle">Order Cancellations</div>
-          <div class="card-value red"><?= $stats['cancelled'] ?></div>
+          <div class="orders-card-subtitle">Order Cancellations</div>
+          <div class="orders-card-value red"><?= $stats['cancelled'] ?></div>
         </div>
       </section>
 
-      <div class="card filter-card">
-        <div class="filter-header">
+      <div class="orders-filter-card">
+        <div class="orders-filter-header">
           <i class="fas fa-filter"></i> Search & Filter Orders
         </div>
         <form method="GET" class="filters-form">
