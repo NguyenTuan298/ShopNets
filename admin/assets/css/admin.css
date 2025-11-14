@@ -4,6 +4,20 @@
   padding: 0;
 }
 
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.topbar .actions span {
+  margin-left: 15px;
+  cursor: pointer;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   display: flex;
@@ -104,7 +118,13 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 25px;
   margin-top: 40px;
+  transition: transform 0.2s ease;
 }
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
 
 .card {
   background: #fff;
