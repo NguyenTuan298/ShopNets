@@ -17,10 +17,7 @@
     "autoload": {
         "psr-4": {
             "ShopNets\\": "src/"
-        },
-        "files": [
-            "includes/functions.php"
-        ]
+        }
     },
     "scripts": {
         "start": "php -S 0.0.0.0:$PORT -t .",

@@ -8,12 +8,11 @@ echo "Starting ShopNets setup...\n";
 
 // Check if composer autoload exists
 if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    echo "Error: Composer dependencies not installed. Run 'composer install' first.\n";
-    exit(1);
+    echo "Warning: Composer dependencies not found. Continuing with basic setup...\n";
 }
 
 // Load configuration
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../config-simple.php';
 
 try {
     // Create database connection

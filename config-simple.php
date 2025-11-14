@@ -1,20 +1,14 @@
 <?php
-// Load environment variables only if vendor exists
-if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
-    
-    // Try to load .env file if it exists
-    if (file_exists(__DIR__ . '/.env')) {
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-        $dotenv->load();
-    }
-}
+/**
+ * Simple database configuration for deployment
+ */
 
-// Database configuration
+// Simple database configuration function
 function getDatabaseConfig() {
     // Check if DATABASE_URL is set (for production deployment)
-    if (!empty($_ENV['DATABASE_URL'])) {
-        $url = parse_url($_ENV['DATABASE_URL']);
+    $database_url = getenv('DATABASE_URL');
+    if (!empty($database_url)) {
+        $url = parse_url($database_url);
         return [
             'host' => $url['host'],
             'port' => isset($url['port']) ? $url['port'] : 3306,
@@ -24,13 +18,13 @@ function getDatabaseConfig() {
         ];
     }
     
-    // Fallback to individual environment variables
+    // Fallback to environment variables or defaults
     return [
-        'host' => $_ENV['DB_HOST'] ?? 'localhost',
-        'port' => $_ENV['DB_PORT'] ?? 3306,
-        'dbname' => $_ENV['DB_NAME'] ?? 'shopnets',
-        'username' => $_ENV['DB_USERNAME'] ?? 'root',
-        'password' => $_ENV['DB_PASSWORD'] ?? ''
+        'host' => getenv('DB_HOST') ?: 'localhost',
+        'port' => getenv('DB_PORT') ?: 3306,
+        'dbname' => getenv('DB_NAME') ?: 'shopnets',
+        'username' => getenv('DB_USERNAME') ?: 'root',
+        'password' => getenv('DB_PASSWORD') ?: ''
     ];
 }
 
@@ -54,11 +48,11 @@ function createPDOConnection() {
 }
 
 // Application configuration
-define('APP_ENV', $_ENV['APP_ENV'] ?? 'development');
-define('APP_DEBUG', filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN));
-define('APP_URL', $_ENV['APP_URL'] ?? 'http://localhost');
-define('UPLOAD_PATH', $_ENV['UPLOAD_PATH'] ?? 'assets/images/uploads/');
-define('MAX_UPLOAD_SIZE', $_ENV['MAX_UPLOAD_SIZE'] ?? 5242880);
+define('APP_ENV', getenv('APP_ENV') ?: 'development');
+define('APP_DEBUG', filter_var(getenv('APP_DEBUG') ?: false, FILTER_VALIDATE_BOOLEAN));
+define('APP_URL', getenv('APP_URL') ?: 'http://localhost');
+define('UPLOAD_PATH', getenv('UPLOAD_PATH') ?: 'assets/images/uploads/');
+define('MAX_UPLOAD_SIZE', getenv('MAX_UPLOAD_SIZE') ?: 5242880);
 
 // Set error reporting based on environment
 if (APP_ENV === 'production') {
