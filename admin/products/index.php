@@ -147,7 +147,7 @@ include '../includes/sidebar.php';
                   $whereClause = 'WHERE ' . implode(' AND ', $whereConditions);
                 }
                 
-                $sql = "SELECT * FROM products $whereClause ORDER BY id DESC";
+                $sql = "SELECT * FROM products $whereClause ORDER BY id ASC";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute($params);
                 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);

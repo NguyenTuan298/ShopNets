@@ -27,10 +27,10 @@ try {
             $search = isset($_GET['q']) ? trim($_GET['q']) : '';
             
             if ($search !== '') {
-                $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE :search OR category LIKE :search ORDER BY id DESC");
+                $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE :search OR category LIKE :search ORDER BY id ASC");
                 $stmt->execute([':search' => "%$search%"]);
             } else {
-                $stmt = $pdo->query("SELECT * FROM products ORDER BY id DESC");
+                $stmt = $pdo->query("SELECT * FROM products ORDER BY id ASC");
             }
             
             $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
