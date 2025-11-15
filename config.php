@@ -1,8 +1,4 @@
 <?php
-// Cấu hình database cho ShopNets
-// File này chứa thông tin kết nối database cho cả localhost và hosting
-
-// Cấu hình cho localhost (development)
 define('LOCAL_DB_HOST', 'localhost');
 define('LOCAL_DB_NAME', 'shopnets');
 define('LOCAL_DB_USER', 'root');
