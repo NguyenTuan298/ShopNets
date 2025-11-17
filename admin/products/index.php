@@ -38,26 +38,26 @@ include '../includes/sidebar.php';
 </style>
 
   <section class="content products-page">
-    <h1>Products Management</h1>
+    <h1>Quản Lý Sản Phẩm</h1>
       <div class="content-header">
-        <span>Manage your product catalog</span>
+        <span>Quản lý danh mục sản phẩm của bạn</span>
         <span>
             <button class="btn btn-primary" id="addProductBtn">
-              <img src="../assets/images/icons/add.png" alt="Add" style="width: 20px;">
-              Add New Product
+              <img src="../assets/images/icons/add.png" alt="Thêm" style="width: 20px;">
+              Thêm Sản Phẩm Mới
             </button>
         </span>
       </div>
 
       <div class="card filter-card">
-        <div class="filter-header">Search &amp; Filter Products</div>
+        <div class="filter-header">Tìm Kiếm & Lọc Sản Phẩm</div>
         <div class="filters-row">
           <div class="search-box">
             <form method="get" action="index.php">
               <?php if (isset($_GET['category']) && $_GET['category'] !== ''): ?>
                 <input type="hidden" name="category" value="<?php echo htmlspecialchars($_GET['category']); ?>">
               <?php endif; ?>
-              <input type="text" name="q" value="<?php echo isset($_GET['q'])?htmlspecialchars($_GET['q']):''; ?>" placeholder="Search Products...">
+              <input type="text" name="q" value="<?php echo isset($_GET['q'])?htmlspecialchars($_GET['q']):''; ?>" placeholder="Tìm kiếm sản phẩm...">
               <button type="submit" style="display: none;"></button>
             </form>
           </div>
@@ -81,7 +81,7 @@ include '../includes/sidebar.php';
                 $allCategoriesUrl .= '?q=' . urlencode($currentSearch);
               }
               ?>
-              <option value="<?php echo $allCategoriesUrl; ?>" <?php echo ($currentCategory === '') ? 'selected' : ''; ?>>All Categories</option>
+              <option value="<?php echo $allCategoriesUrl; ?>" <?php echo ($currentCategory === '') ? 'selected' : ''; ?>>Tất Cả Danh Mục</option>
               
               <?php foreach ($categories as $cat): ?>
                 <?php
@@ -101,7 +101,7 @@ include '../includes/sidebar.php';
 
       <div class="card">
         <div class="card-header">
-          <h2>All Products</h2>
+          <h2>Tất Cả Sản Phẩm</h2>
         </div>
         
         <div class="table-container">
@@ -109,12 +109,12 @@ include '../includes/sidebar.php';
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Image</th>
-                <th>Product Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Inventory</th>
-                <th>Actions</th>
+                <th>Hình Ảnh</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Danh Mục</th>
+                <th>Giá</th>
+                <th>Tồn Kho</th>
+                <th>Hành Động</th>
               </tr>
             </thead>
             <tbody>
@@ -170,7 +170,7 @@ include '../includes/sidebar.php';
                   if ($image && file_exists("../assets/images/uploads/" . $image)) {
                     echo "<img src=\"../assets/images/uploads/" . htmlspecialchars($image) . "\" alt=\"Product Image\" style=\"width: 50px; height: 50px; object-fit: cover; border-radius: 4px;\">";
                   } else {
-                    echo "<span style=\"color: #999; font-size: 12px;\">No Image</span>";
+                    echo "<span style=\"color: #999; font-size: 12px;\">Không Có Hình</span>";
                   }
                   echo "</td>";
                   echo "<td>" . htmlspecialchars($name) . "</td>";
@@ -189,11 +189,11 @@ include '../includes/sidebar.php';
                   echo "</tr>";
                 }
               } else {
-                $noResultsMessage = 'No products found.';
+                $noResultsMessage = 'Không tìm thấy sản phẩm nào.';
                 if ($category !== '') {
-                  $noResultsMessage = "No products found in category: " . htmlspecialchars($category);
+                  $noResultsMessage = "Không tìm thấy sản phẩm trong danh mục: " . htmlspecialchars($category);
                 } elseif ($q !== '') {
-                  $noResultsMessage = "No products found for search: " . htmlspecialchars($q);
+                  $noResultsMessage = "Không tìm thấy sản phẩm cho từ khóa: " . htmlspecialchars($q);
                 }
                 echo "<tr><td colspan=\"7\" style=\"text-align:center;\">$noResultsMessage</td></tr>";
               }
@@ -209,19 +209,19 @@ include '../includes/sidebar.php';
 <div id="addProductModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Add New Product</h2>
+      <h2>Thêm Sản Phẩm Mới</h2>
       <span class="close">&times;</span>
     </div>
     <div class="modal-body">
       <form id="addProductForm" enctype="multipart/form-data">
         <div class="form-group">
-          <label for="productName">Product Name <span class="required">*</span></label>
+          <label for="productName">Tên Sản Phẩm <span class="required">*</span></label>
           <input type="text" id="productName" name="name" required>
         </div>
         <div class="form-group">
-          <label for="productCategory">Category <span class="required">*</span></label>
+          <label for="productCategory">Danh Mục <span class="required">*</span></label>
           <select id="productCategory" name="category" required>
-            <option value="">Select a category</option>
+            <option value="">Chọn danh mục</option>
             <?php
             try {
               $stmt = $pdo->query("SELECT name FROM categories ORDER BY name ASC");
@@ -230,37 +230,37 @@ include '../includes/sidebar.php';
                 echo '<option value="' . htmlspecialchars($cat) . '">' . htmlspecialchars($cat) . '</option>';
               }
             } catch (Exception $e) {
-              echo '<option value="">Error loading categories</option>';
+              echo '<option value="">Lỗi tải danh mục</option>';
             }
             ?>
           </select>
         </div>
         <div class="form-group">
-          <label for="productPrice">Price <span class="required">*</span></label>
+          <label for="productPrice">Giá <span class="required">*</span></label>
           <input type="number" id="productPrice" name="price" step="0.01" min="0">
         </div>
         <div class="form-group">
-          <label for="productInventory" >Inventory <span class="required">*</span></label>
+          <label for="productInventory" >Số Lượng Tồn <span class="required">*</span></label>
           <input type="number" id="productInventory" name="inventory" min="0">
         </div>
         <div class="form-group">
-          <label for="productImage">Product Image</label>
+          <label for="productImage">Hình Ảnh Sản Phẩm</label>
           <input type="file" id="productImage" name="image" accept="image/*">
-          <small style="color: #666; font-size: 12px;">Supported formats: JPG, PNG, GIF (Max: 5MB)</small>
+          <small style="color: #666; font-size: 12px;">Hỗ trợ định dạng: JPG, PNG, GIF (Tối đa: 5MB)</small>
         </div>
         <div class="form-group">
-          <label for="productDescription">Description</label>
+          <label for="productDescription">Mô Tả</label>
           <textarea id="productDescription" name="description" rows="3"></textarea>
         </div>
         <div class="error-messages" id="errorMessages"></div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">
-            <span class="btn-text">Save Product</span>
+            <span class="btn-text">Lưu Sản Phẩm</span>
             <span class="loading-spinner" style="display: none;">
-              <img src="../assets/images/icons/loading.gif" alt="Loading..." style="width: 16px;">
+              <img src="../assets/images/icons/loading.gif" alt="Đang tải..." style="width: 16px;">
             </span>
           </button>
-          <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Hủy</button>
         </div>
       </form>
     </div>
@@ -271,20 +271,20 @@ include '../includes/sidebar.php';
 <div id="editProductModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Edit Product</h2>
+      <h2>Chỉnh Sửa Sản Phẩm</h2>
       <span class="close" id="editModalClose">&times;</span>
     </div>
     <div class="modal-body">
       <form id="editProductForm" enctype="multipart/form-data">
         <input type="hidden" id="editProductId" name="id">
         <div class="form-group">
-          <label for="editProductName">Product Name <span class="required">*</span></label>
+          <label for="editProductName">Tên Sản Phẩm <span class="required">*</span></label>
           <input type="text" id="editProductName" name="name" required>
         </div>
         <div class="form-group">
-          <label for="editProductCategory">Category <span class="required">*</span></label>
+          <label for="editProductCategory">Danh Mục <span class="required">*</span></label>
           <select id="editProductCategory" name="category" required>
-            <option value="">Select a category</option>
+            <option value="">Chọn danh mục</option>
             <?php
             try {
               $stmt = $pdo->query("SELECT name FROM categories ORDER BY name ASC");
@@ -293,38 +293,38 @@ include '../includes/sidebar.php';
                 echo '<option value="' . htmlspecialchars($cat) . '">' . htmlspecialchars($cat) . '</option>';
               }
             } catch (Exception $e) {
-              echo '<option value="">Error loading categories</option>';
+              echo '<option value="">Lỗi tải danh mục</option>';
             }
             ?>
           </select>
         </div>
         <div class="form-group">
-          <label for="editProductPrice">Price <span class="required">*</span></label>
+          <label for="editProductPrice">Giá <span class="required">*</span></label>
           <input type="number" id="editProductPrice" name="price" step="0.01" min="0">
         </div>
         <div class="form-group">
-          <label for="editProductInventory">Inventory <span class="required">*</span></label>
+          <label for="editProductInventory">Số Lượng Tồn <span class="required">*</span></label>
           <input type="number" id="editProductInventory" name="inventory" min="0">
         </div>
         <div class="form-group">
-          <label for="editProductImage">Product Image</label>
+          <label for="editProductImage">Hình Ảnh Sản Phẩm</label>
           <input type="file" id="editProductImage" name="image" accept="image/*">
-          <small style="color: #666; font-size: 12px;">Leave empty to keep current image</small>
+          <small style="color: #666; font-size: 12px;">Bỏ trống để giữ hình hiện tại</small>
           <div id="currentImagePreview" style="margin-top: 10px;"></div>
         </div>
         <div class="form-group">
-          <label for="editProductDescription">Description</label>
+          <label for="editProductDescription">Mô Tả</label>
           <textarea id="editProductDescription" name="description" rows="3"></textarea>
         </div>
         <div class="error-messages" id="editErrorMessages"></div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">
-            <span class="btn-text">Update Product</span>
+            <span class="btn-text">Cập Nhật Sản Phẩm</span>
             <span class="loading-spinner" style="display: none;">
-              <img src="../assets/images/icons/loading.gif" alt="Loading..." style="width: 16px;">
+              <img src="../assets/images/icons/loading.gif" alt="Đang tải..." style="width: 16px;">
             </span>
           </button>
-          <button type="button" class="btn btn-secondary" id="editCancelBtn">Cancel</button>
+          <button type="button" class="btn btn-secondary" id="editCancelBtn">Hủy</button>
         </div>
       </form>
     </div>

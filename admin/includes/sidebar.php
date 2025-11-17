@@ -7,35 +7,35 @@
     <div class="sidebar-content">
       <nav class="menu">
         <a href="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>index.php" class="menu-item <?php echo (isset($currentPage) && $currentPage == 'dashboard') ? 'active' : ''; ?>">
-          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Dashboard.png" alt="Dashboard">
-          Dashboard
+          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Dashboard.png" alt="Bảng Điều Khiển">
+          Bảng Điều Khiển
         </a>
         <a href="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>products/index.php" class="menu-item <?php echo (isset($currentPage) && $currentPage == 'products') ? 'active' : ''; ?>">
-          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Products.png" alt="Products">
-          Products
+          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Products.png" alt="Sản Phẩm">
+          Sản Phẩm
         </a>
         <a href="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>categories/index.php" class="menu-item <?php echo (isset($currentPage) && $currentPage == 'categories') ? 'active' : ''; ?>">
-          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Categories.png" alt="Categories">
-          Categories
+          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Categories.png" alt="Danh Mục">
+          Danh Mục
         </a>
         <a href="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>orders/index.php" class="menu-item <?php echo (isset($currentPage) && $currentPage == 'orders') ? 'active' : ''; ?>">
-          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Orders.png" alt="Orders">
-          Orders
+          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Orders.png" alt="Đơn Hàng">
+          Đơn Hàng
         </a>
         <a href="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>users/index.php" class="menu-item <?php echo (isset($currentPage) && $currentPage == 'users') ? 'active' : ''; ?>">
-          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Users.png" alt="Users">
-          Users
+          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Users.png" alt="Người Dùng">
+          Người Dùng
         </a>
       </nav>
 
       <div class="menu-bottom">
         <a href="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>settings/index.php" class="menu-item">
-          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Setting.png" alt="Settings">
-          Settings
+          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Setting.png" alt="Cài Đặt">
+          Cài Đặt
         </a>
         <a href="#" class="menu-item" id="logoutBtn" onclick="handleLogout(event)">
-          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/SignOut.png" alt="Sign Out">
-          Sign Out
+          <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/SignOut.png" alt="Đăng Xuất">
+          Đăng Xuất
         </a>
       </div>
     </div>
@@ -70,13 +70,13 @@
         
         <div class="profile-menu">
           <a href="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>settings/index.php" class="profile-menu-item">
-            <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Setting.png" alt="Settings">
-            <span>Account Settings</span>
+            <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/Setting.png" alt="Cài Đặt">
+            <span>Cài Đặt Tài Khoản</span>
           </a>
           
           <a href="#" class="profile-menu-item" onclick="handleLogout(event)">
-            <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/SignOut.png" alt="Logout">
-            <span>Sign Out</span>
+            <img src="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>assets/images/icons/SignOut.png" alt="Đăng Xuất">
+            <span>Đăng Xuất</span>
           </a>
         </div>
       </div>

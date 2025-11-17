@@ -45,14 +45,14 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin') {
         <header class="brand">
           <img src="../assets/images/icons/icons_logo/apple-icon-180x180.png?v=<?php echo time(); ?>" alt="ShopNet" class="logo" />
           <h1 class="name">ShopNet</h1>
-          <p class="subtitle">Login into account</p>
+          <p class="subtitle">Đăng nhập vào tài khoản</p>
         </header>
 
         <form class="form" action="login_action.php" method="post" autocomplete="off">
           <div class="field">
-            <label for="email">Email address</label>
+            <label for="email">Địa chỉ email</label>
             <div class="control with-icon">
-              <input type="email" id="email" name="email" placeholder="Enter your email" required />
+              <input type="email" id="email" name="email" placeholder="Nhập email của bạn" required />
               <span class="icon">
                 <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
                   <path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z"/>
@@ -62,9 +62,9 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin') {
           </div>
 
           <div class="field">
-            <label for="password">Password</label>
+            <label for="password">Mật khẩu</label>
             <div class="control with-icon">
-              <input type="password" id="password" name="password" placeholder="Enter your password" required />
+              <input type="password" id="password" name="password" placeholder="Nhập mật khẩu của bạn" required />
               <span class="icon">
                 <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
                   <path fill="currentColor" d="M17 8h-1V6a4 4 0 1 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-6 0V6a3 3 0 1 1 6 0v2h-6Z"/>
@@ -73,7 +73,7 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin') {
             </div>
           </div>
 
-          <button class="btn-primary" type="submit">Login</button>
+          <button class="btn-primary" type="submit">Đăng Nhập</button>
         </form>
       </section>
 

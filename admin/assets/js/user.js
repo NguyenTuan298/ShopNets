@@ -71,12 +71,12 @@ class UserManager {
             if (data.success) {
                 this.renderUsersTable(data.data || []);
             } else {
-                this.showNotification('Error loading users: ' + (data.error || 'Unknown error'), 'error');
+                this.showNotification('Lỗi tải người dùng: ' + (data.error || 'Lỗi không xác định'), 'error');
                 this.renderUsersTable([]);
             }
         } catch (error) {
             console.error('Error loading users:', error);
-            this.showNotification('Error loading users: ' + error.message, 'error');
+            this.showNotification('Lỗi tải người dùng: ' + error.message, 'error');
             this.renderUsersTable([]);
         } finally {
             this.hideLoading();
@@ -88,7 +88,7 @@ class UserManager {
         if (!tbody) return;
 
         if (users.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center">No users found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">Không tìm thấy người dùng nào</td></tr>';
             return;
         }
 
@@ -99,11 +99,11 @@ class UserManager {
                 <td>${this.escapeHtml(user.email)}</td>
                 <td>
                     <div class="action-buttons">
-                        <button type="button" class="btn-icon btn-edit" data-action="edit" title="Edit User" style="position: relative; padding: 8px; border: 1px solid transparent; border-radius: 6px; background: transparent; cursor: pointer; transition: all 0.3s ease; margin: 0 3px; overflow: hidden;">
-                            <img src="../assets/images/icons/edit.png" alt="Edit" style="width: 18px; position: relative; z-index: 1; transition: all 0.3s ease;">
+                        <button type="button" class="btn-icon btn-edit" data-action="edit" title="Chỉnh Sửa Người Dùng" style="position: relative; padding: 8px; border: 1px solid transparent; border-radius: 6px; background: transparent; cursor: pointer; transition: all 0.3s ease; margin: 0 3px; overflow: hidden;">
+                            <img src="../assets/images/icons/edit.png" alt="Chỉnh Sửa" style="width: 18px; position: relative; z-index: 1; transition: all 0.3s ease;">
                         </button>
-                        <button type="button" class="btn-icon btn-delete" data-action="delete" title="Delete User" style="position: relative; padding: 8px; border: 1px solid transparent; border-radius: 6px; background: transparent; cursor: pointer; transition: all 0.3s ease; margin: 0 3px; overflow: hidden;">
-                            <img src="../assets/images/icons/delete.png" alt="Delete" style="width: 18px; position: relative; z-index: 1; transition: all 0.3s ease;">
+                        <button type="button" class="btn-icon btn-delete" data-action="delete" title="Xóa Người Dùng" style="position: relative; padding: 8px; border: 1px solid transparent; border-radius: 6px; background: transparent; cursor: pointer; transition: all 0.3s ease; margin: 0 3px; overflow: hidden;">
+                            <img src="../assets/images/icons/delete.png" alt="Xóa" style="width: 18px; position: relative; z-index: 1; transition: all 0.3s ease;">
                         </button>
                     </div>
                 </td>
@@ -134,11 +134,11 @@ class UserManager {
                 $('#editUsername').focus();
                 this.clearEditErrors();
             } else {
-                this.showNotification('Error: ' + (data.error || 'Could not load user data'), 'error');
+                this.showNotification('Lỗi: ' + (data.error || 'Không thể tải dữ liệu người dùng'), 'error');
             }
         } catch (error) {
             console.error('Error loading user:', error);
-            this.showNotification('Error loading user: ' + error.message, 'error');
+            this.showNotification('Lỗi tải người dùng: ' + error.message, 'error');
         }
     }
 
@@ -173,19 +173,19 @@ class UserManager {
             const data = await response.json();
             
             if (data.success) {
-                this.showNotification(data.message || 'User updated successfully', 'success');
+                this.showNotification(data.message || 'Cập nhật người dùng thành công', 'success');
                 this.closeModal($('#editUserModal'));
                 this.loadUsers();
             } else {
                 if (data.errors && Array.isArray(data.errors)) {
                     this.displayEditErrors(data.errors);
                 } else {
-                    this.showNotification('Error: ' + (data.error || 'Unknown error occurred'), 'error');
+                    this.showNotification('Lỗi: ' + (data.error || 'Lỗi không xác định xảy ra'), 'error');
                 }
             }
         } catch (error) {
             console.error('Error updating user:', error);
-            this.showNotification('Error updating user: ' + error.message, 'error');
+            this.showNotification('Lỗi cập nhật người dùng: ' + error.message, 'error');
         } finally {
             // hiện thị trạng thái tải
             $btnText.show();
@@ -228,15 +228,15 @@ class UserManager {
             const data = await response.json();
             
             if (data.success) {
-                this.showNotification(data.message || 'User deleted successfully', 'success');
+                this.showNotification(data.message || 'Xóa người dùng thành công', 'success');
                 this.closeModal($('#deleteUserModal'));
                 this.loadUsers();
             } else {
-                this.showNotification('Error: ' + (data.error || 'Could not delete user'), 'error');
+                this.showNotification('Lỗi: ' + (data.error || 'Không thể xóa người dùng'), 'error');
             }
         } catch (error) {
             console.error('Error deleting user:', error);
-            this.showNotification('Error deleting user: ' + error.message, 'error');
+            this.showNotification('Lỗi xóa người dùng: ' + error.message, 'error');
         } finally {
             $btnText.show();
             $spinner.hide();

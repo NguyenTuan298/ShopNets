@@ -42,9 +42,9 @@ function formatVND($amount) {
     <section class="stats">
       <div class="card">
         <div class="card-header">
-          <span>Total Products</span>
+          <span>Tổng Sản Phẩm</span>
           <span class="icon">
-            <img src="assets/images/icons/Total_Products.png" alt="Total Products">
+            <img src="assets/images/icons/Total_Products.png" alt="Tổng Sản Phẩm">
           </span>
         </div>
         <div class="card-value"><?= number_format($totalProducts) ?></div>
@@ -52,9 +52,9 @@ function formatVND($amount) {
 
       <div class="card">
         <div class="card-header">
-          <span>Total Orders</span>
+          <span>Tổng Đơn Hàng</span>
           <span class="icon">
-            <img src="assets/images/icons/Total_Orders.png" alt="Total Orders">
+            <img src="assets/images/icons/Total_Orders.png" alt="Tổng Đơn Hàng">
           </span>
         </div>
         <div class="card-value"><?= number_format($totalOrders) ?></div>
@@ -62,9 +62,9 @@ function formatVND($amount) {
 
       <div class="card">
         <div class="card-header">
-          <span>Total Users</span>
+          <span>Tổng Người Dùng</span>
           <span class="icon">
-            <img src="assets/images/icons/Total_Users.png" alt="Total Users">
+            <img src="assets/images/icons/Total_Users.png" alt="Tổng Người Dùng">
           </span>
         </div>
         <div class="card-value"><?= number_format($totalUsers) ?></div>
@@ -72,9 +72,9 @@ function formatVND($amount) {
 
       <div class="card">
         <div class="card-header">
-          <span>Revenue</span>
+          <span>Doanh Thu</span>
           <span class="icon">
-            <img src="assets/images/icons/Revenue.png" alt="Revenue">
+            <img src="assets/images/icons/Revenue.png" alt="Doanh Thu">
           </span>
         </div>
         <div class="card-value"><?= formatVND($revenue) ?></div>

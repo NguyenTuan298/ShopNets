@@ -38,99 +38,99 @@ function getStatusBadgeClass($status) {
 
 function getStatusText($status) {
     $texts = [
-        'pending' => 'Pending',
-        'confirmed' => 'Confirmed',
-        'processing' => 'Processing', 
-        'shipped' => 'Shipped',
-        'delivered' => 'Delivered',
-        'cancelled' => 'Cancelled'
+        'pending' => 'Chờ Duyệt',
+        'confirmed' => 'Đã Xác Nhận',
+        'processing' => 'Đang Xử Lý', 
+        'shipped' => 'Đã Giao',
+        'delivered' => 'Hoàn Thành',
+        'cancelled' => 'Đã Hủy'
     ];
-    return $texts[$status] ?? 'Unknown';
+    return $texts[$status] ?? 'Không Xác Định';
 }
 ?>
 <link rel="stylesheet" href="../assets/css/pages/orders.css">
 
   <section class="content orders-page">
       <div class="content-header">
-        <h1>Order Management</h1>
-        <p class="content-description">Manage and track all customer orders</p>
+        <h1>Quản Lý Đơn Hàng</h1>
+        <p class="content-description">Quản lý và theo dõi tất cả đơn hàng của khách hàng</p>
       </div>
 
       <section class="stats">
         <div class="orders-card <?= ($filters['status'] === 'pending') ? 'active' : '' ?>">
           <div class="orders-card-header">
-            <span>Pending Orders</span>
+            <span>Đơn Hàng Chờ Duyệt</span>
             <span class="icon">
               <i class="fas fa-clock"></i>
             </span>
           </div>
-          <div class="orders-card-subtitle">Awaiting Confirmation</div>
+          <div class="orders-card-subtitle">Chờ Xác Nhận</div>
           <div class="orders-card-value blue"><?= $stats['pending'] ?></div>
         </div>
 
         <div class="orders-card <?= ($filters['status'] === 'shipped') ? 'active' : '' ?>">
           <div class="orders-card-header">
-            <span>Shipped Orders</span>
+            <span>Đơn Hàng Đã Giao</span>
             <span class="icon">
               <i class="fas fa-truck"></i>
             </span>
           </div>
-          <div class="orders-card-subtitle">On Delivery</div>
+          <div class="orders-card-subtitle">Đang Giao Hàng</div>
           <div class="orders-card-value orange"><?= $stats['shipped'] ?></div>
         </div>
 
         <div class="orders-card <?= ($filters['status'] === 'delivered') ? 'active' : '' ?>">
           <div class="orders-card-header">
-            <span>Completed Orders</span>
+            <span>Đơn Hàng Hoàn Thành</span>
             <span class="icon">
               <i class="fas fa-check-circle"></i>
             </span>
           </div>
-          <div class="orders-card-subtitle">Successfully Delivered</div>
+          <div class="orders-card-subtitle">Giao Hàng Thành Công</div>
           <div class="orders-card-value green"><?= $stats['delivered'] ?></div>
         </div>
 
         <div class="orders-card <?= ($filters['status'] === 'cancelled') ? 'active' : '' ?>">
           <div class="orders-card-header">
-            <span>Cancelled Orders</span>
+            <span>Đơn Hàng Đã Hủy</span>
             <span class="icon">
               <i class="fas fa-times-circle"></i>
             </span>
           </div>
-          <div class="orders-card-subtitle">Order Cancellations</div>
+          <div class="orders-card-subtitle">Hủy Đơn Hàng</div>
           <div class="orders-card-value red"><?= $stats['cancelled'] ?></div>
         </div>
       </section>
 
       <div class="orders-filter-card">
         <div class="orders-filter-header">
-          <i class="fas fa-filter"></i> Search & Filter Orders
+          <i class="fas fa-filter"></i> Tìm Kiếm & Lọc Đơn Hàng
         </div>
         <form method="GET" class="filters-form">
           <div class="filters-row">
             <div class="search-box">
-              <input type="text" name="search" placeholder="Search orders by number, customer name, or email..." 
+              <input type="text" name="search" placeholder="Tìm kiếm theo số đơn hàng, tên khách hàng hoặc email..." 
                      value="<?= htmlspecialchars($filters['search']) ?>" 
                      onkeypress="if(event.key==='Enter') this.form.submit()">
             </div>
             <div class="select">
               <select name="status" onchange="this.form.submit()">
-                <option value="">All Statuses</option>
-                <option value="pending" <?= ($filters['status'] === 'pending') ? 'selected' : '' ?>>Pending</option>
-                <option value="confirmed" <?= ($filters['status'] === 'confirmed') ? 'selected' : '' ?>>Confirmed</option>
-                <option value="processing" <?= ($filters['status'] === 'processing') ? 'selected' : '' ?>>Processing</option>
-                <option value="shipped" <?= ($filters['status'] === 'shipped') ? 'selected' : '' ?>>Shipped</option>
-                <option value="delivered" <?= ($filters['status'] === 'delivered') ? 'selected' : '' ?>>Delivered</option>
-                <option value="cancelled" <?= ($filters['status'] === 'cancelled') ? 'selected' : '' ?>>Cancelled</option>
+                <option value="">Tất Cả Trạng Thái</option>
+                <option value="pending" <?= ($filters['status'] === 'pending') ? 'selected' : '' ?>>Chờ Duyệt</option>
+                <option value="confirmed" <?= ($filters['status'] === 'confirmed') ? 'selected' : '' ?>>Đã Xác Nhận</option>
+                <option value="processing" <?= ($filters['status'] === 'processing') ? 'selected' : '' ?>>Đang Xử Lý</option>
+                <option value="shipped" <?= ($filters['status'] === 'shipped') ? 'selected' : '' ?>>Đã Giao</option>
+                <option value="delivered" <?= ($filters['status'] === 'delivered') ? 'selected' : '' ?>>Hoàn Thành</option>
+                <option value="cancelled" <?= ($filters['status'] === 'cancelled') ? 'selected' : '' ?>>Đã Hủy</option>
               </select>
             </div>
             <div class="select">
               <select name="date_range" onchange="this.form.submit()">
-                <option value="">All Time</option>
-                <option value="today" <?= ($filters['date_range'] === 'today') ? 'selected' : '' ?>>Today</option>
-                <option value="week" <?= ($filters['date_range'] === 'week') ? 'selected' : '' ?>>Last 7 Days</option>
-                <option value="month" <?= ($filters['date_range'] === 'month') ? 'selected' : '' ?>>Last 30 Days</option>
-                <option value="3months" <?= ($filters['date_range'] === '3months') ? 'selected' : '' ?>>Last 90 Days</option>
+                <option value="">Tất Cả Thời Gian</option>
+                <option value="today" <?= ($filters['date_range'] === 'today') ? 'selected' : '' ?>>Hôm Nay</option>
+                <option value="week" <?= ($filters['date_range'] === 'week') ? 'selected' : '' ?>>7 Ngày Qua</option>
+                <option value="month" <?= ($filters['date_range'] === 'month') ? 'selected' : '' ?>>30 Ngày Qua</option>
+                <option value="3months" <?= ($filters['date_range'] === '3months') ? 'selected' : '' ?>>90 Ngày Qua</option>
               </select>
             </div>
 
@@ -142,9 +142,9 @@ function getStatusText($status) {
       <div class="orders-table-card">
         <div class="orders-table-header">
           <div class="table-title">
-            <h2><i class="fas fa-list"></i> All Orders</h2>
+            <h2><i class="fas fa-list"></i> Tất Cả Đơn Hàng</h2>
             <span class="orders-count">
-              Showing <?= count($orders) ?> of <?= $totalOrders ?> total orders
+              Hiện thị <?= count($orders) ?> trong tổng số <?= $totalOrders ?> đơn hàng
             </span>
           </div>
         </div>
@@ -152,21 +152,21 @@ function getStatusText($status) {
         <?php if (empty($orders)): ?>
           <div class="no-orders">
             <i class="fas fa-shopping-cart"></i>
-            <h3>No Orders Found</h3>
-            <p>No orders found matching the current search criteria.</p>
+            <h3>Không Tìm Thấy Đơn Hàng</h3>
+            <p>Không tìm thấy đơn hàng nào phù hợp với tiêu chí tìm kiếm hiện tại.</p>
           </div>
         <?php else: ?>
         <div class="orders-table-container">
           <table class="orders-data-table">
             <thead>
               <tr>
-                <th>Order Number</th>
-                <th>Customer</th>
-                <th>Products</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Order Date</th>
-                <th>Actions</th>
+                <th>Số Đơn Hàng</th>
+                <th>Khách Hàng</th>
+                <th>Sản Phẩm</th>
+                <th>Tổng Tiền</th>
+                <th>Trạng Thái</th>
+                <th>Ngày Đặt</th>
+                <th>Hành Động</th>
               </tr>
             </thead>
             <tbody>
@@ -185,7 +185,7 @@ function getStatusText($status) {
                 </td>
                 <td>
                   <div class="orders-products">
-                    <span class="product-count"><?= $order['total_items'] ?> products</span>
+                    <span class="product-count"><?= $order['total_items'] ?> sản phẩm</span>
                     <?php if ($order['product_names']): ?>
                       <div class="product-preview" title="<?= htmlspecialchars($order['product_names']) ?>">
                         <?= htmlspecialchars(substr($order['product_names'], 0, 30)) ?>...
@@ -227,7 +227,7 @@ function getStatusText($status) {
           <div class="pagination">
             <?php if ($page > 1): ?>
               <a href="?<?= http_build_query(array_merge($filters, ['page' => $page - 1])) ?>" 
-                 class="page-btn">&laquo; Previous</a>
+                 class="page-btn">&laquo; Trước</a>
             <?php endif; ?>
             
             <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
@@ -237,11 +237,11 @@ function getStatusText($status) {
             
             <?php if ($page < $totalPages): ?>
               <a href="?<?= http_build_query(array_merge($filters, ['page' => $page + 1])) ?>" 
-                 class="page-btn">Next &raquo;</a>
+                 class="page-btn">Tiếp &raquo;</a>
             <?php endif; ?>
           </div>
           <div class="pagination-info">
-            Page <?= $page ?> / <?= $totalPages ?> (<?= $totalOrders ?> orders)
+            Trang <?= $page ?> / <?= $totalPages ?> (<?= $totalOrders ?> đơn hàng)
           </div>
         </div>
         <?php endif; ?>
@@ -255,7 +255,7 @@ function getStatusText($status) {
 
 // Delete order functionality
 function deleteOrder(orderId) {
-    if (confirm('Are you sure you want to delete this order?')) {
+    if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')) {
         const formData = new FormData();
         formData.append('action', 'delete_order');
         formData.append('order_id', orderId);
@@ -267,15 +267,15 @@ function deleteOrder(orderId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Order deleted successfully!');
+                alert('Xóa đơn hàng thành công!');
                 location.reload();
             } else {
-                alert('Error: ' + data.message);
+                alert('Lỗi: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while deleting the order');
+            alert('Có lỗi xảy ra khi xóa đơn hàng');
         });
     }
 }

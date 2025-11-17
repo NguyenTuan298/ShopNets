@@ -39,19 +39,19 @@ include '../includes/sidebar.php';
 
   <section class="content categories-page">
       <div class="content-header">
-        <h1>Categories Management</h1>
+        <h1>Quản Lý Danh Mục</h1>
         <button class="btn btn-primary" id="addCategoryBtn">
-          <img src="../assets/images/icons/add.png" alt="Add">
-          Add New Category
+          <img src="../assets/images/icons/add.png" alt="Thêm">
+          Thêm Danh Mục Mới
         </button>
       </div>
 
       <div class="card filter-card">
-        <div class="filter-header">Search Categories</div>
+        <div class="filter-header">Tìm Kiếm Danh Mục</div>
         <div class="filters-row">
           <div class="search-box">
             <form method="get" action="index.php">
-              <input type="text" name="q" value="<?php echo isset($_GET['q'])?htmlspecialchars($_GET['q']):''; ?>" placeholder="Search Categories...">
+              <input type="text" name="q" value="<?php echo isset($_GET['q'])?htmlspecialchars($_GET['q']):''; ?>" placeholder="Tìm kiếm danh mục...">
               <button type="submit" style="display: none;"></button>
             </form>
           </div>
@@ -60,7 +60,7 @@ include '../includes/sidebar.php';
 
       <div class="card">
         <div class="card-header">
-          <h2>All Categories</h2>
+          <h2>Tất Cả Danh Mục</h2>
         </div>
         
         <div class="table-container">
@@ -68,10 +68,10 @@ include '../includes/sidebar.php';
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Category Name</th>
-                <th>Description</th>
-                <th>Products Count</th>
-                <th>Actions</th>
+                <th>Tên Danh Mục</th>
+                <th>Mô Tả</th>
+                <th>Số Sản Phẩm</th>
+                <th>Hành Động</th>
               </tr>
             </thead>
             <tbody>
@@ -137,9 +137,9 @@ include '../includes/sidebar.php';
                   echo "</tr>";
                 }
               } else {
-                $noResultsMessage = 'No categories found.';
+                $noResultsMessage = 'Không tìm thấy danh mục nào.';
                 if ($q !== '') {
-                  $noResultsMessage = "No categories found for search: " . htmlspecialchars($q);
+                  $noResultsMessage = "Không tìm thấy danh mục cho từ khóa: " . htmlspecialchars($q);
                 }
                 echo "<tr><td colspan=\"5\" style=\"text-align:center;\">$noResultsMessage</td></tr>";
               }
@@ -154,28 +154,28 @@ include '../includes/sidebar.php';
 <div id="addCategoryModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Add New Category</h2>
+      <h2>Thêm Danh Mục Mới</h2>
       <span class="close">&times;</span>
     </div>
     <div class="modal-body">
       <form id="addCategoryForm">
         <div class="form-group">
-          <label for="categoryName">Category Name <span class="required">*</span></label>
+          <label for="categoryName">Tên Danh Mục <span class="required">*</span></label>
           <input type="text" id="categoryName" name="name" required>
         </div>
         <div class="form-group">
-          <label for="categoryDescription">Description</label>
+          <label for="categoryDescription">Mô Tả</label>
           <textarea id="categoryDescription" name="description" rows="3"></textarea>
         </div>
         <div class="error-messages" id="errorMessages"></div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">
-            <span class="btn-text">Save Category</span>
+            <span class="btn-text">Lưu Danh Mục</span>
             <span class="loading-spinner" style="display: none;">
-              <img src="../assets/images/icons/loading.gif" alt="Loading..." style="width: 16px;">
+              <img src="../assets/images/icons/loading.gif" alt="Đang tải..." style="width: 16px;">
             </span>
           </button>
-          <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Hủy</button>
         </div>
       </form>
     </div>
@@ -186,29 +186,29 @@ include '../includes/sidebar.php';
 <div id="editCategoryModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Edit Category</h2>
+      <h2>Chỉnh Sửa Danh Mục</h2>
       <span class="close" id="editModalClose">&times;</span>
     </div>
     <div class="modal-body">
       <form id="editCategoryForm">
         <input type="hidden" id="editCategoryId" name="id">
         <div class="form-group">
-          <label for="editCategoryName">Category Name <span class="required">*</span></label>
+          <label for="editCategoryName">Tên Danh Mục <span class="required">*</span></label>
           <input type="text" id="editCategoryName" name="name" required>
         </div>
         <div class="form-group">
-          <label for="editCategoryDescription">Description</label>
+          <label for="editCategoryDescription">Mô Tả</label>
           <textarea id="editCategoryDescription" name="description" rows="3"></textarea>
         </div>
         <div class="error-messages" id="editErrorMessages"></div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">
-            <span class="btn-text">Update Category</span>
+            <span class="btn-text">Cập Nhật Danh Mục</span>
             <span class="loading-spinner" style="display: none;">
-              <img src="../assets/images/icons/loading.gif" alt="Loading..." style="width: 16px;">
+              <img src="../assets/images/icons/loading.gif" alt="Đang tải..." style="width: 16px;">
             </span>
           </button>
-          <button type="button" class="btn btn-secondary" id="editCancelBtn">Cancel</button>
+          <button type="button" class="btn btn-secondary" id="editCancelBtn">Hủy</button>
         </div>
       </form>
     </div>

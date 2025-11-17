@@ -20,14 +20,14 @@ try {
 
     <section class="content">
       <div class="content-header">
-        <h1>System Settings</h1>
-        <span>Manage basic information and website configuration</span>
+        <h1>Cài Đặt Hệ Thống</h1>
+        <span>Quản lý thông tin cơ bản và cấu hình website</span>
       </div>
 
       <!-- Admin Profile Settings -->
       <div class="card settings-card">
         <div class="card-header">
-          <h2>👤 Administrator Information</h2>
+          <h2>👤 Thông Tin Quản Trị Viên</h2>
         </div>
         
         <div class="settings-content">
@@ -39,29 +39,29 @@ try {
                 <div class="current-avatar">
                   <img src="<?php echo !empty($currentAdmin['avatar']) ? '../' . $currentAdmin['avatar'] : '../assets/images/default-avatar.svg'; ?>" alt="Avatar" id="currentAvatar">
                   <div class="avatar-overlay">
-                    <span>📷 Change</span>
+                    <span>📷 Thay Đổi</span>
                   </div>
                 </div>
                 <input type="file" id="adminAvatar" name="admin_avatar" accept="image/*" style="display: none;">
-                <button type="button" class="btn btn-secondary" onclick="document.getElementById('adminAvatar').click()">Choose Profile Picture</button>
-                <span class="field-help">JPG, PNG max 5MB. Recommended size: 200x200px</span>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('adminAvatar').click()">Chọn Ảnh Đại Diện</button>
+                <span class="field-help">JPG, PNG tối đa 5MB. Kích thước đề xuất: 200x200px</span>
               </div>
 
               <div class="settings-grid">
                 <div class="form-group">
-                  <label for="adminEmail">Login Email <span class="required">*</span></label>
+                  <label for="adminEmail">Email Đăng Nhập <span class="required">*</span></label>
                   <input type="email" id="adminEmail" name="admin_email" value="<?php echo htmlspecialchars($currentAdmin['email'] ?? ''); ?>" required>
-                  <span class="field-help">This email is used to login to the system</span>
+                  <span class="field-help">Email này được sử dụng để đăng nhập vào hệ thống</span>
                 </div>
                 
                 <div class="form-group">
-                  <label for="adminPhone">Phone Number</label>
+                  <label for="adminPhone">Số Điện Thoại</label>
                   <input type="tel" id="adminPhone" name="admin_phone" value="<?php echo htmlspecialchars($currentAdmin['phone'] ?? ''); ?>">
                 </div>
               </div>
             </div>
             
-            <button type="submit" class="btn btn-primary">👤 Update Admin Information</button>
+            <button type="submit" class="btn btn-primary">👤 Cập Nhật Thông Tin Quản Trị</button>
           </form>
         </div>
       </div>
@@ -69,7 +69,7 @@ try {
       <!-- Website Information Settings -->
       <div class="card settings-card">
         <div class="card-header">
-          <h2>🌐 Website Information</h2>
+          <h2>🌐 Thông Tin Website</h2>
         </div>
         
         <div class="settings-content">
@@ -78,23 +78,23 @@ try {
             
             <div class="settings-grid">
               <div class="form-group">
-                <label for="siteName">Website / Application Name <span class="required">*</span></label>
+                <label for="siteName">Tên Website / Ứng Dụng <span class="required">*</span></label>
                 <input type="text" id="siteName" name="site_name" value="ShopNets" required>
               </div>
               
               <div class="form-group">
-                <label for="siteTagline">Slogan / Tagline</label>
-                <input type="text" id="siteTagline" name="site_tagline" value="Your Online Shopping Destination" placeholder="Website slogan">
+                <label for="siteTagline">Slogan / Khẩu Hiệu</label>
+                <input type="text" id="siteTagline" name="site_tagline" value="Điểm đến mua sắm trực tuyến của bạn" placeholder="Slogan website">
               </div>
               
               <div class="form-group">
-                <label for="metaDescription">Short Description (Meta Description) <span class="required">*</span></label>
-                <textarea id="metaDescription" name="meta_description" rows="3" required placeholder="Brief description of the website to display on Google and social media...">ShopNets - Leading online shopping platform with thousands of high-quality products and best services.</textarea>
+                <label for="metaDescription">Mô Tả Ngắn (Meta Description) <span class="required">*</span></label>
+                <textarea id="metaDescription" name="meta_description" rows="3" required placeholder="Mô tả ngắn về website để hiện thị trên Google và mạng xã hội...">ShopNets - Nền tảng mua sắm trực tuyến hàng đầu với hàng nghìn sản phẩm chất lượng cao và dịch vụ tốt nhất.</textarea>
               </div>
             
             </div>
             
-            <button type="submit" class="btn btn-primary">💾 Save Website Information</button>
+            <button type="submit" class="btn btn-primary">💾 Lưu Thông Tin Website</button>
           </form>
         </div>
       </div>
@@ -102,7 +102,7 @@ try {
       <!-- Contact Information Settings -->
       <div class="card settings-card">
         <div class="card-header">
-          <h2>📞 Contact Information</h2>
+          <h2>📞 Thông Tin Liên Hệ</h2>
         </div>
         
         <div class="settings-content">
@@ -111,34 +111,34 @@ try {
             
             <div class="settings-grid">
               <div class="form-group">
-                <label for="contactEmail">System Email <span class="required">*</span></label>
-                <input type="email" id="contactEmail" name="contact_email" value="admin@shopnets.com" required placeholder="Main system email">
-                <span class="field-help">This email will be used for notifications and contact</span>
+                <label for="contactEmail">Email Hệ Thống <span class="required">*</span></label>
+                <input type="email" id="contactEmail" name="contact_email" value="admin@shopnets.com" required placeholder="Email hệ thống chính">
+                <span class="field-help">Email này sẽ được sử dụng cho thông báo và liên hệ</span>
               </div>
               
               <div class="form-group">
-                <label for="supportEmail">Support Email</label>
-                <input type="email" id="supportEmail" name="support_email" value="support@shopnets.com" placeholder="Email for customer contact">
+                <label for="supportEmail">Email Hỗ Trợ</label>
+                <input type="email" id="supportEmail" name="support_email" value="support@shopnets.com" placeholder="Email cho khách hàng liên hệ">
               </div>
               
               <div class="form-group">
-                <label for="contactPhone">Phone Number <span class="required">*</span></label>
-                <input type="tel" id="contactPhone" name="contact_phone" value="0123-456-789" required placeholder="Contact phone number">
+                <label for="contactPhone">Số Điện Thoại <span class="required">*</span></label>
+                <input type="tel" id="contactPhone" name="contact_phone" value="0123-456-789" required placeholder="Số điện thoại liên hệ">
               </div>
               
               <div class="form-group">
                 <label for="contactHotline">Hotline</label>
-                <input type="tel" id="contactHotline" name="contact_hotline" value="1900-1234" placeholder="24/7 support hotline">
+                <input type="tel" id="contactHotline" name="contact_hotline" value="1900-1234" placeholder="Hotline hỗ trợ 24/7">
               </div>
               
               <div class="form-group full-width">
-                <label for="contactAddress">Contact Address <span class="required">*</span></label>
-                <textarea id="contactAddress" name="contact_address" rows="3" required placeholder="Main office/store address...">123 ABC Street, XYZ Ward, District 1, Ho Chi Minh City, Vietnam</textarea>
+                <label for="contactAddress">Địa Chỉ Liên Hệ <span class="required">*</span></label>
+                <textarea id="contactAddress" name="contact_address" rows="3" required placeholder="Địa chỉ văn phòng/cửa hàng chính...">123 Đường ABC, Phường XYZ, Quận 1, Thành phố Hồ Chí Minh, Việt Nam</textarea>
               </div>
               
               <div class="form-group">
-                <label for="workingHours">Working Hours</label>
-                <input type="text" id="workingHours" name="working_hours" value="8:00 - 17:00, Monday - Sunday" placeholder="Example: 8:00 - 17:00, Mon-Sat">
+                <label for="workingHours">Giờ Làm Việc</label>
+                <input type="text" id="workingHours" name="working_hours" value="8:00 - 17:00, Thứ 2 - Chủ Nhật" placeholder="Ví dụ: 8:00 - 17:00, T2-T7">
               </div>
               
               <div class="form-group">
@@ -147,7 +147,7 @@ try {
               </div>
             </div>
             
-            <button type="submit" class="btn btn-primary">📱 Update Contact Information</button>
+            <button type="submit" class="btn btn-primary">📱 Cập Nhật Thông Tin Liên Hệ</button>
           </form>
         </div>
       </div>
@@ -155,7 +155,7 @@ try {
       <!-- System Settings -->
       <div class="card settings-card">
         <div class="card-header">
-          <h2>⚙️ System Settings</h2>
+          <h2>⚙️ Cài Đặt Hệ Thống</h2>
         </div>
         
         <div class="settings-content">
@@ -164,44 +164,44 @@ try {
             
             <div class="settings-grid">
               <div class="form-group">
-                <label for="currency">Currency Unit <span class="required">*</span></label>
+                <label for="currency">Đơn Vị Tiền Tệ <span class="required">*</span></label>
                 <select id="currency" name="currency" required>
-                  <option value="VND" selected>Vietnamese Dong (VNĐ)</option>
-                  <option value="USD">US Dollar ($)</option>
+                  <option value="VND" selected>Việt Nam Đồng (VNĐ)</option>
+                  <option value="USD">Dollar Mỹ ($)</option>
                   <option value="EUR">Euro (€)</option>
-                  <option value="JPY">Japanese Yen (¥)</option>
+                  <option value="JPY">Yên Nhật (¥)</option>
                 </select>
               </div>
               
               <div class="form-group">
-                <label for="timezone">Timezone</label>
+                <label for="timezone">Múi Giờ</label>
                 <select id="timezone" name="timezone">
-                  <option value="Asia/Ho_Chi_Minh" selected>Vietnam (GMT+7)</option>
-                  <option value="Asia/Bangkok">Thailand (GMT+7)</option>
+                  <option value="Asia/Ho_Chi_Minh" selected>Việt Nam (GMT+7)</option>
+                  <option value="Asia/Bangkok">Thái Lan (GMT+7)</option>
                   <option value="Asia/Singapore">Singapore (GMT+8)</option>
                   <option value="UTC">UTC (GMT+0)</option>
                 </select>
               </div>
               
               <div class="form-group">
-                <label for="language">Language</label>
+                <label for="language">Ngôn Ngữ</label>
                 <select id="language" name="language">
-                  <option value="vi">Tiếng Việt</option>
-                  <option value="en" selected>English</option>
+                  <option value="vi" selected>Tiếng Việt</option>
+                  <option value="en">English</option>
                 </select>
               </div>
               
               <div class="form-group">
-                <label for="dateFormat">Date Format</label>
+                <label for="dateFormat">Cách Hiển Thị Ngày</label>
                 <select id="dateFormat" name="date_format">
-                  <option value="d/m/Y">DD/MM/YYYY</option>
-                  <option value="m/d/Y" selected>MM/DD/YYYY</option>
+                  <option value="d/m/Y" selected>DD/MM/YYYY</option>
+                  <option value="m/d/Y">MM/DD/YYYY</option>
                   <option value="Y-m-d">YYYY-MM-DD</option>
                 </select>
               </div>
             </div>
             
-            <button type="submit" class="btn btn-primary">⚙️ Save System Settings</button>
+            <button type="submit" class="btn btn-primary">⚙️ Lưu Cài Đặt Hệ Thống</button>
           </form>
         </div>
       </div>
