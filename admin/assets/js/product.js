@@ -153,11 +153,11 @@ class ProductManager {
                     setTimeout(() => firstInput.focus(), 100);
                 }
             } else {
-                alert(result.error || 'Error loading product data');
+                alert(result.error || 'Lỗi tải dữ liệu sản phẩm');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Network error. Please try again.');
+            alert('Lỗi mạng. Vui lòng thử lại.');
         }
     }
 
@@ -178,15 +178,46 @@ class ProductManager {
         document.getElementById('editProductId').value = productData.id;
         document.getElementById('editProductName').value = productData.name || '';
         
-        // Set selected category
+        // Set selected category - xử lý cả cấu trúc cũ và mới
         const categorySelect = document.getElementById('editProductCategory');
-        if (categorySelect && productData.category) {
-            categorySelect.value = productData.category;
+        if (categorySelect) {
+            if (productData.category_id) {
+                // Cấu trúc mới - sử dụng category_id
+                categorySelect.value = productData.category_id;
+            } else if (productData.category) {
+                // Cấu trúc cũ - tìm category theo tên (fallback)
+                for (let option of categorySelect.options) {
+                    if (option.text === productData.category) {
+                        categorySelect.value = option.value;
+                        break;
+                    }
+                }
+            }
         }
         
         document.getElementById('editProductPrice').value = productData.price || '';
-        document.getElementById('editProductInventory').value = productData.inventory || '';
+        
+        // Cập nhật các trường mới (kiểm tra tồn tại trước)
+        const comparePrice = document.getElementById('editProductComparePrice');
+        if (comparePrice) comparePrice.value = productData.compare_price || '';
+        
+        const quantity = document.getElementById('editProductQuantity');
+        if (quantity) {
+            // Xử lý cả quantity (mới) và inventory (cũ)
+            quantity.value = productData.quantity || productData.inventory || '';
+        }
+        
+        const shortDescription = document.getElementById('editProductShortDescription');
+        if (shortDescription) shortDescription.value = productData.short_description || '';
+        
         document.getElementById('editProductDescription').value = productData.description || '';
+        
+        // Checkbox cho featured và is_active (chỉ khi có)
+        const featured = document.getElementById('editProductFeatured');
+        if (featured) featured.checked = productData.featured == 1;
+        
+        const isActive = document.getElementById('editProductActive');
+        if (isActive) isActive.checked = productData.is_active == 1;
         
         // Show current image preview
         const imagePreview = document.getElementById('currentImagePreview');
@@ -340,17 +371,17 @@ class ProductManager {
             modal.innerHTML = `
                 <div class="modal-content" style="max-width: 400px;">
                     <div class="modal-header">
-                        <h2>Confirm Delete</h2>
+                        <h2>Xác Nhận Xóa</h2>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure you want to delete <strong>"${productName}"</strong>?</p>
-                        <p style="color: #666; font-size: 14px;">This action cannot be undone.</p>
+                        <p>Bạn có chắc chắn muốn xóa sản phẩm <strong>"${productName}"</strong>?</p>
+                        <p style="color: #666; font-size: 14px;">Hành động này không thể hoàn tác.</p>
                         <div class="form-actions" style="margin-top: 20px;">
                             <button type="button" class="btn btn-primary delete-confirm-btn" style="background-color: #dc3545; border-color: #dc3545;">
-                                Delete
+                                Xóa
                             </button>
                             <button type="button" class="btn btn-secondary delete-cancel-btn">
-                                Cancel
+                                Hủy
                             </button>
                         </div>
                     </div>

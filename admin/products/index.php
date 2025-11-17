@@ -35,6 +35,47 @@ include '../includes/sidebar.php';
 .btn-icon:active {
     transform: translateY(-1px) scale(1.02) !important;
 }
+
+/* Status styles */
+.status-active {
+    background: #10b981;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-inactive {
+    background: #f59e0b;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Checkbox styles */
+.checkbox-group {
+    margin: 10px 0;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+}
+
+.checkbox-group .checkmark {
+    margin-left: 4px;
+}
 </style>
 
   <section class="content products-page">
@@ -114,6 +155,7 @@ include '../includes/sidebar.php';
                 <th>Danh Mục</th>
                 <th>Giá</th>
                 <th>Tồn Kho</th>
+                <th>Trạng Thái</th>
                 <th>Hành Động</th>
               </tr>
             </thead>
@@ -147,7 +189,9 @@ include '../includes/sidebar.php';
                   $whereClause = 'WHERE ' . implode(' AND ', $whereConditions);
                 }
                 
-                $sql = "SELECT * FROM products $whereClause ORDER BY id ASC";
+                $sql = "SELECT p.*, c.name as category_name FROM products p 
+                        LEFT JOIN categories c ON p.category_id = c.id 
+                        $whereClause ORDER BY p.id ASC";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute($params);
                 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -157,12 +201,13 @@ include '../includes/sidebar.php';
 
               if (!empty($products)) {
                 foreach ($products as $p) {
-                  $id = isset($p['id']) ? $p['id'] : (isset($p['product_id']) ? $p['product_id'] : '');
-                  $name = isset($p['name']) ? $p['name'] : (isset($p['product_name']) ? $p['product_name'] : '');
-                  $category = isset($p['category']) ? $p['category'] : (isset($p['cat']) ? $p['cat'] : '');
-                  $price = isset($p['price']) ? $p['price'] : (isset($p['unit_price']) ? $p['unit_price'] : '');
-                  $inventory = isset($p['inventory']) ? $p['inventory'] : (isset($p['stock']) ? $p['stock'] : '');
-                  $image = isset($p['image']) ? $p['image'] : '';
+                  $id = $p['id'];
+                  $name = $p['name'];
+                  $category = $p['category_name'] ?? 'Chưa phân loại';
+                  $price = $p['price'];
+                  $quantity = $p['quantity'] ?? 0;
+                  $image = $p['image'] ?? '';
+                  $isActive = $p['is_active'] ?? 1;
 
                   echo "<tr>";
                   echo "<td>" . htmlspecialchars($id) . "</td>";
@@ -176,7 +221,14 @@ include '../includes/sidebar.php';
                   echo "<td>" . htmlspecialchars($name) . "</td>";
                   echo "<td>" . htmlspecialchars($category) . "</td>";
                   echo "<td>" . ($price !== '' ? number_format((float)$price) . ' VNĐ' : '') . "</td>";
-                  echo "<td style=\"padding-left: 45px;\">" . htmlspecialchars($inventory) . "</td>";
+                  echo "<td style=\"padding-left: 45px;\">" . htmlspecialchars($quantity) . "</td>";
+                  echo "<td>";
+                  if ($isActive) {
+                    echo "<span class=\"status-active\">Hoạt động</span>";
+                  } else {
+                    echo "<span class=\"status-inactive\">Tạm dừng</span>";
+                  }
+                  echo "</td>";
                   echo "<td style=\"text-align: left;\" class=\"actions-cell\">";
                   echo "<button class=\"btn-icon btn-edit\" type=\"button\" onclick=\"editProduct(" . $id . ", '" . htmlspecialchars($name, ENT_QUOTES) . "')\" style=\"position: relative; padding: 8px; border: 1px solid transparent; border-radius: 6px; background: transparent; cursor: pointer; transition: all 0.3s ease; margin: 0 3px; overflow: hidden;\">";
                   echo "<img src=\"../assets/images/icons/edit.png\" alt=\"Edit\" style=\"width: 18px; position: relative; z-index: 1; transition: all 0.3s ease;\">";
@@ -195,7 +247,7 @@ include '../includes/sidebar.php';
                 } elseif ($q !== '') {
                   $noResultsMessage = "Không tìm thấy sản phẩm cho từ khóa: " . htmlspecialchars($q);
                 }
-                echo "<tr><td colspan=\"7\" style=\"text-align:center;\">$noResultsMessage</td></tr>";
+                echo "<tr><td colspan=\"8\" style=\"text-align:center;\">$noResultsMessage</td></tr>";
               }
 
               ?>
@@ -220,14 +272,14 @@ include '../includes/sidebar.php';
         </div>
         <div class="form-group">
           <label for="productCategory">Danh Mục <span class="required">*</span></label>
-          <select id="productCategory" name="category" required>
+          <select id="productCategory" name="category_id" required>
             <option value="">Chọn danh mục</option>
             <?php
             try {
-              $stmt = $pdo->query("SELECT name FROM categories ORDER BY name ASC");
-              $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+              $stmt = $pdo->query("SELECT id, name FROM categories ORDER BY name ASC");
+              $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
               foreach ($categories as $cat) {
-                echo '<option value="' . htmlspecialchars($cat) . '">' . htmlspecialchars($cat) . '</option>';
+                echo '<option value="' . htmlspecialchars($cat['id']) . '">' . htmlspecialchars($cat['name']) . '</option>';
               }
             } catch (Exception $e) {
               echo '<option value="">Lỗi tải danh mục</option>';
@@ -240,8 +292,13 @@ include '../includes/sidebar.php';
           <input type="number" id="productPrice" name="price" step="0.01" min="0">
         </div>
         <div class="form-group">
-          <label for="productInventory" >Số Lượng Tồn <span class="required">*</span></label>
-          <input type="number" id="productInventory" name="inventory" min="0">
+          <label for="productComparePrice">Giá So Sánh</label>
+          <input type="number" id="productComparePrice" name="compare_price" step="0.01" min="0">
+          <small style="color: #666; font-size: 12px;">Giá gốc trước khi giảm (không bắt buộc)</small>
+        </div>
+        <div class="form-group">
+          <label for="productQuantity" >Số Lượng Tồn <span class="required">*</span></label>
+          <input type="number" id="productQuantity" name="quantity" min="0">
         </div>
         <div class="form-group">
           <label for="productImage">Hình Ảnh Sản Phẩm</label>
@@ -249,8 +306,30 @@ include '../includes/sidebar.php';
           <small style="color: #666; font-size: 12px;">Hỗ trợ định dạng: JPG, PNG, GIF (Tối đa: 5MB)</small>
         </div>
         <div class="form-group">
-          <label for="productDescription">Mô Tả</label>
-          <textarea id="productDescription" name="description" rows="3"></textarea>
+          <label for="productShortDescription">Mô Tả Ngắn</label>
+          <textarea id="productShortDescription" name="short_description" rows="2" placeholder="Mô tả ngắn hiển thị trong danh sách sản phẩm..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="productDescription">Mô Tả Chi Tiết</label>
+          <textarea id="productDescription" name="description" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <div class="checkbox-group">
+            <label>
+              <input type="checkbox" id="productFeatured" name="featured" value="1">
+              <span class="checkmark"></span>
+              Sản phẩm nổi bật
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="checkbox-group">
+            <label>
+              <input type="checkbox" id="productActive" name="is_active" value="1" checked>
+              <span class="checkmark"></span>
+              Đang hoạt động
+            </label>
+          </div>
         </div>
         <div class="error-messages" id="errorMessages"></div>
         <div class="form-actions">
@@ -283,14 +362,14 @@ include '../includes/sidebar.php';
         </div>
         <div class="form-group">
           <label for="editProductCategory">Danh Mục <span class="required">*</span></label>
-          <select id="editProductCategory" name="category" required>
+          <select id="editProductCategory" name="category_id" required>
             <option value="">Chọn danh mục</option>
             <?php
             try {
-              $stmt = $pdo->query("SELECT name FROM categories ORDER BY name ASC");
-              $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+              $stmt = $pdo->query("SELECT id, name FROM categories ORDER BY name ASC");
+              $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
               foreach ($categories as $cat) {
-                echo '<option value="' . htmlspecialchars($cat) . '">' . htmlspecialchars($cat) . '</option>';
+                echo '<option value="' . htmlspecialchars($cat['id']) . '">' . htmlspecialchars($cat['name']) . '</option>';
               }
             } catch (Exception $e) {
               echo '<option value="">Lỗi tải danh mục</option>';
@@ -303,8 +382,13 @@ include '../includes/sidebar.php';
           <input type="number" id="editProductPrice" name="price" step="0.01" min="0">
         </div>
         <div class="form-group">
-          <label for="editProductInventory">Số Lượng Tồn <span class="required">*</span></label>
-          <input type="number" id="editProductInventory" name="inventory" min="0">
+          <label for="editProductComparePrice">Giá So Sánh</label>
+          <input type="number" id="editProductComparePrice" name="compare_price" step="0.01" min="0">
+          <small style="color: #666; font-size: 12px;">Giá gốc trước khi giảm (không bắt buộc)</small>
+        </div>
+        <div class="form-group">
+          <label for="editProductQuantity">Số Lượng Tồn <span class="required">*</span></label>
+          <input type="number" id="editProductQuantity" name="quantity" min="0">
         </div>
         <div class="form-group">
           <label for="editProductImage">Hình Ảnh Sản Phẩm</label>
@@ -313,8 +397,30 @@ include '../includes/sidebar.php';
           <div id="currentImagePreview" style="margin-top: 10px;"></div>
         </div>
         <div class="form-group">
-          <label for="editProductDescription">Mô Tả</label>
-          <textarea id="editProductDescription" name="description" rows="3"></textarea>
+          <label for="editProductShortDescription">Mô Tả Ngắn</label>
+          <textarea id="editProductShortDescription" name="short_description" rows="2" placeholder="Mô tả ngắn hiển thị trong danh sách sản phẩm..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="editProductDescription">Mô Tả Chi Tiết</label>
+          <textarea id="editProductDescription" name="description" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <div class="checkbox-group">
+            <label>
+              <input type="checkbox" id="editProductFeatured" name="featured" value="1">
+              <span class="checkmark"></span>
+              Sản phẩm nổi bật
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="checkbox-group">
+            <label>
+              <input type="checkbox" id="editProductActive" name="is_active" value="1">
+              <span class="checkmark"></span>
+              Đang hoạt động
+            </label>
+          </div>
         </div>
         <div class="error-messages" id="editErrorMessages"></div>
         <div class="form-actions">
@@ -331,6 +437,6 @@ include '../includes/sidebar.php';
   </div>
 </div>
 
-<script src="../assets/js/product.js"></script>
+<script src="../assets/js/product.js?v=<?php echo time(); ?>"></script>
 
 <?php include '../includes/footer.php'; ?>

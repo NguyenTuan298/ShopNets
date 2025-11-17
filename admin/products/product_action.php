@@ -27,10 +27,10 @@ try {
             $search = isset($_GET['q']) ? trim($_GET['q']) : '';
             
             if ($search !== '') {
-                $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE :search OR category LIKE :search ORDER BY id ASC");
+                $stmt = $pdo->prepare("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.name LIKE :search ORDER BY p.id ASC");
                 $stmt->execute([':search' => "%$search%"]);
             } else {
-                $stmt = $pdo->query("SELECT * FROM products ORDER BY id ASC");
+                $stmt = $pdo->query("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.id ASC");
             }
             
             $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -45,31 +45,57 @@ try {
             }
             
             $name = trim($input['name'] ?? '');
-            $category = trim($input['category'] ?? '');
+            $category_id = $input['category_id'] ?? null;
             $price = $input['price'] ?? 0;
-            $inventory = $input['inventory'] ?? 0;
+            $compare_price = $input['compare_price'] ?? null;
+            $quantity = $input['quantity'] ?? 0;
             $description = trim($input['description'] ?? '');
+            $short_description = trim($input['short_description'] ?? '');
+            $featured = isset($input['featured']) ? 1 : 0;
+            $is_active = isset($input['is_active']) ? 1 : 0;
+
+            // Tạo slug từ tên sản phẩm
+            $slug = generateSlug($name);
+            
+            // Kiểm tra slug trùng lặp
+            $counter = 1;
+            $originalSlug = $slug;
+            while (true) {
+                $checkStmt = $pdo->prepare("SELECT id FROM products WHERE slug = ?");
+                $checkStmt->execute([$slug]);
+                if (!$checkStmt->fetch()) {
+                    break;
+                }
+                $slug = $originalSlug . '-' . $counter;
+                $counter++;
+            }
 
             $errors = [];
-            if ($name === '') $errors[] = 'Product name is required';
-            if (!is_numeric($price)) $errors[] = 'Price must be a number';
-            if (!is_numeric($inventory)) $errors[] = 'Inventory must be a number';
+            if ($name === '') $errors[] = 'Tên sản phẩm là bắt buộc';
+            if (!is_numeric($price) || $price < 0) $errors[] = 'Giá phải là số dương';
+            if (!is_numeric($quantity) || $quantity < 0) $errors[] = 'Số lượng phải là số không âm';
+            if ($compare_price && (!is_numeric($compare_price) || $compare_price < 0)) $errors[] = 'Giá so sánh phải là số dương';
 
             if (!empty($errors)) {
                 sendError(implode(', ', $errors));
             }
 
-            $stmt = $pdo->prepare("INSERT INTO products (name, category, price, inventory, description) VALUES (:name, :category, :price, :inventory, :description)");
+            $stmt = $pdo->prepare("INSERT INTO products (name, category_id, price, compare_price, quantity, description, short_description, slug, featured, is_active) VALUES (:name, :category_id, :price, :compare_price, :quantity, :description, :short_description, :slug, :featured, :is_active)");
             $stmt->execute([
                 ':name' => $name,
-                ':category' => $category,
+                ':category_id' => $category_id,
                 ':price' => $price,
-                ':inventory' => $inventory,
-                ':description' => $description
+                ':compare_price' => $compare_price,
+                ':quantity' => $quantity,
+                ':description' => $description,
+                ':short_description' => $short_description,
+                ':slug' => $slug,
+                ':featured' => $featured,
+                ':is_active' => $is_active
             ]);
 
             $productId = $pdo->lastInsertId();
-            sendJsonResponse(['success' => true, 'message' => 'Product added successfully', 'id' => $productId], 201);
+            sendJsonResponse(['success' => true, 'message' => 'Thêm sản phẩm thành công', 'id' => $productId], 201);
             break;
 
         case 'PUT':
@@ -77,41 +103,71 @@ try {
             
             $id = $input['id'] ?? $_GET['id'] ?? 0;
             if (!$id) {
-                sendError('Product ID is required');
+                sendError('Yêu cầu ID sản phẩm');
             }
 
-            $stmt = $pdo->prepare('SELECT id FROM products WHERE id = :id');
+            $stmt = $pdo->prepare('SELECT name, slug FROM products WHERE id = :id');
             $stmt->execute([':id' => $id]);
-            if (!$stmt->fetch()) {
-                sendError('Product not found', 404);
+            $currentProduct = $stmt->fetch();
+            if (!$currentProduct) {
+                sendError('Không tìm thấy sản phẩm', 404);
             }
 
             $name = trim($input['name'] ?? '');
-            $category = trim($input['category'] ?? '');
+            $category_id = $input['category_id'] ?? null;
             $price = $input['price'] ?? 0;
-            $inventory = $input['inventory'] ?? 0;
+            $compare_price = $input['compare_price'] ?? null;
+            $quantity = $input['quantity'] ?? 0;
             $description = trim($input['description'] ?? '');
+            $short_description = trim($input['short_description'] ?? '');
+            $featured = isset($input['featured']) ? 1 : 0;
+            $is_active = isset($input['is_active']) ? 1 : 0;
+
+            // Tạo slug mới nếu tên đã thay đổi
+            $slug = $currentProduct['slug'];
+            if ($name !== $currentProduct['name']) {
+                $slug = generateSlug($name);
+                
+                // Kiểm tra slug trùng lặp
+                $counter = 1;
+                $originalSlug = $slug;
+                while (true) {
+                    $checkStmt = $pdo->prepare("SELECT id FROM products WHERE slug = ? AND id != ?");
+                    $checkStmt->execute([$slug, $id]);
+                    if (!$checkStmt->fetch()) {
+                        break;
+                    }
+                    $slug = $originalSlug . '-' . $counter;
+                    $counter++;
+                }
+            }
 
             $errors = [];
-            if ($name === '') $errors[] = 'Product name is required';
-            if (!is_numeric($price)) $errors[] = 'Price must be a number';
-            if (!is_numeric($inventory)) $errors[] = 'Inventory must be a number';
+            if ($name === '') $errors[] = 'Tên sản phẩm là bắt buộc';
+            if (!is_numeric($price) || $price < 0) $errors[] = 'Giá phải là số dương';
+            if (!is_numeric($quantity) || $quantity < 0) $errors[] = 'Số lượng phải là số không âm';
+            if ($compare_price && (!is_numeric($compare_price) || $compare_price < 0)) $errors[] = 'Giá so sánh phải là số dương';
 
             if (!empty($errors)) {
                 sendError(implode(', ', $errors));
             }
 
-            $stmt = $pdo->prepare('UPDATE products SET name = :name, category = :category, price = :price, inventory = :inventory, description = :description WHERE id = :id');
+            $stmt = $pdo->prepare('UPDATE products SET name = :name, category_id = :category_id, price = :price, compare_price = :compare_price, quantity = :quantity, description = :description, short_description = :short_description, slug = :slug, featured = :featured, is_active = :is_active WHERE id = :id');
             $stmt->execute([
                 ':name' => $name,
-                ':category' => $category,
+                ':category_id' => $category_id,
                 ':price' => $price,
-                ':inventory' => $inventory,
+                ':compare_price' => $compare_price,
+                ':quantity' => $quantity,
                 ':description' => $description,
+                ':short_description' => $short_description,
+                ':slug' => $slug,
+                ':featured' => $featured,
+                ':is_active' => $is_active,
                 ':id' => $id
             ]);
 
-            sendJsonResponse(['success' => true, 'message' => 'Product updated successfully']);
+            sendJsonResponse(['success' => true, 'message' => 'Cập nhật sản phẩm thành công']);
             break;
 
         case 'DELETE':
@@ -131,14 +187,42 @@ try {
             $stmt = $pdo->prepare('DELETE FROM products WHERE id = :id');
             $stmt->execute([':id' => $id]);
 
-            sendJsonResponse(['success' => true, 'message' => 'Product deleted successfully']);
+            sendJsonResponse(['success' => true, 'message' => 'Xóa sản phẩm thành công']);
             break;
 
         default:
-            sendError('Method not allowed', 405);
+            sendError('Phương thức không được hỗ trợ', 405);
     }
 
 } catch (Exception $e) {
-    sendError('Database error: ' . $e->getMessage(), 500);
+    sendError('Lỗi cơ sở dữ liệu: ' . $e->getMessage(), 500);
+}
+
+/**
+ * Tạo slug từ tên sản phẩm
+ */
+function generateSlug($text) {
+    // Chuyển về chữ thường
+    $text = strtolower($text);
+    
+    // Loại bỏ dấu tiếng Việt
+    $text = preg_replace('/[àáạảãâầấậẩẫăằắặẳẵ]/u', 'a', $text);
+    $text = preg_replace('/[èéẹẻẽêềếệểễ]/u', 'e', $text);
+    $text = preg_replace('/[ìíịỉĩ]/u', 'i', $text);
+    $text = preg_replace('/[òóọỏõôồốộổỗơờớợởỡ]/u', 'o', $text);
+    $text = preg_replace('/[ùúụủũưừứựửữ]/u', 'u', $text);
+    $text = preg_replace('/[ỳýỵỷỹ]/u', 'y', $text);
+    $text = preg_replace('/đ/u', 'd', $text);
+    
+    // Loại bỏ ký tự đặc biệt, chỉ giữ lại chữ cái, số và khoảng trắng
+    $text = preg_replace('/[^a-z0-9\s-]/', '', $text);
+    
+    // Thay thế khoảng trắng và nhiều dấu gạch ngang liên tiếp bằng một dấu gạch ngang
+    $text = preg_replace('/[\s-]+/', '-', $text);
+    
+    // Loại bỏ dấu gạch ngang ở đầu và cuối
+    $text = trim($text, '-');
+    
+    return $text;
 }
 ?>
