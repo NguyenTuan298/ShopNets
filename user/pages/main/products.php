@@ -8,38 +8,34 @@ $db = (new Database())->getConnection();
 
 // === THAM SỐ LỌC ===
 $cat    = $_GET['category'] ?? '';
-$brand  = $_GET['brand'] ?? '';
 $search = $_GET['search'] ?? '';
 $min    = $_GET['min_price'] ?? '';
 $max    = $_GET['max_price'] ?? '';
 $sort   = $_GET['sort'] ?? 'newest';
 $page   = max(1, (int)($_GET['page'] ?? 1));
 
-$limit_brands = 3;
-$offset = ($page - 1) * $limit_brands;
+$limit_per_page = 12;
+$offset = ($page - 1) * $limit_per_page;
 
 // === LẤY DỮ LIỆU ===
 $categories = getCategories($db);
-$brands_all = getBrands($db);
 
-$brand_products = getMixedProductsByBrand($db, $cat, $brand, $search, $min, $max, $sort, $offset, $limit_brands);
+// Lấy sản phẩm theo bộ lọc
+$products = getFilteredProducts($db, $cat, $search, $min, $max, $sort, $offset, $limit_per_page);
+$total_products = getFilteredProductCount($db, $cat, $search, $min, $max);
+$pages = ceil($total_products / $limit_per_page);
 
-$total_brands = getFilteredBrandCount($db, $cat, $brand, $search, $min, $max);
-$pages = ceil($total_brands / $limit_brands);
-
-// === HÀM LẤY 4 SẢN PHẨM/BRAND ===
-function getMixedProductsByBrand($db, $cat, $brand, $search, $min, $max, $sort, $offset, $limit) {
+// === HÀM LẤY SẢN PHẨM CÓ LỌC ===
+function getFilteredProducts($db, $cat, $search, $min, $max, $sort, $offset, $limit) {
     $sql = "
-        SELECT p.*, c.name AS category_name, b.id AS brand_id, b.name AS brand_name
+        SELECT p.*, c.name AS category_name
         FROM products p
-        LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN brands b ON p.brand_id = b.id
-        WHERE p.is_active = 1
+        LEFT JOIN categories c ON p.category = c.name
+        WHERE p.inventory > 0
     ";
     $params = [];
 
-    if ($cat) { $sql .= " AND c.slug = ?"; $params[] = $cat; }
-    if ($brand) { $sql .= " AND b.slug = ?"; $params[] = $brand; }
+    if ($cat) { $sql .= " AND p.category = ?"; $params[] = $cat; }
     if ($search) {
         $s = "%$search%";
         $sql .= " AND (p.name LIKE ? OR p.description LIKE ?)";
@@ -56,69 +52,33 @@ function getMixedProductsByBrand($db, $cat, $brand, $search, $min, $max, $sort, 
         default => " ORDER BY p.created_at DESC"
     };
     $sql .= $order;
+    $sql .= " LIMIT $limit OFFSET $offset";
 
     $stmt = $db->prepare($sql);
     $stmt->execute($params);
-    $all = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $grouped = [];
-    foreach ($all as $p) {
-        $bid = $p['brand_id'];
-        if (!isset($grouped[$bid])) {
-            $grouped[$bid] = [
-                'brand_name' => $p['brand_name'],
-                'products' => []
-            ];
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Thêm fake compare_price để hiển thị giảm giá
+    foreach ($products as &$product) {
+        if (!isset($product['compare_price']) || empty($product['compare_price'])) {
+            // Tạo giá so sánh giả cho một số sản phẩm (30% chance)
+            if (rand(1, 100) <= 30) {
+                $product['compare_price'] = $product['price'] * 1.2; // Tăng 20%
+            } else {
+                $product['compare_price'] = 0;
+            }
         }
-        $grouped[$bid]['products'][] = $p;
     }
-
-    $result = [];
-    foreach ($grouped as $bid => $data) {
-        $prods = $data['products'];
-
-        // Ưu tiên 2 giảm giá
-        $discount = array_filter($prods, fn($p) => $p['compare_price'] > $p['price']);
-        usort($discount, fn($a, $b) => ($b['compare_price'] - $b['price']) <=> ($a['compare_price'] - $a['price']));
-        $discount = array_slice($discount, 0, 2);
-
-        // 2 không giảm (mới nhất)
-        $non_discount = array_filter($prods, fn($p) => $p['compare_price'] <= $p['price']);
-        usort($non_discount, fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
-        $non_discount = array_slice($non_discount, 0, 2);
-
-        $final_products = array_merge($discount, $non_discount);
-        if (count($final_products) < 4) {
-            $remaining = array_filter($prods, fn($p) => !in_array($p, $final_products, true));
-            usort($remaining, fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
-            $final_products = array_merge($final_products, array_slice($remaining, 0, 4 - count($final_products)));
-        }
-
-        $result[$bid] = [
-            'brand_name' => $data['brand_name'],
-            'products' => array_slice($final_products, 0, 4)
-        ];
-    }
-
-    $keys = array_keys($result);
-    $page_keys = array_slice($keys, $offset, $limit);
-    $page_result = [];
-    foreach ($page_keys as $k) {
-        $page_result[$k] = $result[$k];
-    }
-
-    return $page_result;
+    
+    return $products;
 }
 
-function getFilteredBrandCount($db, $cat, $brand, $search, $min, $max) {
-    $sql = "SELECT COUNT(DISTINCT b.id) FROM products p 
-        LEFT JOIN brands b ON p.brand_id = b.id
-        LEFT JOIN categories c ON p.category_id = c.id
-        WHERE p.is_active = 1";
+function getFilteredProductCount($db, $cat, $search, $min, $max) {
+    $sql = "SELECT COUNT(*) FROM products p 
+        WHERE p.inventory > 0";
     $params = [];
 
-    if ($cat) { $sql .= " AND c.slug = ?"; $params[] = $cat; }
-    if ($brand) { $sql .= " AND b.slug = ?"; $params[] = $brand; }
+    if ($cat) { $sql .= " AND p.category = ?"; $params[] = $cat; }
     if ($search) {
         $s = "%$search%";
         $sql .= " AND (p.name LIKE ? OR p.description LIKE ?)";
@@ -134,6 +94,8 @@ function getFilteredBrandCount($db, $cat, $brand, $search, $min, $max) {
 
 function buildUrl($overrides = []) {
     $params = $_GET;
+    // Loại bỏ tham số brand không còn sử dụng
+    unset($params['brand']);
     foreach ($overrides as $k => $v) {
         if ($v === null) unset($params[$k]);
         else $params[$k] = $v;
@@ -582,7 +544,7 @@ if (!defined('BASE_URL')) {
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item <?php echo !$cat ? 'active' : ''; ?>" href="?<?php echo buildUrl(['category'=>null]); ?>">Tất cả</a></li>
                     <?php foreach ($categories as $c): ?>
-                        <li><a class="dropdown-item <?php echo $cat===$c['slug']?'active':''; ?>" href="?<?php echo buildUrl(['category'=>$c['slug']]); ?>">
+                        <li><a class="dropdown-item <?php echo $cat===$c['name']?'active':''; ?>" href="?<?php echo buildUrl(['category'=>$c['name']]); ?>">
                             <?php echo htmlspecialchars($c['name']); ?>
                         </a></li>
                     <?php endforeach; ?>
@@ -600,11 +562,11 @@ if (!defined('BASE_URL')) {
                 <h5 class="filter-title">Bộ lọc</h5>
 
                 <div class="mb-4">
-                    <strong class="d-block mb-2">Thương hiệu</strong>
-                    <a href="?<?php echo buildUrl(['brand'=>null]); ?>" class="filter-item <?php echo !$brand?'active':''; ?>">Tất cả</a>
-                    <?php foreach ($brands_all as $b): ?>
-                        <a href="?<?php echo buildUrl(['brand'=>$b['slug']]); ?>" class="filter-item <?php echo $brand===$b['slug']?'active':''; ?>">
-                            <?php echo htmlspecialchars($b['name']); ?>
+                    <strong class="d-block mb-2">Danh mục</strong>
+                    <a href="?<?php echo buildUrl(['category'=>null]); ?>" class="filter-item <?php echo !$cat?'active':''; ?>">Tất cả</a>
+                    <?php foreach ($categories as $c): ?>
+                        <a href="?<?php echo buildUrl(['category'=>$c['name']]); ?>" class="filter-item <?php echo $cat===$c['name']?'active':''; ?>">
+                            <?php echo htmlspecialchars($c['name']); ?>
                         </a>
                     <?php endforeach; ?>
                 </div>
@@ -628,64 +590,71 @@ if (!defined('BASE_URL')) {
 
         <!-- SẢN PHẨM -->
         <div class="col-lg-9">
-            <?php if (!empty($brand_products)): ?>
-                <?php foreach ($brand_products as $bid => $brand): ?>
-                    <div class="mb-5">
-                        <h2 class="brand-title"><?php echo htmlspecialchars($brand['brand_name']); ?></h2>
-                        <div class="row g-4">
-                            <?php foreach ($brand['products'] as $p): 
-                                $price = $p['price'] ?? 0;
-                                $compare_price = $p['compare_price'] ?? 0;
-                                $discount = ($compare_price > $price && $compare_price > 0) 
-                                    ? round((($compare_price - $price) / $compare_price) * 100) : 0;
-                                $img_src = 'https://via.placeholder.com/300x200?text=No+Image';
-                                $stmt = $db->prepare("SELECT image_path FROM product_images WHERE product_id = ? AND is_primary = TRUE LIMIT 1");
-                                $stmt->execute([$p['id']]);
-                                $img = $stmt->fetch(PDO::FETCH_ASSOC);
-                                if ($img && file_exists('../../../assets/images/' . $img['image_path'])) {
-                                    $img_src = '../../../assets/images/' . $img['image_path'];
-                                }
-                            ?>
-                                <div class="col-md-6 col-lg-4 col-xl-3">
-                                    <div class="product-card">
-                                        <div class="product-image">
-                                            <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($p['name']) ?>">
-                                            <?php if ($discount > 0): ?>
-                                                <div class="product-badge discount-badge">-<?= $discount ?>%</div>
-                                            <?php else: ?>
-                                                <div class="product-badge new-badge">Mới</div>
-                                            <?php endif; ?>
-                                            <div class="product-overlay">
-                                                <a href="product-detail.php?id=<?= $p['id'] ?>" class="btn-view-detail">
-                                                    Xem chi tiết
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="product-info">
-                                            <h3 class="product-title"><?= htmlspecialchars($p['name']) ?></h3>
-                                            <div class="product-price">
-                                                <?php if ($compare_price > $price && $compare_price > 0): ?>
-                                                    <span class="old-price"><?= number_format($compare_price) ?>đ</span>
-                                                    <span class="current-price"><?= number_format($price) ?>đ</span>
-                                                <?php else: ?>
-                                                    <span class="current-price"><?= number_format($price) ?>đ</span>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="product-actions">
-                                                <button class="btn btn-outline-primary action-btn" data-id="<?= $p['id'] ?>" data-action="buy">
-                                                    Mua ngay
-                                                </button>
-                                                <button class="btn btn-primary action-btn" data-id="<?= $p['id'] ?>" data-action="cart">
-                                                    Thêm vào giỏ
-                                                </button>
-                                            </div>
-                                        </div>
+            <?php if (!empty($products)): ?>
+                <div class="mb-4">
+                    <h2 class="section-title">Sản phẩm 
+                        <?php if ($cat): ?>
+                            - <?= htmlspecialchars(ucfirst($cat)) ?>
+                        <?php endif; ?>
+                        (<?= $total_products ?> sản phẩm)
+                    </h2>
+                </div>
+                <div class="row g-4">
+                    <?php foreach ($products as $p): 
+                        $price = $p['price'] ?? 0;
+                        $compare_price = $p['compare_price'] ?? 0;
+                        $discount = ($compare_price > $price && $compare_price > 0) 
+                            ? round((($compare_price - $price) / $compare_price) * 100) : 0;
+                        
+                        // Xử lý hình ảnh
+                        $img_src = 'https://via.placeholder.com/300x200?text=No+Image';
+                        if (!empty($p['image'])) {
+                            if (file_exists('../../../admin/assets/images/uploads/' . $p['image'])) {
+                                $img_src = '../../../admin/assets/images/uploads/' . $p['image'];
+                            } elseif (file_exists('../../assets/images/products/' . $p['image'])) {
+                                $img_src = '../../assets/images/products/' . $p['image'];
+                            }
+                        }
+                    ?>
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($p['name']) ?>">
+                                    <?php if ($discount > 0): ?>
+                                        <div class="product-badge discount-badge">-<?= $discount ?>%</div>
+                                    <?php else: ?>
+                                        <div class="product-badge new-badge">Mới</div>
+                                    <?php endif; ?>
+                                    <div class="product-overlay">
+                                        <a href="product-detail.php?id=<?= $p['id'] ?>" class="btn-view-detail">
+                                            Xem chi tiết
+                                        </a>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                                <div class="product-info">
+                                    <h3 class="product-title"><?= htmlspecialchars($p['name']) ?></h3>
+                                    <p class="product-category"><?= htmlspecialchars($p['category_name'] ?? $p['category'] ?? '') ?></p>
+                                    <div class="product-price">
+                                        <?php if ($compare_price > $price && $compare_price > 0): ?>
+                                            <span class="old-price"><?= number_format($compare_price) ?>đ</span>
+                                            <span class="current-price"><?= number_format($price) ?>đ</span>
+                                        <?php else: ?>
+                                            <span class="current-price"><?= number_format($price) ?>đ</span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="product-actions">
+                                        <button class="btn btn-outline-primary action-btn" data-id="<?= $p['id'] ?>" data-action="buy">
+                                            Mua ngay
+                                        </button>
+                                        <button class="btn btn-primary action-btn" data-id="<?= $p['id'] ?>" data-action="cart">
+                                            Thêm vào giỏ
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
 
                 <?php if ($pages > 1): ?>
                     <nav class="mt-5">

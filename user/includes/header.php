@@ -5,6 +5,18 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once 'database.php';
 require_once 'functions.php';
 require_once 'config.php';
+
+// Tính đường dẫn trang chủ dựa trên vị trí hiện tại
+function getHomePath() {
+    // Luôn return về trang chủ chính của ShopNets
+    return 'http://localhost/shopnets/index.php';
+}
+
+// Tính đường dẫn logo chính xác
+function getLogoPath() {
+    // Luôn return đường dẫn absolute từ localhost
+    return 'http://localhost/shopnets/admin/assets/images/icons/icons_logo/apple-icon.png';
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -188,6 +200,71 @@ require_once 'config.php';
             height: 100%;
         }
         .logo-img { width: 180px; height: auto; border-radius: 4px; }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .logo-icon .logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .logo-icon .logo-img:not([src]),
+        .logo-icon .logo-img[src=""] {
+            display: none;
+        }
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .logo-main {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+        }
+        .logo-sub {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 400;
+            margin-top: -2px;
+        }
+        .logo-link {
+            text-decoration: none;
+        }
+        .logo-link:hover .logo-main {
+            color: var(--primary-dark);
+        }
+        .logo-link:hover .logo-icon {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        .logo-link:hover .logo-img {
+            transform: scale(1.1);
+        }
+        
+        .logo-svg {
+            width: 100%;
+            height: 100%;
+            display: none; /* Ẩn ban đầu, chỉ hiện khi image lỗi */
+        }
         .search-bar {
             flex: 1;
             max-width: 600px;
@@ -330,7 +407,10 @@ require_once 'config.php';
                 gap: 12px;
                 padding: 12px 15px;
             }
-            .logo-img { width: 130px; }
+            .logo-main { font-size: 2rem; }
+            .logo-sub { font-size: 1.1rem; }
+            .logo-icon { width: 40px; height: 40px; }
+            .logo-container { gap: 8px; }
             .search-bar { order: 3; margin: 0; height: 40px; max-width: none; }
             .cart-wrap { order: 2; width: 60px; }
             .cart-link { font-size: 2.4rem; }
@@ -412,7 +492,7 @@ require_once 'config.php';
                 </div>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <a href="<?php echo BASE_URL; ?>pages/user/profile.php" class="top-bar__item top-bar__item-separate">
-                        <i class="bi bi-person-circle"></i> <?php echo htmlspecialchars($_SESSION['full_name']); ?>
+                        <i class="bi bi-person-circle"></i> <?php echo htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username'] ?? 'User'); ?>
                     </a>
                     <a href="<?php echo BASE_URL; ?>auth/logout.php" class="top-bar__item">Đăng xuất</a>
                 <?php else: ?>
@@ -426,8 +506,28 @@ require_once 'config.php';
     <!-- MAIN HEADER -->
     <header class="main-header">
         <div class="header-with-search">
-            <a href="<?php echo BASE_URL; ?>index.php" class="logo-link">
-                <img src="<?php echo BASE_URL; ?>assets/images/logo.png" alt="TechShop Logo" class="logo-img">
+            <a href="<?php echo getHomePath(); ?>" class="logo-link" onclick="handleLogoClick(event)">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <?php 
+                        $localLogoPath = __DIR__ . '/../../admin/assets/images/icons/icons_logo/apple-icon.png';
+                        if (file_exists($localLogoPath)): ?>
+                            <img src="<?php echo getLogoPath(); ?>" alt="ShopNets Logo" class="logo-img">
+                        <?php else: ?>
+                            <!-- SVG Logo Fallback -->
+                            <svg class="logo-svg" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="50" height="50" fill="#2563eb" rx="12"/>
+                                <path d="M15 20h20v2H15v-2zm0 4h20v2H15v-2zm0 4h15v2H15v-2z" fill="white"/>
+                                <circle cx="37" cy="15" r="3" fill="white"/>
+                                <path d="M12 35h26v2H12v-2z" fill="white"/>
+                            </svg>
+                        <?php endif; ?>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">ShopNets</span>
+                        <span class="logo-sub">Mua sắm tiện lợi</span>
+                    </div>
+                </div>
             </a>
 
             <div class="search-bar">
@@ -508,6 +608,51 @@ require_once 'config.php';
                 }
             });
         });
+    </script>
+    
+    <script>
+    function handleLogoClick(event) {
+        // Kiểm tra xem đang ở trang chủ hay không
+        const currentPath = window.location.pathname;
+        
+        // Các pattern trang chủ (lowercase cho localhost)
+        const homePatterns = [
+            '/shopnets/',
+            '/shopnets/index.php',
+            '/shopnets/user/',
+            '/shopnets/user/index.php'
+        ];
+        
+        // Kiểm tra nếu đang ở trang chủ
+        const isHomePage = homePatterns.some(pattern => 
+            currentPath === pattern || 
+            currentPath.endsWith(pattern)
+        ) || (currentPath.endsWith('/shopnets/') || currentPath.endsWith('/shopnets/index.php'));
+        
+        console.log('Current path:', currentPath, 'Is home:', isHomePage);
+        
+        if (isHomePage) {
+            // Nếu đang ở trang chủ, reload
+            event.preventDefault();
+            location.reload();
+        }
+        // Nếu không ở trang chủ, để link bình thường (về trang chủ)
+    }
+    
+    // Handle logo loading error
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoImg = document.querySelector('.logo-img');
+        if (logoImg) {
+            logoImg.onerror = function() {
+                // Ẩn image và hiển thị SVG fallback
+                this.style.display = 'none';
+                const svgLogo = this.parentElement.querySelector('.logo-svg');
+                if (svgLogo) {
+                    svgLogo.style.display = 'block';
+                }
+            };
+        }
+    });
     </script>
 </body>
 </html>

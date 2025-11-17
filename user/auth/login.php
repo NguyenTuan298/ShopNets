@@ -26,11 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($user && verifyPassword($password, $user['password'])) {
-                if ($user['is_active']) {
+                if ($user['status'] === 'active') {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['role'] = $user['role'];
-                    $_SESSION['full_name'] = $user['full_name'];
+                    $_SESSION['full_name'] = $user['username']; // Sử dụng username làm display name
 
                     if (isset($_POST['remember_me']) && $_POST['remember_me'] == 'on') {
                         setcookie('remember_user', $user['id'], time() + (30 * 24 * 60 * 60), '/');

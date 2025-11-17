@@ -5,7 +5,7 @@
  * Lấy danh mục sản phẩm
  */
 function getCategories($db) {
-    $sql = "SELECT * FROM categories WHERE is_active = TRUE ORDER BY sort_order, name";
+    $sql = "SELECT * FROM categories ORDER BY name";
     try {
         $stmt = $db->prepare($sql);
         $stmt->execute();
@@ -20,13 +20,13 @@ function getCategories($db) {
  * Lấy sản phẩm nổi bật
  */
 function getFeaturedProducts($db, $limit = 8) {
-    $query = "SELECT p.*, c.name as category_name, b.name as brand_name 
+    $limit = (int)$limit;
+    $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category_id = c.id 
-              LEFT JOIN brands b ON p.brand_id = b.id 
-              WHERE p.featured = 1 AND p.is_active = 1 AND p.quantity > 0 
+              LEFT JOIN categories c ON p.category = c.name 
+              WHERE p.inventory > 0 
               ORDER BY p.created_at DESC 
-              LIMIT " . (int)$limit;
+              LIMIT $limit";
     $stmt = $db->prepare($query);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -36,13 +36,13 @@ function getFeaturedProducts($db, $limit = 8) {
  * Lấy sản phẩm mới
  */
 function getNewProducts($db, $limit = 8) {
-    $query = "SELECT p.*, c.name as category_name, b.name as brand_name 
+    $limit = (int)$limit;
+    $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category_id = c.id 
-              LEFT JOIN brands b ON p.brand_id = b.id 
-              WHERE p.is_active = 1 AND p.quantity > 0 
+              LEFT JOIN categories c ON p.category = c.name 
+              WHERE p.inventory > 0 
               ORDER BY p.created_at DESC 
-              LIMIT " . (int)$limit;
+              LIMIT $limit";
     $stmt = $db->prepare($query);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -51,12 +51,9 @@ function getNewProducts($db, $limit = 8) {
 /**
  * Lấy thương hiệu
  */
-// Đã bỏ comment vì brands tồn tại
+// Brands table doesn't exist, return empty array
 function getBrands($db) {
-    $query = "SELECT * FROM brands WHERE is_active = 1 ORDER BY name";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return [];
 }
 
 /**
@@ -124,10 +121,9 @@ function getReviewCount($db, $product_id) {
  */
 function getProductById($db, $product_id) {
     try {
-        $query = "SELECT p.*, c.name as category_name, b.name as brand_name 
+        $query = "SELECT p.*, c.name as category_name 
                   FROM products p 
-                  LEFT JOIN categories c ON p.category_id = c.id 
-                  LEFT JOIN brands b ON p.brand_id = b.id 
+                  LEFT JOIN categories c ON p.category = c.name 
                   WHERE p.id = ?";
         $stmt = $db->prepare($query);
         $stmt->execute([$product_id]);
@@ -185,13 +181,11 @@ function getCartItems($db) {
     // TẠO IN() CHÍNH XÁC
     $placeholders = implode(',', array_fill(0, count($valid_ids), '?'));
 
-    $query = "SELECT p.*, c.name as category_name, b.name as brand_name 
+    $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category_id = c.id 
-              LEFT JOIN brands b ON p.brand_id = b.id 
+              LEFT JOIN categories c ON p.category = c.name 
               WHERE p.id IN ($placeholders) 
-              AND p.is_active = 1 
-              AND p.quantity > 0";
+              AND p.inventory > 0";
 
     try {
         $stmt = $db->prepare($query);
@@ -254,35 +248,48 @@ function getProductImage($image_path) {
         return 'https://via.placeholder.com/300x200/64748b/ffffff?text=No+Image';
     }
 
-    $full_path = '../assets/images/' . $image_path; // từ ajax/ đến assets/images/
-
-    if (file_exists($full_path)) {
-        return '../assets/images/' . $image_path;
+    // Check if it's an admin uploaded image
+    if (strpos($image_path, 'admin/assets/images/uploads/') === 0) {
+        if (file_exists('../' . $image_path)) {
+            return '../' . $image_path;
+        }
+    } else {
+        // Check user assets folder
+        $full_path = 'user/assets/images/products/' . $image_path;
+        if (file_exists($full_path)) {
+            return $full_path;
+        }
     }
 
     return 'https://via.placeholder.com/300x200/64748b/ffffff?text=No+Image';
 }
 
-// Thêm hàm này vào cuối file functions.php nếu chưa có
+// Flash sale products - use random products with discounted prices
 function getFlashSaleProducts($db, $limit = 8) {
+    $limit = (int)$limit; // Ensure integer
     $query = "
         SELECT 
-            p.id, p.name, p.price, p.compare_price,
-            pi.image_path
+            p.id, p.name, p.price, p.image
         FROM products p
-        LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = TRUE
-        WHERE p.flash_sale = 1 
-          AND p.is_active = 1 
-          AND p.quantity > 0
-          AND p.compare_price > p.price
-        ORDER BY (p.compare_price - p.price) DESC
-        LIMIT ?
+        WHERE p.inventory > 0
+          AND p.price > 100000
+        ORDER BY RAND()
+        LIMIT $limit
     ";
     
     try {
         $stmt = $db->prepare($query);
-        $stmt->execute([$limit]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Add flash sale discount (20-50% off)
+        foreach ($products as &$product) {
+            $discount = rand(20, 50);
+            $product['compare_price'] = $product['price'];
+            $product['price'] = $product['price'] * (100 - $discount) / 100;
+        }
+        
+        return $products;
     } catch (PDOException $e) {
         error_log("getFlashSaleProducts Error: " . $e->getMessage());
         return [];
@@ -455,19 +462,19 @@ function generateOrderNumber() {
  * Kiểm tra tồn kho sản phẩm
  */
 function checkProductStock($db, $product_id, $quantity = 1) {
-    $query = "SELECT quantity FROM products WHERE id = ? AND is_active = 1";
+    $query = "SELECT inventory FROM products WHERE id = ?";
     $stmt = $db->prepare($query);
     $stmt->execute([$product_id]);
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    return $product && $product['quantity'] >= $quantity;
+    return $product && $product['inventory'] >= $quantity;
 }
 
 /**
  * Cập nhật tồn kho sản phẩm
  */
 function updateProductStock($db, $product_id, $quantity) {
-    $query = "UPDATE products SET quantity = quantity - ? WHERE id = ?";
+    $query = "UPDATE products SET inventory = inventory - ? WHERE id = ?";
     $stmt = $db->prepare($query);
     return $stmt->execute([$quantity, $product_id]);
 }
@@ -531,18 +538,15 @@ function logProductView($db, $product_id, $user_id = null, $session_id = null, $
  * Lấy sản phẩm phổ biến
  */
 function getPopularProducts($db, $limit = 6) {
-    $query = "SELECT p.*, c.name as category_name, b.name as brand_name, 
-                     COUNT(pv.id) as view_count 
+    $limit = (int)$limit;
+    $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category_id = c.id 
-              LEFT JOIN brands b ON p.brand_id = b.id 
-              LEFT JOIN product_views pv ON p.id = pv.product_id 
-              WHERE p.is_active = 1 AND p.quantity > 0 
-              GROUP BY p.id 
-              ORDER BY view_count DESC, p.created_at DESC 
-              LIMIT ?";
+              LEFT JOIN categories c ON p.category = c.name 
+              WHERE p.inventory > 0 
+              ORDER BY p.created_at DESC 
+              LIMIT $limit";
     $stmt = $db->prepare($query);
-    $stmt->execute([$limit]);
+    $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -712,10 +716,10 @@ function getOrderItemsForProfile($db, $order_id) {
 /**
  * Cập nhật thông tin người dùng
  */
-function updateUserProfile($db, $user_id, $full_name, $email, $phone = null, $address = null) {
-    $query = "UPDATE users SET full_name = ?, email = ?, phone = ?, address = ? WHERE id = ?";
+function updateUserProfile($db, $user_id, $username, $email, $phone = null) {
+    $query = "UPDATE users SET username = ?, email = ?, phone = ? WHERE id = ?";
     $stmt = $db->prepare($query);
-    return $stmt->execute([$full_name, $email, $phone, $address, $user_id]);
+    return $stmt->execute([$username, $email, $phone, $user_id]);
 }
 
 /**
@@ -749,15 +753,15 @@ function isEmailExists($db, $email, $exclude_user_id = null) {
  * Lấy sản phẩm theo danh mục
  */
 function getProductsByCategory($db, $category_id, $limit = 12) {
-    $query = "SELECT p.*, c.name as category_name, b.name as brand_name 
+    $limit = (int)$limit;
+    $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category_id = c.id 
-              LEFT JOIN brands b ON p.brand_id = b.id 
-              WHERE p.category_id = ? AND p.is_active = 1 AND p.quantity > 0 
+              LEFT JOIN categories c ON p.category = c.name 
+              WHERE p.category = ? AND p.inventory > 0 
               ORDER BY p.created_at DESC 
-              LIMIT ?";
+              LIMIT $limit";
     $stmt = $db->prepare($query);
-    $stmt->execute([$category_id, $limit]);
+    $stmt->execute([$category_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -765,15 +769,15 @@ function getProductsByCategory($db, $category_id, $limit = 12) {
  * Lấy sản phẩm theo thương hiệu
  */
 function getProductsByBrand($db, $brand_id, $limit = 12) {
-    $query = "SELECT p.*, c.name as category_name, b.name as brand_name 
+    $limit = (int)$limit;
+    $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category_id = c.id 
-              LEFT JOIN brands b ON p.brand_id = b.id 
-              WHERE p.brand_id = ? AND p.is_active = 1 AND p.quantity > 0 
+              LEFT JOIN categories c ON p.category = c.name 
+              WHERE p.inventory > 0 
               ORDER BY p.created_at DESC 
-              LIMIT ?";
+              LIMIT $limit";
     $stmt = $db->prepare($query);
-    $stmt->execute([$brand_id, $limit]);
+    $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -781,17 +785,17 @@ function getProductsByBrand($db, $brand_id, $limit = 12) {
  * Tìm kiếm sản phẩm
  */
 function searchProducts($db, $keyword, $limit = 12) {
-    $query = "SELECT p.*, c.name as category_name, b.name as brand_name 
+    $limit = (int)$limit;
+    $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category_id = c.id 
-              LEFT JOIN brands b ON p.brand_id = b.id 
-              WHERE (p.name LIKE ? OR p.description LIKE ? OR p.sku LIKE ?) 
-              AND p.is_active = 1 AND p.quantity > 0 
+              LEFT JOIN categories c ON p.category = c.name 
+              WHERE (p.name LIKE ? OR p.description LIKE ?) 
+              AND p.inventory > 0 
               ORDER BY p.created_at DESC 
-              LIMIT ?";
+              LIMIT $limit";
     $stmt = $db->prepare($query);
     $search_term = "%$keyword%";
-    $stmt->execute([$search_term, $search_term, $search_term, $limit]);
+    $stmt->execute([$search_term, $search_term]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -799,22 +803,16 @@ function searchProducts($db, $keyword, $limit = 12) {
  * Lấy sản phẩm theo bộ lọc
  */
 function getProducts($db, $filters = []) {
-    $sql = "SELECT p.*, c.name as category_name, b.name as brand_name 
+    $sql = "SELECT p.*, c.name as category_name 
             FROM products p 
-            LEFT JOIN categories c ON p.category_id = c.id 
-            LEFT JOIN brands b ON p.brand_id = b.id 
-            WHERE p.is_active = 1";
+            LEFT JOIN categories c ON p.category = c.name 
+            WHERE p.inventory > 0";
 
     $params = [];
 
     if (!empty($filters['category_id'])) {
-        $sql .= " AND p.category_id = ?";
+        $sql .= " AND p.category = ?";
         $params[] = $filters['category_id'];
-    }
-
-    if (!empty($filters['brand_id'])) {
-        $sql .= " AND p.brand_id = ?";
-        $params[] = $filters['brand_id'];
     }
 
     if (!empty($filters['search'])) {
@@ -827,8 +825,8 @@ function getProducts($db, $filters = []) {
     $sql .= " ORDER BY p.created_at DESC";
 
     if (!empty($filters['limit'])) {
-        $sql .= " LIMIT ?";
-        $params[] = $filters['limit'];
+        $limit = (int)$filters['limit'];
+        $sql .= " LIMIT $limit";
     }
 
     try {
@@ -841,61 +839,45 @@ function getProducts($db, $filters = []) {
     }
 }
 
-// Lấy 2 sản phẩm MỚI NHẤT của mỗi brand
-// Đã bỏ comment và sửa query (thay p.status bằng p.is_active)
+// Lấy sản phẩm mới nhất theo danh mục
 function getLatestProductsByBrand($db, $limit_per_brand = 2) {
+    $limit = (int)($limit_per_brand * 4); // Calculate limit as integer
     $query = "
         SELECT 
-            p.id, p.name, p.price, p.compare_price, p.created_at,
-            b.name as brand_name,
-            c.name as category_name,
-            ROW_NUMBER() OVER (PARTITION BY p.brand_id ORDER BY p.created_at DESC) as rn
+            p.id, p.name, p.price, p.created_at, p.image,
+            p.category as category_name
         FROM products p
-        JOIN brands b ON p.brand_id = b.id
-        JOIN categories c ON p.category_id = c.id
-        WHERE p.price > 0 AND p.is_active = 1 AND p.quantity > 0
-        ORDER BY p.brand_id, p.created_at DESC
+        WHERE p.price > 0 AND p.inventory > 0
+        ORDER BY p.created_at DESC
+        LIMIT $limit
     ";
     $stmt = $db->prepare($query);
     $stmt->execute();
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $result = [];
-    foreach ($products as $p) {
-        if ($p['rn'] <= $limit_per_brand) {
-            $result[] = $p;
-        }
-    }
-    return $result;
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Lấy 2 sản phẩm GIẢM GIÁ NHIỀU NHẤT của mỗi brand
-// Đã bỏ comment và sửa query (thay p.status bằng p.is_active)
+// Lấy sản phẩm khuyến mãi (tạo giá so sánh giả)
 function getDiscountProductsByBrand($db, $limit_per_brand = 2) {
+    $limit = (int)($limit_per_brand * 4); // Calculate limit as integer
     $query = "
         SELECT 
-            p.id, p.name, p.price, p.compare_price, p.created_at,
-            b.name as brand_name,
-            c.name as category_name,
-            (p.compare_price - p.price) as discount_amount,
-            ROW_NUMBER() OVER (PARTITION BY p.brand_id ORDER BY (p.compare_price - p.price) DESC, p.compare_price DESC) as rn
+            p.id, p.name, p.price, p.created_at, p.image,
+            p.category as category_name
         FROM products p
-        JOIN brands b ON p.brand_id = b.id
-        JOIN categories c ON p.category_id = c.id
-        WHERE p.compare_price > p.price AND p.price > 0 AND p.is_active = 1 AND p.quantity > 0
-        ORDER BY p.brand_id, discount_amount DESC
+        WHERE p.price > 0 AND p.inventory > 0
+        ORDER BY p.created_at DESC
+        LIMIT $limit
     ";
     $stmt = $db->prepare($query);
     $stmt->execute();
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $result = [];
-    foreach ($products as $p) {
-        if ($p['rn'] <= $limit_per_brand) {
-            $result[] = $p;
-        }
+    
+    // Add fake compare_price for discount display
+    foreach ($products as &$product) {
+        $product['compare_price'] = $product['price'] * 1.3; // 30% higher
     }
-    return $result;
+    
+    return $products;
 }
 
 function getProductsByBrandBalanced($db) {
@@ -962,22 +944,17 @@ function getProductsByBrandBalanced($db) {
  * Lọc sản phẩm
  */
 function filterProducts($db, $filters = [], $limit = 12) {
-    $query = "SELECT p.*, c.name as category_name, b.name as brand_name 
+    $limit = (int)$limit;
+    $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category_id = c.id 
-              LEFT JOIN brands b ON p.brand_id = b.id 
-              WHERE p.is_active = 1 AND p.quantity > 0";
+              LEFT JOIN categories c ON p.category = c.name 
+              WHERE p.inventory > 0";
     
     $params = [];
     
     if (!empty($filters['category_id'])) {
-        $query .= " AND p.category_id = ?";
+        $query .= " AND p.category = ?";
         $params[] = $filters['category_id'];
-    }
-    
-    if (!empty($filters['brand_id'])) {
-        $query .= " AND p.brand_id = ?";
-        $params[] = $filters['brand_id'];
     }
     
     if (!empty($filters['min_price'])) {
@@ -990,8 +967,7 @@ function filterProducts($db, $filters = [], $limit = 12) {
         $params[] = $filters['max_price'];
     }
     
-    $query .= " ORDER BY p.created_at DESC LIMIT ?";
-    $params[] = $limit;
+    $query .= " ORDER BY p.created_at DESC LIMIT $limit";
     
     $stmt = $db->prepare($query);
     $stmt->execute($params);
@@ -1002,7 +978,7 @@ function filterProducts($db, $filters = [], $limit = 12) {
  * Lấy số lượng sản phẩm theo danh mục
  */
 function getProductCountByCategory($db, $category_id) {
-    $query = "SELECT COUNT(*) as count FROM products WHERE category_id = ? AND is_active = 1";
+    $query = "SELECT COUNT(*) as count FROM products WHERE category = ? AND inventory > 0";
     $stmt = $db->prepare($query);
     $stmt->execute([$category_id]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1044,9 +1020,9 @@ function getBrandBySlug($db, $slug) {
  * Lấy số lượng sản phẩm theo thương hiệu
  */
 function getProductCountByBrand($db, $brand_id) {
-    $query = "SELECT COUNT(*) as count FROM products WHERE brand_id = ? AND is_active = 1";
+    $query = "SELECT COUNT(*) as count FROM products WHERE inventory > 0";
     $stmt = $db->prepare($query);
-    $stmt->execute([$brand_id]);
+    $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return $result['count'];
 }

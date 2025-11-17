@@ -6,17 +6,14 @@ require_once __DIR__ . '/../includes/functions.php';
 $database = new Database();
 $db = $database->getConnection();
 
+// Get random products and add flash sale discounts
 $query = "
     SELECT 
-        p.id, p.name, p.price, p.compare_price,
-        pi.image_path
+        p.id, p.name, p.price, p.image
     FROM products p
-    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = TRUE
-    WHERE p.flash_sale = 1 
-      AND p.is_active = 1 
-      AND p.quantity > 0
-      AND p.compare_price > p.price
-    ORDER BY (p.compare_price - p.price) DESC
+    WHERE p.inventory > 0
+      AND p.price > 100000
+    ORDER BY RAND()
     LIMIT 8
 ";
 
@@ -24,6 +21,13 @@ try {
     $stmt = $db->prepare($query);
     $stmt->execute();
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Add flash sale discount (20-50% off)
+    foreach ($products as &$product) {
+        $discount = rand(20, 50);
+        $product['compare_price'] = $product['price'];
+        $product['price'] = $product['price'] * (100 - $discount) / 100;
+    }
 } catch (PDOException $e) {
     error_log("Flash Sale Query Error: " . $e->getMessage());
     $products = [];
@@ -36,17 +40,15 @@ if (empty($products)) {
 }
 
 foreach ($products as $p):
-    // Sửa phần lấy ảnh - dùng cùng logic với index.php
+    // Fix image handling for actual database schema
     $img_src = 'https://via.placeholder.com/300x200?text=No+Image';
     
-    if (!empty($p['image_path'])) {
-        // Kiểm tra file tồn tại với đường dẫn đúng
-        $image_full_path = __DIR__ . '/../assets/images/' . $p['image_path'];
-        if (file_exists($image_full_path)) {
-            $img_src = 'assets/images/' . $p['image_path'];
-        } else {
-            // Log để debug
-            error_log("Image not found: " . $image_full_path);
+    if (!empty($p['image'])) {
+        // Check if it's an admin uploaded image
+        if (file_exists(__DIR__ . '/../../admin/assets/images/uploads/' . $p['image'])) {
+            $img_src = '../admin/assets/images/uploads/' . $p['image'];
+        } else if (file_exists(__DIR__ . '/../assets/images/products/' . $p['image'])) {
+            $img_src = 'assets/images/products/' . $p['image'];
         }
     }
     

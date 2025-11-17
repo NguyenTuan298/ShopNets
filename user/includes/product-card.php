@@ -1,11 +1,16 @@
 <!-- includes/product-card.php -->
 
 <?php
-$img_sql = "SELECT image_path FROM product_images WHERE product_id = ? AND is_primary = 1 LIMIT 1";
-$stmt = $db->prepare($img_sql);
-$stmt->execute([$p['id']]);
-$img = $stmt->fetchColumn();
-$src = $img && file_exists("../assets/images/$img") ? "../assets/images/$img" : 'https://via.placeholder.com/300x300/64748b/fff?text=No+Image';
+// Handle product image from the simple products.image field
+$src = 'https://via.placeholder.com/300x300/64748b/fff?text=No+Image';
+if (!empty($p['image'])) {
+    // Check if it's an admin uploaded image
+    if (file_exists("../../admin/assets/images/uploads/" . $p['image'])) {
+        $src = "../../admin/assets/images/uploads/" . $p['image'];
+    } else if (file_exists("../assets/images/products/" . $p['image'])) {
+        $src = "../assets/images/products/" . $p['image'];
+    }
+}
 ?>
 
 <div class="product-card">
