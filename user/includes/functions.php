@@ -23,8 +23,8 @@ function getFeaturedProducts($db, $limit = 8) {
     $limit = (int)$limit;
     $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category = c.name 
-              WHERE p.inventory > 0 
+              LEFT JOIN categories c ON p.category_id = c.id 
+              WHERE p.quantity > 0 
               ORDER BY p.created_at DESC 
               LIMIT $limit";
     $stmt = $db->prepare($query);
@@ -39,8 +39,8 @@ function getNewProducts($db, $limit = 8) {
     $limit = (int)$limit;
     $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category = c.name 
-              WHERE p.inventory > 0 
+              LEFT JOIN categories c ON p.category_id = c.id 
+              WHERE p.quantity > 0 
               ORDER BY p.created_at DESC 
               LIMIT $limit";
     $stmt = $db->prepare($query);
@@ -123,7 +123,7 @@ function getProductById($db, $product_id) {
     try {
         $query = "SELECT p.*, c.name as category_name 
                   FROM products p 
-                  LEFT JOIN categories c ON p.category = c.name 
+                  LEFT JOIN categories c ON p.category_id = c.id 
                   WHERE p.id = ?";
         $stmt = $db->prepare($query);
         $stmt->execute([$product_id]);
@@ -183,9 +183,9 @@ function getCartItems($db) {
 
     $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category = c.name 
+              LEFT JOIN categories c ON p.category_id = c.id 
               WHERE p.id IN ($placeholders) 
-              AND p.inventory > 0";
+              AND p.quantity > 0";
 
     try {
         $stmt = $db->prepare($query);
@@ -271,7 +271,7 @@ function getFlashSaleProducts($db, $limit = 8) {
         SELECT 
             p.id, p.name, p.price, p.image
         FROM products p
-        WHERE p.inventory > 0
+        WHERE p.quantity > 0
           AND p.price > 100000
         ORDER BY RAND()
         LIMIT $limit
@@ -462,19 +462,19 @@ function generateOrderNumber() {
  * Kiểm tra tồn kho sản phẩm
  */
 function checkProductStock($db, $product_id, $quantity = 1) {
-    $query = "SELECT inventory FROM products WHERE id = ?";
+    $query = "SELECT quantity FROM products WHERE id = ?";
     $stmt = $db->prepare($query);
     $stmt->execute([$product_id]);
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    return $product && $product['inventory'] >= $quantity;
+    return $product && $product['quantity'] >= $quantity;
 }
 
 /**
  * Cập nhật tồn kho sản phẩm
  */
 function updateProductStock($db, $product_id, $quantity) {
-    $query = "UPDATE products SET inventory = inventory - ? WHERE id = ?";
+    $query = "UPDATE products SET quantity = quantity - ? WHERE id = ?";
     $stmt = $db->prepare($query);
     return $stmt->execute([$quantity, $product_id]);
 }
@@ -541,8 +541,8 @@ function getPopularProducts($db, $limit = 6) {
     $limit = (int)$limit;
     $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category = c.name 
-              WHERE p.inventory > 0 
+              LEFT JOIN categories c ON p.category_id = c.id 
+              WHERE p.quantity > 0 
               ORDER BY p.created_at DESC 
               LIMIT $limit";
     $stmt = $db->prepare($query);
@@ -756,8 +756,8 @@ function getProductsByCategory($db, $category_id, $limit = 12) {
     $limit = (int)$limit;
     $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category = c.name 
-              WHERE p.category = ? AND p.inventory > 0 
+              LEFT JOIN categories c ON p.category_id = c.id 
+              WHERE p.category_id = ? AND p.quantity > 0 
               ORDER BY p.created_at DESC 
               LIMIT $limit";
     $stmt = $db->prepare($query);
@@ -772,8 +772,8 @@ function getProductsByBrand($db, $brand_id, $limit = 12) {
     $limit = (int)$limit;
     $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category = c.name 
-              WHERE p.inventory > 0 
+              LEFT JOIN categories c ON p.category_id = c.id 
+              WHERE p.quantity > 0 
               ORDER BY p.created_at DESC 
               LIMIT $limit";
     $stmt = $db->prepare($query);
@@ -788,9 +788,9 @@ function searchProducts($db, $keyword, $limit = 12) {
     $limit = (int)$limit;
     $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category = c.name 
+              LEFT JOIN categories c ON p.category_id = c.id 
               WHERE (p.name LIKE ? OR p.description LIKE ?) 
-              AND p.inventory > 0 
+              AND p.quantity > 0 
               ORDER BY p.created_at DESC 
               LIMIT $limit";
     $stmt = $db->prepare($query);
@@ -805,13 +805,13 @@ function searchProducts($db, $keyword, $limit = 12) {
 function getProducts($db, $filters = []) {
     $sql = "SELECT p.*, c.name as category_name 
             FROM products p 
-            LEFT JOIN categories c ON p.category = c.name 
-            WHERE p.inventory > 0";
+            LEFT JOIN categories c ON p.category_id = c.id 
+            WHERE p.quantity > 0";
 
     $params = [];
 
     if (!empty($filters['category_id'])) {
-        $sql .= " AND p.category = ?";
+        $sql .= " AND p.category_id = ?";
         $params[] = $filters['category_id'];
     }
 
@@ -845,9 +845,10 @@ function getLatestProductsByBrand($db, $limit_per_brand = 2) {
     $query = "
         SELECT 
             p.id, p.name, p.price, p.created_at, p.image,
-            p.category as category_name
+            c.name as category_name
         FROM products p
-        WHERE p.price > 0 AND p.inventory > 0
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE p.price > 0 AND p.quantity > 0
         ORDER BY p.created_at DESC
         LIMIT $limit
     ";
@@ -862,9 +863,10 @@ function getDiscountProductsByBrand($db, $limit_per_brand = 2) {
     $query = "
         SELECT 
             p.id, p.name, p.price, p.created_at, p.image,
-            p.category as category_name
+            c.name as category_name
         FROM products p
-        WHERE p.price > 0 AND p.inventory > 0
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE p.price > 0 AND p.quantity > 0
         ORDER BY p.created_at DESC
         LIMIT $limit
     ";
@@ -947,13 +949,13 @@ function filterProducts($db, $filters = [], $limit = 12) {
     $limit = (int)$limit;
     $query = "SELECT p.*, c.name as category_name 
               FROM products p 
-              LEFT JOIN categories c ON p.category = c.name 
-              WHERE p.inventory > 0";
+              LEFT JOIN categories c ON p.category_id = c.id 
+              WHERE p.quantity > 0";
     
     $params = [];
     
     if (!empty($filters['category_id'])) {
-        $query .= " AND p.category = ?";
+        $query .= " AND p.category_id = ?";
         $params[] = $filters['category_id'];
     }
     
@@ -978,7 +980,7 @@ function filterProducts($db, $filters = [], $limit = 12) {
  * Lấy số lượng sản phẩm theo danh mục
  */
 function getProductCountByCategory($db, $category_id) {
-    $query = "SELECT COUNT(*) as count FROM products WHERE category = ? AND inventory > 0";
+    $query = "SELECT COUNT(*) as count FROM products WHERE category_id = ? AND quantity > 0";
     $stmt = $db->prepare($query);
     $stmt->execute([$category_id]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1020,7 +1022,7 @@ function getBrandBySlug($db, $slug) {
  * Lấy số lượng sản phẩm theo thương hiệu
  */
 function getProductCountByBrand($db, $brand_id) {
-    $query = "SELECT COUNT(*) as count FROM products WHERE inventory > 0";
+    $query = "SELECT COUNT(*) as count FROM products WHERE quantity > 0";
     $stmt = $db->prepare($query);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);

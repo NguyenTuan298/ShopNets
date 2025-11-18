@@ -30,12 +30,12 @@ function getFilteredProducts($db, $cat, $search, $min, $max, $sort, $offset, $li
     $sql = "
         SELECT p.*, c.name AS category_name
         FROM products p
-        LEFT JOIN categories c ON p.category = c.name
-        WHERE p.inventory > 0
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE p.quantity > 0
     ";
     $params = [];
 
-    if ($cat) { $sql .= " AND p.category = ?"; $params[] = $cat; }
+    if ($cat) { $sql .= " AND c.name = ?"; $params[] = $cat; }
     if ($search) {
         $s = "%$search%";
         $sql .= " AND (p.name LIKE ? OR p.description LIKE ?)";
@@ -75,10 +75,11 @@ function getFilteredProducts($db, $cat, $search, $min, $max, $sort, $offset, $li
 
 function getFilteredProductCount($db, $cat, $search, $min, $max) {
     $sql = "SELECT COUNT(*) FROM products p 
-        WHERE p.inventory > 0";
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE p.quantity > 0";
     $params = [];
 
-    if ($cat) { $sql .= " AND p.category = ?"; $params[] = $cat; }
+    if ($cat) { $sql .= " AND c.name = ?"; $params[] = $cat; }
     if ($search) {
         $s = "%$search%";
         $sql .= " AND (p.name LIKE ? OR p.description LIKE ?)";

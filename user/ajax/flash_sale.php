@@ -11,7 +11,7 @@ $query = "
     SELECT 
         p.id, p.name, p.price, p.image
     FROM products p
-    WHERE p.inventory > 0
+    WHERE p.quantity > 0
       AND p.price > 100000
     ORDER BY RAND()
     LIMIT 8
