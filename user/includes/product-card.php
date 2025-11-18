@@ -2,15 +2,7 @@
 
 <?php
 // Handle product image from the simple products.image field
-$src = 'https://via.placeholder.com/300x300/64748b/fff?text=No+Image';
-if (!empty($p['image'])) {
-    // Check if it's an admin uploaded image
-    if (file_exists("../../admin/assets/images/uploads/" . $p['image'])) {
-        $src = "../../admin/assets/images/uploads/" . $p['image'];
-    } else if (file_exists("../assets/images/products/" . $p['image'])) {
-        $src = "../assets/images/products/" . $p['image'];
-    }
-}
+$src = getProductImage($p['image'], 'user-pages');
 ?>
 
 <div class="product-card">

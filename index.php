@@ -261,15 +261,7 @@ $posts = getLatestPosts($db);
         <div class="grid__row">
           <?php foreach ($new_products as $product): 
             $price = $product['price'] ?? 0;
-            $img_src = 'https://via.placeholder.com/300x200?text=No+Image';
-            if (!empty($product['image'])) {
-                // Check if it's an admin uploaded image
-                if (file_exists('admin/assets/images/uploads/' . $product['image'])) {
-                    $img_src = 'admin/assets/images/uploads/' . $product['image'];
-                } else if (file_exists('user/assets/images/products/' . $product['image'])) {
-                    $img_src = 'user/assets/images/products/' . $product['image'];
-                }
-            }
+            $img_src = getProductImage($product['image'], 'index');
           ?>
             <div class="grid__col col-3">
               <div class="product-card">
@@ -331,15 +323,7 @@ $posts = getLatestPosts($db);
             $compare_price = $product['compare_price'] ?? 0;
             $discount = ($compare_price > $price && $compare_price > 0) 
               ? round((($compare_price - $price) / $compare_price) * 100) : 0;
-            $img_src = 'https://via.placeholder.com/300x200?text=No+Image';
-            if (!empty($product['image'])) {
-                // Check if it's an admin uploaded image
-                if (file_exists('admin/assets/images/uploads/' . $product['image'])) {
-                    $img_src = 'admin/assets/images/uploads/' . $product['image'];
-                } else if (file_exists('user/assets/images/products/' . $product['image'])) {
-                    $img_src = 'user/assets/images/products/' . $product['image'];
-                }
-            }
+            $img_src = getProductImage($product['image'], 'index');
           ?>
             <div class="grid__col col-3">
               <div class="product-card">

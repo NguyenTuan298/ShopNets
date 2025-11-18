@@ -243,25 +243,26 @@ function getCartCount() {
  * @param string|null $image_path
  * @return string
  */
-function getProductImage($image_path) {
+function getProductImage($image_path, $context = 'product-detail') {
     if (empty($image_path)) {
-        return 'https://via.placeholder.com/300x200/64748b/ffffff?text=No+Image';
+        return 'https://via.placeholder.com/400x400/e2e8f0/64748b?text=No+Image';
     }
 
-    // Check if it's an admin uploaded image
-    if (strpos($image_path, 'admin/assets/images/uploads/') === 0) {
-        if (file_exists('../' . $image_path)) {
-            return '../' . $image_path;
-        }
-    } else {
-        // Check user assets folder
-        $full_path = 'user/assets/images/products/' . $image_path;
-        if (file_exists($full_path)) {
-            return $full_path;
-        }
+    // Clean the image path - chỉ lấy tên file
+    $image_name = basename($image_path);
+    
+    // Xác định đường dẫn dựa vào context
+    switch ($context) {
+        case 'index': // Từ root index.php
+            return 'admin/assets/images/uploads/' . $image_name;
+            
+        case 'user-pages': // Từ user/pages/main/
+            return '../../../admin/assets/images/uploads/' . $image_name;
+            
+        case 'product-detail': // Từ user/pages/main/product-detail.php (default)
+        default:
+            return '../../../admin/assets/images/uploads/' . $image_name;
     }
-
-    return 'https://via.placeholder.com/300x200/64748b/ffffff?text=No+Image';
 }
 
 // Flash sale products - use random products with discounted prices
@@ -304,14 +305,44 @@ function getFlashSaleProducts($db, $limit = 8) {
  */
 function getProductImages($db, $product_id) {
     try {
+        // Try to get from product_images table first
         $query = "SELECT * FROM product_images 
                   WHERE product_id = ? 
                   ORDER BY is_primary DESC, id ASC";
         $stmt = $db->prepare($query);
         $stmt->execute([$product_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // If no images found or table doesn't exist, fallback to main product image
+        if (empty($images)) {
+            $productQuery = "SELECT image FROM products WHERE id = ?";
+            $productStmt = $db->prepare($productQuery);
+            $productStmt->execute([$product_id]);
+            $product = $productStmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($product && !empty($product['image'])) {
+                return [['image_path' => $product['image'], 'is_primary' => 1]];
+            } else {
+                // Return placeholder if no image at all
+                return [['image_path' => '', 'is_primary' => 1]];
+            }
+        }
+        
+        return $images;
     } catch (PDOException $e) {
-        error_log("Lỗi getProductImages: " . $e->getMessage());
+        // If product_images table doesn't exist, get main product image
+        try {
+            $productQuery = "SELECT image FROM products WHERE id = ?";
+            $productStmt = $db->prepare($productQuery);
+            $productStmt->execute([$product_id]);
+            $product = $productStmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($product && $product['image']) {
+                return [['image_path' => $product['image'], 'is_primary' => 1]];
+            }
+        } catch (PDOException $e2) {
+            error_log("Lỗi getProductImages: " . $e2->getMessage());
+        }
         return [];
     }
 }
@@ -335,14 +366,9 @@ function getProductAttributes($db, $product_id) {
  * Lấy đánh giá sản phẩm
  */
 function getProductReviews($db, $product_id) {
-    $query = "SELECT r.*, u.full_name 
-              FROM reviews r 
-              JOIN users u ON r.user_id = u.id 
-              WHERE r.product_id = ? AND r.is_approved = 1 
-              ORDER BY r.created_at DESC";
-    $stmt = $db->prepare($query);
-    $stmt->execute([$product_id]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Reviews table doesn't exist yet, return empty array
+    // TODO: Implement reviews functionality when reviews table is created
+    return [];
 }
 
 /**
@@ -370,9 +396,15 @@ function getRelatedProducts($db, $product_id, $category_id, $limit = 4) {
  * Tăng lượt xem sản phẩm
  */
 function incrementProductViews($db, $product_id) {
-    $query = "UPDATE products SET view_count = view_count + 1 WHERE id = ?";
-    $stmt = $db->prepare($query);
-    return $stmt->execute([$product_id]);
+    try {
+        // Try to increment view count if column exists
+        $query = "UPDATE products SET view_count = view_count + 1 WHERE id = ?";
+        $stmt = $db->prepare($query);
+        return $stmt->execute([$product_id]);
+    } catch (PDOException $e) {
+        // If view_count column doesn't exist, just return true (no error)
+        return true;
+    }
 }
 
 /**

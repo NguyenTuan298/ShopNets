@@ -608,14 +608,7 @@ if (!defined('BASE_URL')) {
                             ? round((($compare_price - $price) / $compare_price) * 100) : 0;
                         
                         // Xử lý hình ảnh
-                        $img_src = 'https://via.placeholder.com/300x200?text=No+Image';
-                        if (!empty($p['image'])) {
-                            if (file_exists('../../../admin/assets/images/uploads/' . $p['image'])) {
-                                $img_src = '../../../admin/assets/images/uploads/' . $p['image'];
-                            } elseif (file_exists('../../assets/images/products/' . $p['image'])) {
-                                $img_src = '../../assets/images/products/' . $p['image'];
-                            }
-                        }
+                        $img_src = getProductImage($p['image'], 'user-pages');
                     ?>
                         <div class="col-md-6 col-lg-4 col-xl-3">
                             <div class="product-card">

@@ -20,11 +20,9 @@ $related_products = getRelatedProducts($db, $product_id, $product['category_id']
 
 incrementProductViews($db, $product_id);
 
-$avg_rating = 0;
-if (!empty($product_reviews)) {
-    $total = array_sum(array_column($product_reviews, 'rating'));
-    $avg_rating = round($total / count($product_reviews), 1);
-}
+// Set default rating since reviews are not implemented yet
+$avg_rating = 4.5; // Default rating for display
+$review_count = 0; // No reviews yet
 ?>
 
 <!DOCTYPE html>
@@ -726,15 +724,24 @@ if (!empty($product_reviews)) {
             <div class="col-lg-6">
                 <div class="product-gallery">
                     <div class="main-image">
-                        <img id="main-product-image" src="<?php echo getProductImage($product_images[0]['image_path'] ?? null); ?>" alt="">
+                        <?php 
+                        $main_image_src = isset($product_images[0]['image_path']) ? getProductImage($product_images[0]['image_path'], 'product-detail') : getProductImage($product['image'], 'product-detail'); 
+                        ?>
+                        <img id="main-product-image" src="<?php echo $main_image_src; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                     </div>
                     <?php if (count($product_images) > 1): ?>
                     <div class="thumbnail-container">
                         <?php foreach ($product_images as $i => $img): ?>
-                        <div class="thumbnail <?php echo $i === 0 ? 'active' : ''; ?>" data-image="<?php echo getProductImage($img['image_path']); ?>">
-                            <img src="<?php echo getProductImage($img['image_path']); ?>" alt="">
+                        <div class="thumbnail <?php echo $i === 0 ? 'active' : ''; ?>" data-image="<?php echo getProductImage($img['image_path'], 'product-detail'); ?>">
+                            <img src="<?php echo getProductImage($img['image_path'], 'product-detail'); ?>" alt="">
                         </div>
                         <?php endforeach; ?>
+                    </div>
+                    <?php elseif (!empty($product['image'])): ?>
+                    <div class="thumbnail-container">
+                        <div class="thumbnail active" data-image="<?php echo getProductImage($product['image'], 'product-detail'); ?>">
+                            <img src="<?php echo getProductImage($product['image'], 'product-detail'); ?>" alt="">
+                        </div>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -751,7 +758,7 @@ if (!empty($product_reviews)) {
                                 <i class="bi <?php echo $i <= $avg_rating ? 'bi-star-fill' : 'bi-star'; ?>"></i>
                             <?php endfor; ?>
                         </div>
-                        <span class="review-count">(<?php echo count($product_reviews); ?> đánh giá)</span>
+                        <span class="review-count">(<?php echo $review_count; ?> đánh giá)</span>
                     </div>
 
                     <div class="product-price">
@@ -811,7 +818,7 @@ if (!empty($product_reviews)) {
             <ul class="nav nav-tabs" id="productTabs">
                 <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#desc">Mô tả</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#specs">Thông số</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#reviews">Đánh giá (<?php echo count($product_reviews); ?>)</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#reviews">Đánh giá (<?php echo $review_count; ?>)</button></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="desc">

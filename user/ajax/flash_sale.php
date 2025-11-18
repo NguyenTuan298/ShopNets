@@ -41,16 +41,8 @@ if (empty($products)) {
 
 foreach ($products as $p):
     // Fix image handling for actual database schema
-    $img_src = 'https://via.placeholder.com/300x200?text=No+Image';
-    
-    if (!empty($p['image'])) {
-        // Check if it's an admin uploaded image
-        if (file_exists(__DIR__ . '/../../admin/assets/images/uploads/' . $p['image'])) {
-            $img_src = '../admin/assets/images/uploads/' . $p['image'];
-        } else if (file_exists(__DIR__ . '/../assets/images/products/' . $p['image'])) {
-            $img_src = 'assets/images/products/' . $p['image'];
-        }
-    }
+    // Flash sale AJAX được gọi từ root, nên dùng context 'index'  
+    $img_src = getProductImage($p['image'], 'index');
     
     $discount_percent = $p['compare_price'] > 0 ? round((($p['compare_price'] - $p['price']) / $p['compare_price']) * 100) : 0;
 ?>
