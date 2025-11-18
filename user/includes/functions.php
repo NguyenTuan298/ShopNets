@@ -632,18 +632,31 @@ function cancelOrder($db, $order_id, $user_id) {
 }
 
 function getProductSpecifications($db, $product_id) {
-    $stmt = $db->prepare("
-        SELECT 
-            a.name as attribute_name,
-            COALESCE(av.value, pa.value_text) as attribute_value
-        FROM product_attributes pa
-        JOIN attributes a ON pa.attribute_id = a.id
-        LEFT JOIN attribute_values av ON pa.attribute_value_id = av.id
-        WHERE pa.product_id = ?
-        ORDER BY a.sort_order, a.id
-    ");
+    $stmt = $db->prepare("SELECT specifications FROM products WHERE id = ? LIMIT 1");
     $stmt->execute([$product_id]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$product || empty($product['specifications'])) {
+        return [];
+    }
+    
+    $specs = json_decode($product['specifications'], true);
+    if (!$specs || !is_array($specs)) {
+        return [];
+    }
+    
+    // Convert to array format expected by template
+    $result = [];
+    foreach ($specs as $key => $value) {
+        if (!empty(trim($value))) {
+            $result[] = [
+                'attribute_name' => $key,
+                'attribute_value' => $value
+            ];
+        }
+    }
+    
+    return $result;
 }
 
 /**

@@ -109,7 +109,7 @@ include '../includes/sidebar.php';
             $currentSearch = isset($_GET['q']) ? $_GET['q'] : '';
             
             try {
-              $stmt = $pdo->query("SELECT DISTINCT category FROM products WHERE category IS NOT NULL AND category != '' ORDER BY category ASC");
+              $stmt = $pdo->query("SELECT DISTINCT c.name as category FROM products p JOIN categories c ON p.category_id = c.id ORDER BY c.name ASC");
               $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
             } catch (Exception $e) {
               $categories = [];
@@ -175,12 +175,12 @@ include '../includes/sidebar.php';
                 $params = [];
                 
                 if ($q !== '') {
-                  $whereConditions[] = "(name LIKE :search OR category LIKE :search)";
+                  $whereConditions[] = "(p.name LIKE :search OR c.name LIKE :search)";
                   $params[':search'] = "%$q%";
                 }
                 
                 if ($category !== '') {
-                  $whereConditions[] = "category = :category";
+                  $whereConditions[] = "c.name = :category";
                   $params[':category'] = $category;
                 }
                 
@@ -314,6 +314,11 @@ include '../includes/sidebar.php';
           <textarea id="productDescription" name="description" rows="4"></textarea>
         </div>
         <div class="form-group">
+          <label for="addSpecificationsContainer">Thông Số Kỹ Thuật</label>
+          <div id="addSpecificationsContainer"></div>
+          <input type="hidden" id="addSpecificationsInput" name="specifications">
+        </div>
+        <div class="form-group">
           <div class="checkbox-group">
             <label>
               <input type="checkbox" id="productFeatured" name="featured" value="1">
@@ -403,6 +408,11 @@ include '../includes/sidebar.php';
         <div class="form-group">
           <label for="editProductDescription">Mô Tả Chi Tiết</label>
           <textarea id="editProductDescription" name="description" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="editProductSpecificationsContainer">Thông Số Kỹ Thuật</label>
+          <div id="editProductSpecificationsContainer"></div>
+          <input type="hidden" id="editProductSpecificationsInput" name="specifications">
         </div>
         <div class="form-group">
           <div class="checkbox-group">

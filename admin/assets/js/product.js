@@ -33,6 +33,12 @@ class ProductManager {
             this.addForm.addEventListener('submit', (e) => this.handleAddSubmit(e));
         }
 
+        // Render specifications when add-category changes
+        const addCategory = document.getElementById('productCategory');
+        if (addCategory) {
+            addCategory.addEventListener('change', () => this.renderSpecifications('product', addCategory.options[addCategory.selectedIndex]?.text || '', {}));
+        }
+
         // Chỉnh sửa sản phẩm - modal event listeners
         if (this.editCloseBtn) {
             this.editCloseBtn.addEventListener('click', () => this.hideEditModal());
@@ -44,6 +50,12 @@ class ProductManager {
         
         if (this.editForm) {
             this.editForm.addEventListener('submit', (e) => this.handleEditSubmit(e));
+        }
+
+        // Render specifications when edit-category changes
+        const editCategory = document.getElementById('editProductCategory');
+        if (editCategory) {
+            editCategory.addEventListener('change', () => this.renderSpecifications('editProduct', editCategory.options[editCategory.selectedIndex]?.text || '', {}));
         }
 
         window.addEventListener('click', (e) => {
@@ -99,6 +111,8 @@ class ProductManager {
         this.clearErrors('errorMessages');
         this.setLoading(this.addForm, true);
 
+        // Serialize specifications into hidden input before sending
+        this.serializeSpecifications('product');
         const formData = new FormData(this.addForm);
         
         try {
@@ -234,6 +248,21 @@ class ProductManager {
         }
         
         this.clearErrors('editErrorMessages');
+        
+        // Render specifications (if any)
+        // Delay rendering to ensure category dropdown is updated first
+        setTimeout(() => {
+            try {
+                const specs = productData.specifications ? JSON.parse(productData.specifications) : {};
+                const categorySelect = document.getElementById('editProductCategory');
+                const categoryName = categorySelect?.options[categorySelect.selectedIndex]?.text || '';
+                console.log('Rendering specs for category:', categoryName, 'with data:', specs);
+                this.renderSpecifications('editProduct', categoryName, specs);
+            } catch (e) {
+                console.error('Error parsing specifications:', e);
+                this.renderSpecifications('editProduct', '', {});
+            }
+        }, 100);
     }
 
     async handleEditSubmit(e) {
@@ -242,6 +271,8 @@ class ProductManager {
         this.clearErrors('editErrorMessages');
         this.setLoading(this.editForm, true);
 
+        // Serialize specifications into hidden input before sending
+        this.serializeSpecifications('editProduct');
         const formData = new FormData(this.editForm);
         
         try {
@@ -485,6 +516,125 @@ class ProductManager {
         }, type === 'success' ? 3000 : 5000);
     }
 }
+
+// Specifications support
+ProductManager.prototype.specTemplates = {
+    'Điện thoại': ['Màn hình', 'CPU', 'RAM', 'Ổ cứng', 'Pin', 'Camera'],
+    'Laptop': ['Màn hình', 'CPU', 'RAM', 'Ổ cứng', 'Pin', 'Card đồ hoa'],
+    'Tablet': ['Màn hình', 'CPU', 'RAM', 'Ổ cứng', 'Pin'],
+    'Headphones': ['Loại', 'Kết nối', 'Thời lượng pin', 'Trở kháng'],
+    'Smartwatch': ['Màn hình', 'Pin', 'Kết nối', 'Tính năng']
+};
+
+ProductManager.prototype.renderSpecifications = function(formPrefix, categoryName, existingSpecs) {
+    const containerId = formPrefix === 'product' ? 'addSpecificationsContainer' : (formPrefix + 'SpecificationsContainer');
+    const inputId = formPrefix === 'product' ? 'addSpecificationsInput' : (formPrefix + 'SpecificationsInput');
+    const container = document.getElementById(containerId);
+    const hiddenInput = document.getElementById(inputId);
+    if (!container) return;
+    container.innerHTML = '';
+
+    const template = this.specTemplates[categoryName] || [];
+
+    // Render template fields
+    template.forEach(key => {
+        const row = document.createElement('div');
+        row.className = 'spec-row';
+        row.style.marginBottom = '8px';
+        row.innerHTML = `
+            <label style="display:block;font-size:13px;margin-bottom:4px;">${key}</label>
+            <input type="text" class="spec-input" data-spec-key="${key}" value="${existingSpecs[key] ? existingSpecs[key] : ''}" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;">
+        `;
+        container.appendChild(row);
+    });
+
+    // If no template, show generic key/value pairs UI
+    if (template.length === 0) {
+        // First render existing specs if any
+        const existingKeys = Object.keys(existingSpecs || {});
+        if (existingKeys.length > 0) {
+            existingKeys.forEach(key => {
+                const row = document.createElement('div');
+                row.className = 'spec-row';
+                row.style.display = 'flex';
+                row.style.gap = '8px';
+                row.style.marginBottom = '8px';
+                row.innerHTML = `
+                    <input type="text" class="spec-key" placeholder="Tên thông số" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" value="${key}">
+                    <input type="text" class="spec-value" placeholder="Giá trị" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" value="${existingSpecs[key] || ''}">
+                `;
+                container.appendChild(row);
+            });
+        } else {
+            // Show 2 empty rows by default
+            for (let i = 0; i < 2; i++) {
+                const row = document.createElement('div');
+                row.className = 'spec-row';
+                row.style.display = 'flex';
+                row.style.gap = '8px';
+                row.style.marginBottom = '8px';
+                row.innerHTML = `
+                    <input type="text" class="spec-key" placeholder="Tên thông số" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" value="">
+                    <input type="text" class="spec-value" placeholder="Giá trị" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" value="">
+                `;
+                container.appendChild(row);
+            }
+        }
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'btn btn-secondary';
+        addBtn.style.marginTop = '6px';
+        addBtn.textContent = 'Thêm thông số';
+        addBtn.addEventListener('click', () => {
+            const row = document.createElement('div');
+            row.className = 'spec-row';
+            row.style.display = 'flex';
+            row.style.gap = '8px';
+            row.style.marginBottom = '8px';
+            row.innerHTML = `
+                <input type="text" class="spec-key" placeholder="Tên thông số" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" value="">
+                <input type="text" class="spec-value" placeholder="Giá trị" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;" value="">
+            `;
+            container.insertBefore(row, addBtn);
+        });
+        container.appendChild(addBtn);
+    }
+
+    // Set hidden input initial value
+    if (hiddenInput) {
+        hiddenInput.value = JSON.stringify(existingSpecs || {});
+    }
+};
+
+ProductManager.prototype.serializeSpecifications = function(formPrefix) {
+    const containerId = formPrefix === 'product' ? 'addSpecificationsContainer' : (formPrefix + 'SpecificationsContainer');
+    const inputId = formPrefix === 'product' ? 'addSpecificationsInput' : (formPrefix + 'SpecificationsInput');
+    const container = document.getElementById(containerId);
+    const hiddenInput = document.getElementById(inputId);
+    if (!container || !hiddenInput) return;
+
+    const obj = {};
+    // template-based: inputs have class spec-input and data-spec-key
+    const specInputs = container.querySelectorAll('.spec-input');
+    if (specInputs.length) {
+        specInputs.forEach(inp => {
+            const key = inp.getAttribute('data-spec-key') || '';
+            const val = inp.value || '';
+            if (key) obj[key] = val;
+        });
+    } else {
+        // generic key/value
+        const keys = container.querySelectorAll('.spec-key');
+        const vals = container.querySelectorAll('.spec-value');
+        for (let i = 0; i < keys.length; i++) {
+            const k = keys[i].value.trim();
+            const v = vals[i].value.trim();
+            if (k !== '') obj[k] = v;
+        }
+    }
+
+    hiddenInput.value = JSON.stringify(obj);
+};
 
 // Initialize when DOM is loaded
 let productManager;

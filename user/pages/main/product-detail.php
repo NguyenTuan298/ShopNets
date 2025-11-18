@@ -377,19 +377,71 @@ if (!empty($product_reviews)) {
         }
 
         /* SPECS TABLE */
+        .specifications-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+        }
+        .spec-category-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .spec-category-title:before {
+            content: "📋";
+            font-size: 1.6rem;
+        }
         .specs-table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         .specs-table td {
-            padding: 16px 0;
-            border-bottom: 1px dashed #e2e8f0;
+            padding: 18px 24px;
+            border-bottom: 1px solid #f1f5f9;
             font-size: 1.5rem;
+            vertical-align: top;
         }
-        .specs-table td:first-child {
+        .specs-table tr:last-child td {
+            border-bottom: none;
+        }
+        .specs-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        .specs-table tr:hover {
+            background: #e0f2fe;
+            transition: background 0.2s ease;
+        }
+        .spec-name {
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--dark-color);
             width: 35%;
+            position: relative;
+        }
+        .spec-name:after {
+            content: ":";
+            margin-left: 4px;
+            color: var(--primary-color);
+        }
+        .spec-value {
+            color: #475569;
+            font-weight: 500;
+        }
+        .no-specs {
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border-radius: 16px;
+            border: 2px dashed #cbd5e1;
         }
 
         /* REVIEW */
@@ -780,18 +832,28 @@ if (!empty($product_reviews)) {
                 </div>
 
                 <div class="tab-pane fade" id="specs">
-                    <?php $specs = getProductSpecifications($db, $product_id); ?>
+                    <?php 
+                    $specs = getProductSpecifications($db, $product_id); 
+                    $category_name = $product['category_name'] ?? '';
+                    ?>
                     <?php if ($specs): ?>
-                        <table class="specs-table">
-                            <?php foreach ($specs as $s): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($s['attribute_name']); ?></td>
-                                <td><?php echo nl2br(htmlspecialchars($s['attribute_value'])); ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </table>
+                        <div class="specifications-section">
+                            <h5 class="spec-category-title"><?php echo htmlspecialchars($category_name); ?> - Thông số kỹ thuật</h5>
+                            <table class="specs-table">
+                                <?php foreach ($specs as $s): ?>
+                                <tr>
+                                    <td class="spec-name"><?php echo htmlspecialchars($s['attribute_name']); ?></td>
+                                    <td class="spec-value"><?php echo nl2br(htmlspecialchars($s['attribute_value'])); ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </table>
+                        </div>
                     <?php else: ?>
-                        <p class="text-center text-muted">Chưa có thông số chi tiết.</p>
+                        <div class="no-specs text-center">
+                            <i class="bi bi-info-circle-fill text-muted mb-3" style="font-size: 3rem;"></i>
+                            <p class="text-muted">Chưa có thông số kỹ thuật cho sản phẩm này.</p>
+                            <small class="text-muted">Thông tin chi tiết sẽ được cập nhật sớm nhất.</small>
+                        </div>
                     <?php endif; ?>
                 </div>
 

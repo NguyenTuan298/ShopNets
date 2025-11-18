@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        $stmt = $pdo->prepare('SELECT COUNT(*) as count FROM products WHERE category = :category_name');
+        $stmt = $pdo->prepare('SELECT COUNT(*) as count FROM products p JOIN categories c ON p.category_id = c.id WHERE c.name = :category_name');
         $stmt->execute([':category_name' => $category['name']]);
         $productCount = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 

@@ -31,7 +31,7 @@ try {
             
 
             foreach ($categories as &$category) {
-                $countStmt = $pdo->prepare('SELECT COUNT(*) as count FROM products WHERE category = :category_name');
+                $countStmt = $pdo->prepare('SELECT COUNT(*) as count FROM products p JOIN categories c ON p.category_id = c.id WHERE c.name = :category_name');
                 $countStmt->execute([':category_name' => $category['name']]);
                 $category['product_count'] = $countStmt->fetch(PDO::FETCH_ASSOC)['count'];
             }
@@ -127,7 +127,7 @@ try {
                 sendError('Category not found', 404);
             }
 
-            $stmt = $pdo->prepare('SELECT COUNT(*) as count FROM products WHERE category = :category_name');
+            $stmt = $pdo->prepare('SELECT COUNT(*) as count FROM products p JOIN categories c ON p.category_id = c.id WHERE c.name = :category_name');
             $stmt->execute([':category_name' => $category['name']]);
             $productCount = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
 

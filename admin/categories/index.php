@@ -113,7 +113,7 @@ include '../includes/sidebar.php';
                   $description = $c['description'] ?? '';
 
                   try {
-                    $countStmt = $pdo->prepare('SELECT COUNT(*) as count FROM products WHERE category = :category_name');
+                    $countStmt = $pdo->prepare('SELECT COUNT(*) as count FROM products p JOIN categories c ON p.category_id = c.id WHERE c.name = :category_name');
                     $countStmt->execute([':category_name' => $name]);
                     $productCount = $countStmt->fetch(PDO::FETCH_ASSOC)['count'];
                   } catch (Exception $e) {

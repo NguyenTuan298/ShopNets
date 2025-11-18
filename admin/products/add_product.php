@@ -6,7 +6,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// $isAjax đã được định nghĩa ở trên
+// Định nghĩa $isAjax trước khi sử dụng
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     if ($isAjax) {
@@ -69,11 +71,11 @@ function generateSlug($string) {
     return $string;
 }
 
-$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-
 $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    error_log("Add Product POST request received");
+    error_log("POST data: " . print_r($_POST, true));
+    
     $name = trim($_POST['name'] ?? '');
     $category_id = $_POST['category_id'] ?? null;
     $price = $_POST['price'] ?? 0;
@@ -81,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $quantity = $_POST['quantity'] ?? 0;
     $description = trim($_POST['description'] ?? '');
     $short_description = trim($_POST['short_description'] ?? '');
+    $specifications = $_POST['specifications'] ?? '';
     $featured = isset($_POST['featured']) ? 1 : 0;
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     $imageName = '';
@@ -160,21 +163,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        try {
-            $stmt = $pdo->prepare("INSERT INTO products (name, category_id, price, compare_price, quantity, description, short_description, image, slug, featured, is_active) VALUES (:name, :category_id, :price, :compare_price, :quantity, :description, :short_description, :image, :slug, :featured, :is_active)");
-            $stmt->execute([
-                ':name' => $name,
-                ':category_id' => $category_id,
-                ':price' => $price,
-                ':compare_price' => $compare_price,
-                ':quantity' => $quantity,
-                ':description' => $description,
-                ':short_description' => $short_description,
-                ':image' => $imageName,
-                ':slug' => $slug,
-                ':featured' => $featured,
-                ':is_active' => $is_active
-            ]);
+    // Validate specifications JSON
+    $specs_json = null;
+    if (!empty($specifications)) {
+        error_log("Specifications received: " . $specifications);
+        $decoded = json_decode($specifications, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $specs_json = $specifications;
+            error_log("Specifications JSON valid");
+        } else {
+            error_log("JSON decode error: " . json_last_error_msg());
+            $errors[] = 'Dữ liệu thông số kỹ thuật không hợp lệ: ' . json_last_error_msg();
+        }
+    }        if (empty($errors)) {
+            try {
+                $stmt = $pdo->prepare("INSERT INTO products (name, category_id, price, compare_price, quantity, description, short_description, specifications, image, slug, featured, is_active) VALUES (:name, :category_id, :price, :compare_price, :quantity, :description, :short_description, :specifications, :image, :slug, :featured, :is_active)");
+                $stmt->execute([
+                    ':name' => $name,
+                    ':category_id' => $category_id,
+                    ':price' => $price,
+                    ':compare_price' => $compare_price,
+                    ':quantity' => $quantity,
+                    ':description' => $description,
+                    ':short_description' => $short_description,
+                    ':specifications' => $specs_json,
+                    ':image' => $imageName,
+                    ':slug' => $slug,
+                    ':featured' => $featured,
+                    ':is_active' => $is_active
+                ]);
             
             if ($isAjax) {
                 header('Content-Type: application/json');
@@ -188,6 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($imageName && file_exists($uploadDir . $imageName)) {
                 unlink($uploadDir . $imageName);
             }
+            error_log("Add Product Error: " . $e->getMessage());
             $errors[] = 'Lỗi DB: ' . $e->getMessage();
         }
     } else {
@@ -206,5 +224,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (!$isAjax) {
     header('Location: index.php');
     exit;
+}
 }
 ?>
