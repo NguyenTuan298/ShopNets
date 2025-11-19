@@ -1,0 +1,10 @@
+* {
+  margin-top: 0px;
+  border: 0;
+  box-sizing: border-box;
+}
+
+.h1 {
+  navigation: calc(var(--light) - (deg(40)));
+  nav-down: calc(var(--dif) - (var(--rol)));
+}

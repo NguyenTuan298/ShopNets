@@ -1,0 +1,233 @@
+body.dark-theme {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .sidebar {
+    background-color: #2d2d2d;
+    border-right: 1px solid #404040;
+}
+
+body.dark-theme .logo-area {
+    background-color: #333333;
+    border-bottom: 1px solid #404040;
+}
+
+body.dark-theme .logo-text {
+    color: #ffffff;
+}
+
+body.dark-theme .menu-item {
+    color: #e0e0e0;
+    background-color: transparent;
+}
+
+body.dark-theme .menu-item:hover {
+    background-color: #404040;
+    color: #ffffff;
+}
+
+body.dark-theme .menu-item.active {
+    background-color: #4CAF50;
+    color: #ffffff;
+}
+
+body.dark-theme .topbar {
+    background-color: #2d2d2d;
+    border-bottom: 1px solid #404040;
+}
+
+body.dark-theme .actions .icon {
+    background-color: #404040;
+}
+
+body.dark-theme .actions .icon:hover {
+    background-color: #505050;
+}
+
+body.dark-theme .main {
+    background-color: #1a1a1a;
+}
+
+body.dark-theme .content {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .content h1 {
+    color: #ffffff;
+}
+
+body.dark-theme .card {
+    background-color: #2d2d2d;
+    border: 1px solid #404040;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .card-header {
+    background-color: #333333;
+    border-bottom: 1px solid #404040;
+    color: #ffffff;
+}
+
+body.dark-theme .filter-card {
+    background-color: #2d2d2d;
+    border: 1px solid #404040;
+}
+
+body.dark-theme .filter-header {
+    color: #ffffff;
+}
+
+body.dark-theme .data-table {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+body.dark-theme .data-table thead {
+    background-color: #333333;
+}
+
+body.dark-theme .data-table th {
+    background-color: #333333;
+    color: #ffffff;
+    border-bottom: 1px solid #404040;
+}
+
+body.dark-theme .data-table td {
+    border-top: 1px solid #404040;
+    color: #e0e0e0;
+}
+
+body.dark-theme .data-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme input,
+body.dark-theme textarea,
+body.dark-theme select {
+    background-color: #333333;
+    border: 1px solid #555555;
+    color: #e0e0e0;
+}
+
+body.dark-theme input:focus,
+body.dark-theme textarea:focus,
+body.dark-theme select:focus {
+    border-color: #4CAF50;
+    background-color: #404040;
+}
+
+body.dark-theme .search-box input {
+    background-color: #333333;
+    border: 1px solid #555555;
+    color: #e0e0e0;
+}
+
+body.dark-theme .search-box input::placeholder {
+    color: #999999;
+}
+
+body.dark-theme .btn-primary {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+body.dark-theme .btn-primary:hover {
+    background-color: #45a049;
+}
+
+body.dark-theme .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+body.dark-theme .btn-icon {
+    background-color: #404040;
+    border: 1px solid #555555;
+}
+
+body.dark-theme .btn-icon:hover {
+    background-color: #505050;
+}
+
+body.dark-theme .modal {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-theme .modal-content {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+    border: 1px solid #404040;
+}
+
+body.dark-theme .modal-header {
+    background-color: #333333;
+    border-bottom: 1px solid #404040;
+}
+
+body.dark-theme .modal-header h2 {
+    color: #ffffff;
+}
+
+body.dark-theme .modal-header .close {
+    color: #cccccc;
+}
+
+body.dark-theme .modal-header .close:hover {
+    color: #ffffff;
+}
+
+body.dark-theme .modal .form-group label {
+    color: #e0e0e0;
+}
+
+body.dark-theme .modal .form-group input,
+body.dark-theme .modal .form-group textarea,
+body.dark-theme .modal .form-group select {
+    background-color: #333333;
+    border: 1px solid #555555;
+    color: #e0e0e0;
+}
+
+body.dark-theme .modal .form-group input:focus,
+body.dark-theme .modal .form-group textarea:focus,
+body.dark-theme .modal .form-group select:focus {
+    border-color: #4CAF50;
+    background-color: #404040;
+}
+
+body.dark-theme .success-message {
+    background-color: #1e4d2b;
+    border-color: #2d7a3e;
+    color: #b8e6c1;
+}
+
+body.dark-theme .error {
+    background-color: #4d1e1e;
+    border-color: #7a2d2d;
+    color: #e6b8b8;
+}
+
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar,
+.topbar,
+.card,
+.modal-content {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#themeToggle {
+    transition: transform 0.2s ease;
+}
+
+#themeToggle:hover {
+    transform: scale(1.1);
+}
+
+#themeIcon {
+    transition: all 0.3s ease;
+}

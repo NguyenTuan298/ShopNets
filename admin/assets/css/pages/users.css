@@ -1,0 +1,159 @@
+.users-page .page-subtitle {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.users-filter-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 0 0 1rem 0;
+  margin-bottom: 1.25rem;
+}
+
+.users-filter-header {
+  padding: 1.5rem 1rem 1rem 1rem;
+  color: #000;
+  font-weight: 500;
+  font-size: 0.8125rem;
+}
+
+.users-search-container {
+  padding: 0 0.875rem 0.5rem 0.875rem;
+}
+
+.users-search-box {
+  position: relative;
+  width: 100%;
+}
+
+.users-search-box input {
+  height: 36px;
+  padding: 0.4rem 0.65rem 0.4rem 34px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f3f4f6;
+  font-size: 0.8125rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.users-search-box input:focus {
+  outline: none;
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+
+.users-search-box::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>") no-repeat center/contain;
+  pointer-events: none;
+}
+
+.users-table-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.users-table-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.users-table-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.users-table-container {
+  overflow-x: auto;
+}
+
+.users-data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-data-table thead {
+  background: #f9fafb;
+}
+
+.users-data-table th {
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.users-data-table td {
+  padding: 1rem;
+  border-top: 1px solid #f3f4f6;
+  font-size: 0.875rem;
+  color: #111827;
+  vertical-align: middle;
+}
+
+.users-data-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.users-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 0.25rem;
+}
+
+.users-btn-edit:hover {
+  background: #dbeafe;
+}
+
+.users-btn-delete:hover {
+  background: #fee2e2;
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #111827;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

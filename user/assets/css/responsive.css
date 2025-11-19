@@ -1,0 +1,652 @@
+/* ===== RESPONSIVE STYLES ===== */
+/* Mobile First Approach */
+
+/* Extra small devices (phones, 576px and down) */
+@media (max-width: 576px) {
+  /* Top Bar */
+  .top-bar .container {
+    padding: 0 15px;
+  }
+
+  .top-bar .shipping-text {
+    font-size: 0.75rem;
+    text-align: center;
+    display: block;
+  }
+
+  .top-bar .contact-info {
+    font-size: 0.7rem;
+    text-align: center;
+    display: block;
+    margin-top: 5px;
+  }
+
+  .language-switcher {
+    margin-top: 5px;
+    justify-content: center;
+  }
+
+  /* Main Navigation */
+  .navbar-brand {
+    font-size: 1.5rem;
+    margin-right: 0;
+  }
+
+  .search-form {
+    margin: 1rem 0;
+    order: 3;
+    width: 100%;
+  }
+
+  .navbar-actions {
+    margin-left: 0;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+  }
+
+  .account-text,
+  .cart-text {
+    font-size: 0.8rem;
+  }
+
+  /* Category Navigation */
+  .category-nav .nav-link {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+
+  .nav-toggle-text {
+    font-size: 0.9rem;
+    margin-left: 5px;
+  }
+
+  /* Shipping Page */
+  .shipping-hero {
+    padding: 2rem 0;
+  }
+
+  .shipping-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .shipping-hero p {
+    font-size: 1rem;
+    padding: 0 15px;
+  }
+
+  .policy-card {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .policy-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .policy-title {
+    font-size: 1.3rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.9rem;
+    padding: 0 15px;
+  }
+
+  /* Tables */
+  .shipping-table {
+    font-size: 0.8rem;
+  }
+
+  .shipping-table th,
+  .shipping-table td {
+    padding: 0.5rem 0.3rem;
+  }
+
+  .shipping-table th:nth-child(3),
+  .shipping-table td:nth-child(3) {
+    display: none;
+  }
+
+  /* Partner Logos */
+  .partner-logos {
+    gap: 1rem;
+  }
+
+  .partner-logo {
+    width: 80px;
+    height: 50px;
+  }
+
+  .partner-logo span {
+    font-size: 0.8rem;
+  }
+
+  /* FAQ Section */
+  .faq-section .accordion-button {
+    font-size: 0.9rem;
+    padding: 12px 15px;
+  }
+
+  .accordion-body {
+    font-size: 0.85rem;
+    padding: 15px;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 2rem 0 1rem;
+  }
+
+  .footer-brand {
+    font-size: 1.3rem;
+    justify-content: center;
+  }
+
+  .footer-desc {
+    text-align: center;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+
+  .footer-title {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  .footer-links {
+    text-align: center;
+  }
+
+  .contact-info {
+    text-align: center;
+  }
+
+  .payment-methods {
+    justify-content: center;
+  }
+
+  .footer-bottom {
+    text-align: center;
+  }
+}
+
+/* Small devices (phones, 577px to 768px) */
+@media (min-width: 577px) and (max-width: 768px) {
+  /* Top Bar */
+  .top-bar .container {
+    padding: 0 20px;
+  }
+
+  .top-bar .shipping-text {
+    text-align: center;
+  }
+
+  .top-bar .contact-info {
+    text-align: center;
+    margin-top: 5px;
+  }
+
+  /* Main Navigation */
+  .navbar-brand {
+    font-size: 1.6rem;
+  }
+
+  .search-form {
+    margin: 1rem 0;
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .navbar-actions {
+    margin-left: 0;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+
+  /* Category Navigation */
+  .category-nav .nav-link {
+    padding: 12px 18px;
+    font-size: 0.95rem;
+  }
+
+  /* Shipping Page */
+  .shipping-hero h1 {
+    font-size: 2rem;
+  }
+
+  .policy-card {
+    padding: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  /* Tables */
+  .shipping-table {
+    font-size: 0.85rem;
+  }
+
+  .shipping-table th,
+  .shipping-table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 3rem 0 1.5rem;
+  }
+
+  .footer-title {
+    margin-top: 2rem;
+  }
+}
+
+/* Medium devices (tablets, 769px to 992px) */
+@media (min-width: 769px) and (max-width: 992px) {
+  /* Main Navigation */
+  .navbar-brand {
+    margin-right: 1rem;
+  }
+
+  .search-form {
+    margin: 0 1rem;
+    max-width: 400px;
+  }
+
+  .navbar-actions {
+    gap: 0.8rem;
+  }
+
+  .account-text,
+  .cart-text {
+    font-size: 0.9rem;
+  }
+
+  /* Category Navigation */
+  .category-nav .nav-link {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+
+  /* Shipping Page */
+  .policy-card {
+    padding: 2rem;
+  }
+
+  .partner-logos {
+    gap: 1.2rem;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 3rem 0 2rem;
+  }
+
+  .footer-brand {
+    font-size: 1.4rem;
+  }
+}
+
+/* Large devices (desktops, 993px to 1200px) */
+@media (min-width: 993px) and (max-width: 1200px) {
+  /* Search Form */
+  .search-form {
+    max-width: 450px;
+    margin: 0 1.5rem;
+  }
+
+  /* Category Navigation */
+  .category-nav .nav-link {
+    padding: 12px 18px;
+  }
+}
+
+/* Extra large devices (large desktops, 1201px and up) */
+@media (min-width: 1201px) {
+  .container {
+    max-width: 1320px;
+  }
+}
+
+/* ===== COMMON RESPONSIVE UTILITIES ===== */
+
+/* Hide elements on mobile */
+.mobile-hidden {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-hidden {
+    display: block;
+  }
+
+  .mobile-only {
+    display: none;
+  }
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive iframes and videos */
+iframe,
+video {
+  max-width: 100%;
+}
+
+/* Responsive tables */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive text */
+.text-responsive {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+/* Responsive spacing */
+@media (max-width: 768px) {
+  .responsive-padding {
+    padding: 1rem;
+  }
+
+  .responsive-margin {
+    margin: 1rem 0;
+  }
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .row {
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+
+  .col,
+  .col-1,
+  .col-10,
+  .col-11,
+  .col-12,
+  .col-2,
+  .col-3,
+  .col-4,
+  .col-5,
+  .col-6,
+  .col-7,
+  .col-8,
+  .col-9,
+  .col-auto,
+  .col-lg,
+  .col-lg-1,
+  .col-lg-10,
+  .col-lg-11,
+  .col-lg-12,
+  .col-lg-2,
+  .col-lg-3,
+  .col-lg-4,
+  .col-lg-5,
+  .col-lg-6,
+  .col-lg-7,
+  .col-lg-8,
+  .col-lg-9,
+  .col-lg-auto,
+  .col-md,
+  .col-md-1,
+  .col-md-10,
+  .col-md-11,
+  .col-md-12,
+  .col-md-2,
+  .col-md-3,
+  .col-md-4,
+  .col-md-5,
+  .col-md-6,
+  .col-md-7,
+  .col-md-8,
+  .col-md-9,
+  .col-md-auto,
+  .col-sm,
+  .col-sm-1,
+  .col-sm-10,
+  .col-sm-11,
+  .col-sm-12,
+  .col-sm-2,
+  .col-sm-3,
+  .col-sm-4,
+  .col-sm-5,
+  .col-sm-6,
+  .col-sm-7,
+  .col-sm-8,
+  .col-sm-9,
+  .col-sm-auto,
+  .col-xl,
+  .col-xl-1,
+  .col-xl-10,
+  .col-xl-11,
+  .col-xl-12,
+  .col-xl-2,
+  .col-xl-3,
+  .col-xl-4,
+  .col-xl-5,
+  .col-xl-6,
+  .col-xl-7,
+  .col-xl-8,
+  .col-xl-9,
+  .col-xl-auto {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+@media (hover: none) and (pointer: coarse) {
+  /* Improve touch targets */
+  .nav-action-btn,
+  .btn,
+  .dropdown-item,
+  .footer-links a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Remove hover effects on touch devices */
+  .policy-card:hover {
+    transform: none;
+  }
+
+  .nav-action-btn:hover {
+    background: transparent;
+  }
+
+  /* Improve dropdown usability */
+  .dropdown-menu {
+    border: 2px solid var(--border-color);
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .top-bar,
+  .main-navbar,
+  .category-nav,
+  .footer,
+  .back-to-top {
+    display: none !important;
+  }
+
+  .shipping-hero {
+    background: white !important;
+    color: black !important;
+    padding: 1rem 0 !important;
+  }
+
+  .policy-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+  }
+
+  .shipping-table {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --dark-color: #f8fafc;
+    --light-color: #1e293b;
+    --secondary-color: #cbd5e1;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .policy-card {
+    border: 2px solid #000;
+  }
+
+  .shipping-table th {
+    background: #000;
+    color: #fff;
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .policy-card:hover {
+    transform: none;
+  }
+}
+
+/* ===== LANDSCAPE ORIENTATION ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .shipping-hero {
+    padding: 1.5rem 0;
+  }
+
+  .policy-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .shipping-section {
+    padding: 2rem 0;
+  }
+}
+
+/* ===== FOLDABLE DEVICES ===== */
+@media (max-width: 350px) {
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+
+  .policy-card {
+    padding: 1rem;
+  }
+
+  .policy-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
+
+  .partner-logo {
+    width: 70px;
+    height: 45px;
+  }
+}
+
+/* ===== ACCESSIBILITY IMPROVEMENTS ===== */
+@media (max-width: 768px) {
+  /* Ensure readable font sizes */
+  body {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Improve touch targets */
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* ===== SPECIFIC COMPONENT FIXES ===== */
+
+/* Fix for dropdown menus on mobile */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .account-menu,
+  .language-dropdown {
+    position: static !important;
+    box-shadow: none !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* Fix for tables on very small screens */
+@media (max-width: 400px) {
+  .shipping-table {
+    font-size: 0.75rem;
+  }
+
+  .shipping-table th,
+  .shipping-table td {
+    padding: 0.4rem 0.2rem;
+  }
+}
+
+/* Fix for partner logos on small screens */
+@media (max-width: 400px) {
+  .partner-logos {
+    gap: 0.8rem;
+  }
+
+  .partner-logo {
+    width: 70px;
+    height: 45px;
+  }
+
+  .partner-logo i {
+    font-size: 1.5rem;
+  }
+
+  .partner-logo span {
+    font-size: 0.7rem;
+  }
+}

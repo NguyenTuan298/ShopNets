@@ -1,0 +1,154 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.topbar .actions span {
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  background: #f9fafb;
+  color: #111827;
+}
+
+.sidebar {
+  width: 240px;
+  background: #fff;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e5e7eb;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 15px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.logo-area img {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+}
+
+.logo-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.sidebar-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #111827;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.menu-item img {
+  width: 18px;
+  height: 18px;
+}
+
+.menu-item:hover,
+.menu-item.active {
+  background: #eef2ff;
+  color: #1d4ed8;
+}
+
+.menu-bottom {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 15px;
+  padding-top: 10px;
+}
+
+.main {
+  margin-left: 240px;
+  width: calc(100% - 240px);
+  padding: 20px 25px;
+}
+
+
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  margin-top: 40px;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.card-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 20px;
+  color: #000;
+}
+.stats .icon img {
+  width: 30px;    
+  height: 30px;
+  object-fit: contain; 
+}
