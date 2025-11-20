@@ -42,12 +42,15 @@ define('ROOT_PATH', __DIR__ . '/..');  // includes/.. → shopnets/
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-echo "<!-- DEBUG INFO --><br>";
-echo "DB_SERVER: " . DB_SERVER . "<br>";
-echo "DB_USERNAME: " . DB_USERNAME . "<br>";
-echo "DB_NAME: " . DB_NAME . "<br>";
-echo "Environment: " . (isLocalhost() ? 'LOCALHOST' : 'PRODUCTION') . "<br>";
-echo "<!-- END DEBUG --><br>";
+echo "<div style='background:#f0f0f0;padding:20px;margin:20px;border:2px solid #333;'>";
+echo "<h3>🔍 DEBUG THÔNG TIN KẾT NỐI DATABASE</h3>";
+echo "<strong>HTTP_HOST:</strong> " . $_SERVER['HTTP_HOST'] . "<br>";
+echo "<strong>Environment:</strong> " . (isLocalhost() ? '🏠 LOCALHOST' : '🌐 PRODUCTION') . "<br>";
+echo "<strong>DB_SERVER:</strong> " . DB_SERVER . "<br>";
+echo "<strong>DB_USERNAME:</strong> " . DB_USERNAME . "<br>";
+echo "<strong>DB_NAME:</strong> " . DB_NAME . "<br>";
+echo "<strong>DB_PASSWORD:</strong> " . (DB_PASSWORD ? '***có password***' : '***RỖNG***') . "<br>";
+echo "</div>";
 
 try {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
