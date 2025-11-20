@@ -6,7 +6,7 @@ define('LOCAL_DB_PASS', '');
 
 // Cấu hình cho InfinityFree hosting (production)
 define('PROD_DB_HOST', 'sql204.infinityfree.com');
-define('PROD_DB_NAME', 'if0_40419512_Shopnets');
+define('PROD_DB_NAME', 'if0_40419512_shopnets');  // ✅ Sửa thành chữ thường
 define('PROD_DB_USER', 'if0_40419512');
 define('PROD_DB_PASS', 'shopnets123'); // Thay đổi password này
 
