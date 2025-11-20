@@ -23,7 +23,7 @@ if (isLocalhost()) {
     define('BASE_URL', 'http://localhost/shopnets/user/');
 } else {
     // URL production của bạn trên InfinityFree
-    define('BASE_URL', 'https://shopnets.infinityfreeapp.com/user/');
+    define('BASE_URL', 'https://shopnets.infinityfree.me/user/');
 }
 
 // UPLOAD_DIR: Đường dẫn vật lý trên server (dùng cho PHP)

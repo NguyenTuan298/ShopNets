@@ -1,5 +1,10 @@
 <?php
+// PRODUCTION - TẮT ERROR DISPLAY
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+
 session_start();
+require_once 'config.php';  
 require_once 'user/includes/database.php';
 require_once 'user/includes/functions.php';
 
@@ -21,18 +26,16 @@ $posts = getLatestPosts($db);
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ShopNets - Mua sắm công nghệ cao cấp</title>
 
-  <!-- Bootstrap + Icons -->
+  <!-- Bootstrap + Icons - DÙNG CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-  <link href="user/assets/css/responsive.css" rel="stylesheet">
 </head>
 
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { font-size: 62.5%; line-height: 1.6rem; font-family: 'Inter', 'Roboto', sans-serif; }
-  body { background: #f1f5f9; color: #1e293b; padding-top: 136px; }
+  body { background: #f1f5f9; color: #1e293b; }
 
   :root {
     --primary: #2563eb; --primary-dark: #1d4ed8; --dark: #1e293b; --light: #f8fafc;
@@ -176,7 +179,7 @@ $posts = getLatestPosts($db);
 </style>
 
 <body>
-  <div class="app">
+  <div class="app header-spacing">
     <?php include 'user/includes/header.php'; ?>
 
     <!-- Modal Đăng nhập -->
