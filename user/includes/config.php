@@ -37,6 +37,18 @@ define('ROOT_PATH', __DIR__ . '/..');  // includes/.. → shopnets/
 // ========================
 // 🧩 Kết nối Database
 // ========================
+
+// Debug: Hiển thị thông tin kết nối
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+echo "<!-- DEBUG INFO --><br>";
+echo "DB_SERVER: " . DB_SERVER . "<br>";
+echo "DB_USERNAME: " . DB_USERNAME . "<br>";
+echo "DB_NAME: " . DB_NAME . "<br>";
+echo "Environment: " . (isLocalhost() ? 'LOCALHOST' : 'PRODUCTION') . "<br>";
+echo "<!-- END DEBUG --><br>";
+
 try {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
     
@@ -46,13 +58,15 @@ try {
     
     // Thiết lập charset
     mysqli_set_charset($conn, 'utf8mb4');
+    echo "✅ Kết nối database thành công!<br>";
+    
 } catch (Exception $e) {
-    // Hiển thị lỗi chi tiết trong development, ẩn trong production
-    if (isLocalhost()) {
-        die("Kết nối database thất bại: " . $e->getMessage() . "<br>Host: " . DB_SERVER . "<br>DB: " . DB_NAME);
-    } else {
-        error_log("Database connection error: " . $e->getMessage());
-        die("Lỗi kết nối database. Vui lòng liên hệ quản trị viên.");
-    }
+    // Luôn hiển thị lỗi chi tiết để debug
+    die("❌ Kết nối database thất bại:<br>" . 
+        "Error: " . $e->getMessage() . "<br>" .
+        "Host: " . DB_SERVER . "<br>" . 
+        "User: " . DB_USERNAME . "<br>" .
+        "DB: " . DB_NAME . "<br>" .
+        "Password: " . (DB_PASSWORD ? '***có***' : '***rỗng***'));
 }
 ?>
