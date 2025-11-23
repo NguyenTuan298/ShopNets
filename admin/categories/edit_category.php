@@ -71,20 +71,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (empty($errors)) {
                 try {
-                    $stmt = $pdo->prepare('UPDATE categories SET name = :name, description = :description WHERE id = :id');
-                    $stmt->execute([
-                        ':name' => $name,
-                        ':description' => $description,
-                        ':id' => $id
-                    ]);
+                    // Get current image
+                    $stmt = $pdo->prepare('SELECT image FROM categories WHERE id = :id LIMIT 1');
+                    $stmt->execute([':id' => $id]);
+                    $currentCategory = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $currentImage = $currentCategory['image'] ?? null;
                     
-                    if ($isAjax) {
-                        header('Content-Type: application/json');
-                        echo json_encode(['success' => true, 'message' => 'Category updated successfully']);
-                        exit;
-                    } else {
-                        header('Location: index.php?msg=' . urlencode('Category updated successfully'));
-                        exit;
+                    // Handle image upload
+                    $imagePath = $currentImage; // Keep current image by default
+                    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                        $uploadDir = __DIR__ . '/../assets/images/uploads/categories/';
+                        
+                        // Create directory if it doesn't exist
+                        if (!is_dir($uploadDir)) {
+                            mkdir($uploadDir, 0755, true);
+                        }
+                        
+                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        $fileType = $_FILES['image']['type'];
+                        
+                        if (!in_array($fileType, $allowedTypes)) {
+                            $errors[] = 'Invalid file type. Only JPG, PNG, GIF, and WebP are allowed.';
+                        } else {
+                            $fileExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                            $fileName = uniqid('cat_') . '.' . $fileExtension;
+                            $targetPath = $uploadDir . $fileName;
+                            
+                            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+                                // Delete old image if exists
+                                if ($currentImage && file_exists($uploadDir . $currentImage)) {
+                                    unlink($uploadDir . $currentImage);
+                                }
+                                $imagePath = $fileName;
+                            } else {
+                                $errors[] = 'Failed to upload image.';
+                            }
+                        }
+                    }
+                    
+                    if (empty($errors)) {
+                        $stmt = $pdo->prepare('UPDATE categories SET name = :name, description = :description, image = :image WHERE id = :id');
+                        $stmt->execute([
+                            ':name' => $name,
+                            ':description' => $description,
+                            ':image' => $imagePath,
+                            ':id' => $id
+                        ]);
+                        
+                        if ($isAjax) {
+                            header('Content-Type: application/json');
+                            echo json_encode(['success' => true, 'message' => 'Category updated successfully']);
+                            exit;
+                        } else {
+                            header('Location: index.php?msg=' . urlencode('Category updated successfully'));
+                            exit;
+                        }
                     }
                 } catch (Exception $e) {
                     $errors[] = 'DB error: ' . $e->getMessage();

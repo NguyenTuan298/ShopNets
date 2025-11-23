@@ -67,6 +67,17 @@ class CategoryManager {
                 }
             }
         });
+
+        // Image preview handlers
+        const categoryImage = document.getElementById('categoryImage');
+        if (categoryImage) {
+            categoryImage.addEventListener('change', (e) => this.handleImagePreview(e, 'previewImg', 'imagePreview'));
+        }
+
+        const editCategoryImage = document.getElementById('editCategoryImage');
+        if (editCategoryImage) {
+            editCategoryImage.addEventListener('change', (e) => this.handleImagePreview(e, 'editPreviewImg', 'editImagePreview'));
+        }
     }
 
     // Thêm thể loại Methods
@@ -93,6 +104,12 @@ class CategoryManager {
         this.addForm.reset();
         this.clearErrors('errorMessages');
         this.setLoading(this.addForm, false);
+        
+        // Reset image preview
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        if (imagePreview) imagePreview.style.display = 'none';
+        if (previewImg) previewImg.src = '';
     }
 
     async handleAddSubmit(e) {
@@ -180,6 +197,15 @@ class CategoryManager {
         document.getElementById('editCategoryName').value = categoryData.name || '';
         document.getElementById('editCategoryDescription').value = categoryData.description || '';
         this.clearErrors('editErrorMessages');
+        
+        // Handle image preview
+        const editPreviewImg = document.getElementById('editPreviewImg');
+        if (categoryData.image && editPreviewImg) {
+            editPreviewImg.src = '../assets/images/uploads/categories/' + categoryData.image;
+            editPreviewImg.style.display = 'block';
+        } else if (editPreviewImg) {
+            editPreviewImg.style.display = 'none';
+        }
     }
 
     async handleEditSubmit(e) {
@@ -413,6 +439,25 @@ class CategoryManager {
                 }, 300);
             }
         }, type === 'success' ? 3000 : 5000);
+    }
+
+    handleImagePreview(event, imgId, containerId) {
+        const file = event.target.files[0];
+        const previewImg = document.getElementById(imgId);
+        const container = document.getElementById(containerId);
+        
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                if (container) container.style.display = 'block';
+                if (previewImg) previewImg.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewImg.src = '';
+            if (container) container.style.display = 'none';
+        }
     }
 }
 

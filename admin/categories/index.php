@@ -68,6 +68,7 @@ include '../includes/sidebar.php';
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Hình Ảnh</th>
                 <th>Tên Danh Mục</th>
                 <th>Mô Tả</th>
                 <th>Số Sản Phẩm</th>
@@ -111,6 +112,7 @@ include '../includes/sidebar.php';
                   $id = $c['id'];
                   $name = $c['name'];
                   $description = $c['description'] ?? '';
+                  $image = $c['image'] ?? '';
 
                   try {
                     $countStmt = $pdo->prepare('SELECT COUNT(*) as count FROM products p JOIN categories c ON p.category_id = c.id WHERE c.name = :category_name');
@@ -122,6 +124,16 @@ include '../includes/sidebar.php';
 
                   echo "<tr>";
                   echo "<td>" . htmlspecialchars($id) . "</td>";
+                  
+                  // Display image
+                  echo "<td style=\"text-align: center;\">";
+                  if ($image) {
+                    echo "<img src=\"../assets/images/uploads/categories/" . htmlspecialchars($image) . "\" alt=\"" . htmlspecialchars($name) . "\" style=\"width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 2px solid #e0e0e0;\">";
+                  } else {
+                    echo "<span style=\"color: #999; font-size: 12px;\">Không có ảnh</span>";
+                  }
+                  echo "</td>";
+                  
                   echo "<td>" . htmlspecialchars($name) . "</td>";
                   echo "<td>" . htmlspecialchars($description) . "</td>";
                   echo "<td style=\"text-align: center;\">" . $productCount . "</td>";
@@ -141,7 +153,7 @@ include '../includes/sidebar.php';
                 if ($q !== '') {
                   $noResultsMessage = "Không tìm thấy danh mục cho từ khóa: " . htmlspecialchars($q);
                 }
-                echo "<tr><td colspan=\"5\" style=\"text-align:center;\">$noResultsMessage</td></tr>";
+                echo "<tr><td colspan=\"6\" style=\"text-align:center;\">$noResultsMessage</td></tr>";
               }
               ?>
             </tbody>
@@ -158,7 +170,7 @@ include '../includes/sidebar.php';
       <span class="close">&times;</span>
     </div>
     <div class="modal-body">
-      <form id="addCategoryForm">
+      <form id="addCategoryForm" enctype="multipart/form-data">
         <div class="form-group">
           <label for="categoryName">Tên Danh Mục <span class="required">*</span></label>
           <input type="text" id="categoryName" name="name" required>
@@ -166,6 +178,13 @@ include '../includes/sidebar.php';
         <div class="form-group">
           <label for="categoryDescription">Mô Tả</label>
           <textarea id="categoryDescription" name="description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="categoryImage">Hình Ảnh</label>
+          <input type="file" id="categoryImage" name="image" accept="image/*">
+          <div id="imagePreview" style="margin-top: 10px; display: none;">
+            <img id="previewImg" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid #e0e0e0;">
+          </div>
         </div>
         <div class="error-messages" id="errorMessages"></div>
         <div class="form-actions">
@@ -190,7 +209,7 @@ include '../includes/sidebar.php';
       <span class="close" id="editModalClose">&times;</span>
     </div>
     <div class="modal-body">
-      <form id="editCategoryForm">
+      <form id="editCategoryForm" enctype="multipart/form-data">
         <input type="hidden" id="editCategoryId" name="id">
         <div class="form-group">
           <label for="editCategoryName">Tên Danh Mục <span class="required">*</span></label>
@@ -199,6 +218,13 @@ include '../includes/sidebar.php';
         <div class="form-group">
           <label for="editCategoryDescription">Mô Tả</label>
           <textarea id="editCategoryDescription" name="description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="editCategoryImage">Hình Ảnh</label>
+          <input type="file" id="editCategoryImage" name="image" accept="image/*">
+          <div id="editImagePreview" style="margin-top: 10px;">
+            <img id="editPreviewImg" src="" alt="Current Image" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid #e0e0e0; display: none;">
+          </div>
         </div>
         <div class="error-messages" id="editErrorMessages"></div>
         <div class="form-actions">

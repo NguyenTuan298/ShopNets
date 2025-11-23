@@ -262,6 +262,155 @@ $posts = getLatestPosts($db);
       <section class="section">
         <h2 class="section__title">Sản Phẩm Mới</h2>
         <div class="grid__row">
+              <span class="carousel__dot" onclick="currentSlide(1)"></span>
+              <span class="carousel__dot" onclick="currentSlide(2)"></span>
+            </div>
+          </div>
+        </div>
+        <div class="banner__right">
+          <div class="banner__static">
+            <a href="#"><img src="user/assets/images/banners/uu_dai.png" alt="Ưu đãi"></a>
+          </div>
+          <div class="banner__static">
+            <a href="#"><img src="user/assets/images/banners/giam_gia.png" alt="Miễn phí ship"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- DANH MỤC -->
+      <div class="category">
+        <h1 class="category__title">Danh mục</h1>
+        <div class="category__list">
+          <?php 
+          $cats = [
+            ['phone', 'dienthoai.jpg', 'Điện thoại'],
+            ['laptop', 'laptop.jpg', 'Laptop'],
+            ['tablet', 'tablet.jpg', 'Tablet'],
+            ['accessories', 'phu-kien.jpg', 'Phụ kiện'],
+            ['watch', 'dong-ho.jpg', 'Đồng hồ'],
+            ['pc', 'pc.jpg', 'PC'],
+          ];
+          foreach ($cats as $c): ?>
+            <a href="user/pages/main/products.php?category=<?= $c[0] ?>" class="category__item">
+              <img src="user/assets/images/main/<?= $c[1] ?>" alt="<?= $c[2] ?>" class="category__img">
+              <?= $c[2] ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      </div>
+
+      <!-- PROMO -->
+      <div class="promo-banner">
+        <div class="marquee-container">
+            <a href="#"><img src="user/assets/images/banners/giam_gia.png" alt="Miễn phí ship"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- DANH MỤC -->
+      <div class="category">
+        <h1 class="category__title">Danh mục</h1>
+        <div class="category__list">
+          <?php 
+          $cats = [
+            ['phone', 'dienthoai.jpg', 'Điện thoại'],
+            ['laptop', 'laptop.jpg', 'Laptop'],
+            ['tablet', 'tablet.jpg', 'Tablet'],
+            ['accessories', 'phu-kien.jpg', 'Phụ kiện'],
+            ['watch', 'dong-ho.jpg', 'Đồng hồ'],
+            ['pc', 'pc.jpg', 'PC'],
+          ];
+          foreach ($cats as $c): ?>
+            <a href="user/pages/main/products.php?category=<?= $c[0] ?>" class="category__item">
+              <img src="user/assets/images/main/<?= $c[1] ?>" alt="<?= $c[2] ?>" class="category__img">
+              <?= $c[2] ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      </div>
+
+      <!-- PROMO -->
+      <div class="promo-banner">
+        <div class="marquee-container">
+          <div class="marquee-content">
+            <div class="promo-card bg-warning text-dark">Giảm đến 50% Laptop Gaming</div>
+            <div class="promo-card bg-danger text-white">Miễn phí ship từ 2 triệu</div>
+            <div class="promo-card bg-success text-white">Bảo hành 24 tháng</div>
+            <div class="promo-card bg-primary text-white">Trả góp 0%</div>
+            <div class="promo-card bg-info text-white">Ưu đãi sinh viên</div>
+            <div class="promo-card bg-warning text-dark">Giảm đến 50% Laptop Gaming</div>
+            <div class="promo-card bg-danger text-white">Miễn phí ship từ 2 triệu</div>
+            <div class="promo-card bg-success text-white">Bảo hành 24 tháng</div>
+            <div class="promo-card bg-primary text-white">Trả góp 0%</div>
+            <div class="promo-card bg-info text-white">Ưu đãi sinh viên</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SẢN PHẨM MỚI -->
+      <section class="section">
+        <h2 class="section__title">Sản Phẩm Mới</h2>
+        <div class="grid__row">
+              <span class="carousel__dot active" onclick="currentSlide(0)"></span>
+              <span class="carousel__dot" onclick="currentSlide(1)"></span>
+              <span class="carousel__dot" onclick="currentSlide(2)"></span>
+            </div>
+          </div>
+        </div>
+        <div class="banner__right">
+          <div class="banner__static">
+            <a href="#"><img src="user/assets/images/banners/uu_dai.png" alt="Ưu đãi"></a>
+          </div>
+          <div class="banner__static">
+            <a href="#"><img src="user/assets/images/banners/giam_gia.png" alt="Miễn phí ship"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- DANH MỤC -->
+      <div class="category">
+        <h1 class="category__title">Danh mục</h1>
+        <div class="category__list">
+          <?php 
+          $cats = [
+            ['phone', 'dienthoai.jpg', 'Điện thoại'],
+            ['laptop', 'laptop.jpg', 'Laptop'],
+            ['tablet', 'tablet.jpg', 'Tablet'],
+            ['accessories', 'phu-kien.jpg', 'Phụ kiện'],
+            ['watch', 'dong-ho.jpg', 'Đồng hồ'],
+            ['pc', 'pc.jpg', 'PC'],
+          ];
+          foreach ($cats as $c): ?>
+            <a href="user/pages/main/products.php?category=<?= $c[0] ?>" class="category__item">
+              <img src="user/assets/images/main/<?= $c[1] ?>" alt="<?= $c[2] ?>" class="category__img">
+              <?= $c[2] ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      </div>
+
+      <!-- PROMO -->
+      <div class="promo-banner">
+        <div class="marquee-container">
+          <div class="marquee-content">
+            <div class="promo-card bg-warning text-dark">Giảm đến 50% Laptop Gaming</div>
+            <div class="promo-card bg-danger text-white">Miễn phí ship từ 2 triệu</div>
+            <div class="promo-card bg-success text-white">Bảo hành 24 tháng</div>
+            <div class="promo-card bg-primary text-white">Trả góp 0%</div>
+            <div class="promo-card bg-info text-white">Ưu đãi sinh viên</div>
+            <div class="promo-card bg-warning text-dark">Giảm đến 50% Laptop Gaming</div>
+            <div class="promo-card bg-danger text-white">Miễn phí ship từ 2 triệu</div>
+            <div class="promo-card bg-success text-white">Bảo hành 24 tháng</div>
+            <div class="promo-card bg-primary text-white">Trả góp 0%</div>
+            <div class="promo-card bg-info text-white">Ưu đãi sinh viên</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SẢN PHẨM MỚI -->
+      <section class="section">
+        <h2 class="section__title">Sản Phẩm Mới</h2>
+        <div class="grid__row">
           <?php foreach ($new_products as $product): 
             $price = $product['price'] ?? 0;
             $img_src = getProductImage($product['image'], 'index');

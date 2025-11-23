@@ -26,12 +26,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // Handle image upload
+    $imagePath = null;
+    if (empty($errors) && isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = __DIR__ . '/../assets/images/uploads/categories/';
+        
+        // Create directory if it doesn't exist
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+        
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $fileType = $_FILES['image']['type'];
+        
+        if (!in_array($fileType, $allowedTypes)) {
+            $errors[] = 'Invalid file type. Only JPG, PNG, GIF, and WebP are allowed.';
+        } else {
+            $fileExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $fileName = uniqid('cat_') . '.' . $fileExtension;
+            $targetPath = $uploadDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+                $imagePath = $fileName;
+            } else {
+                $errors[] = 'Failed to upload image.';
+            }
+        }
+    }
+
     if (empty($errors)) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO categories (name, description) VALUES (:name, :description)");
+            $stmt = $pdo->prepare("INSERT INTO categories (name, description, image) VALUES (:name, :description, :image)");
             $stmt->execute([
                 ':name' => $name,
-                ':description' => $description
+                ':description' => $description,
+                ':image' => $imagePath
             ]);
             
             if ($isAjax) {
@@ -43,6 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
         } catch (Exception $e) {
+            // Delete uploaded image if database insert fails
+            if ($imagePath && file_exists($uploadDir . $imagePath)) {
+                unlink($uploadDir . $imagePath);
+            }
             $errors[] = 'DB error: ' . $e->getMessage();
         }
     }
