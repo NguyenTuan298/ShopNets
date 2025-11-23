@@ -72,15 +72,52 @@ $posts = getLatestPosts($db);
   .banner__static img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
   .banner__static:hover img { transform: scale(1.05); }
 
-  /* DANH MỤC */
+  /* DANH MỤC - CAROUSEL STYLE */
   .category { background: white; padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 32px; }
   .category__title { font-size: 1.8rem; font-weight: 600; text-align: center; margin-bottom: 20px; color: var(--dark); position: relative; }
   .category__title::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: var(--primary); border-radius: 2px; }
-  .category__list { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
-  .category__item { width: calc(10% - 16px); text-align: center; text-decoration: none; color: var(--dark); font-weight: 500; font-size: 1.35rem; padding: 12px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); transition: var(--transition); background: #fff; }
+  
+  .category-wrapper { position: relative; padding: 0 40px; }
+  .category__list { 
+      display: flex; 
+      gap: 16px; 
+      overflow-x: hidden; 
+      scroll-behavior: smooth; 
+      justify-content: flex-start;
+      padding: 4px 0; /* Avoid shadow clipping */
+  }
+  .category__item { 
+      flex: 0 0 calc(16.66% - 14px); /* 6 items per row */
+      width: calc(16.66% - 14px);
+      min-width: calc(16.66% - 14px);
+      text-align: center; text-decoration: none; color: var(--dark); font-weight: 500; font-size: 1.35rem; padding: 12px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); transition: var(--transition); background: #fff; 
+  }
   .category__item:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--primary); color: var(--primary); }
   .category__img { width: 100%; height: 60px; object-fit: contain; margin-bottom: 8px; border-radius: 6px; transition: transform 0.3s ease; }
   .category__item:hover .category__img { transform: scale(1.1); }
+
+  .cat-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: white;
+      border: 1px solid #eee;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      color: #333;
+      transition: all 0.3s;
+      font-size: 1.4rem;
+  }
+  .cat-nav-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+  .cat-prev { left: 0; }
+  .cat-next { right: 0; }
 
   /* PROMO */
   .promo-banner { background: white; padding: 16px 0; overflow: hidden; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 32px; }
@@ -173,9 +210,26 @@ $posts = getLatestPosts($db);
   }
 
   /* RESPONSIVE */
-  @media (max-width: 992px) { .col-3, .col-4 { flex: 0 0 50%; max-width: 50%; } .category__item { width: calc(20% - 16px); font-size: 1.3rem; } .banner { height: 220px; } }
-  @media (max-width: 768px) { body { padding-top: 180px; } .col-3, .col-4, .col-6 { flex: 0 0 100%; max-width: 100%; } .category__item { width: calc(33.33% - 16px); } .banner { flex-direction: column; height: auto; } .banner__right { flex-direction: row; height: 120px; } .banner__static { height: 100%; } .product-image { height: 180px; } .back-to-top { bottom: 20px; right: 20px; width: 45px; height: 45px; font-size: 1.4rem; } }
-  @media (max-width: 576px) { .category__item { width: calc(50% - 16px); } .promo-card { font-size: 1.25rem; padding: 8px 16px; } .back-to-top { bottom: 15px; right: 15px; width: 40px; height: 40px; font-size: 1.2rem; } }
+  @media (max-width: 992px) { 
+    .col-3, .col-4 { flex: 0 0 50%; max-width: 50%; } 
+    .category__item { flex: 0 0 calc(25% - 16px); width: calc(25% - 16px); font-size: 1.3rem; } 
+    .banner { height: 220px; } 
+  }
+  @media (max-width: 768px) { 
+    body { padding-top: 180px; } 
+    .col-3, .col-4, .col-6 { flex: 0 0 100%; max-width: 100%; } 
+    .category__item { flex: 0 0 calc(33.33% - 16px); width: calc(33.33% - 16px); } 
+    .banner { flex-direction: column; height: auto; } 
+    .banner__right { flex-direction: row; height: 120px; } 
+    .banner__static { height: 100%; } 
+    .product-image { height: 180px; } 
+    .back-to-top { bottom: 20px; right: 20px; width: 45px; height: 45px; font-size: 1.4rem; } 
+  }
+  @media (max-width: 576px) { 
+    .category__item { flex: 0 0 calc(50% - 16px); width: calc(50% - 16px); } 
+    .promo-card { font-size: 1.25rem; padding: 8px 16px; } 
+    .back-to-top { bottom: 15px; right: 15px; width: 40px; height: 40px; font-size: 1.2rem; } 
+  }
 </style>
 
 <body>
@@ -218,174 +272,32 @@ $posts = getLatestPosts($db);
         </div>
       </div>
 
-      <!-- DANH MỤC -->
+      <!-- DANH MỤC (CAROUSEL) -->
       <div class="category">
         <h1 class="category__title">Danh mục</h1>
-        <div class="category__list">
-          <?php 
-          $cats = [
-            ['phone', 'dienthoai.jpg', 'Điện thoại'],
-            ['laptop', 'laptop.jpg', 'Laptop'],
-            ['tablet', 'tablet.jpg', 'Tablet'],
-            ['accessories', 'phu-kien.jpg', 'Phụ kiện'],
-            ['watch', 'dong-ho.jpg', 'Đồng hồ'],
-            ['pc', 'pc.jpg', 'PC'],
-          ];
-          foreach ($cats as $c): ?>
-            <a href="user/pages/main/products.php?category=<?= $c[0] ?>" class="category__item">
-              <img src="user/assets/images/main/<?= $c[1] ?>" alt="<?= $c[2] ?>" class="category__img">
-              <?= $c[2] ?>
-            </a>
-          <?php endforeach; ?>
-        </div>
-      </div>
-
-      <!-- PROMO -->
-      <div class="promo-banner">
-        <div class="marquee-container">
-          <div class="marquee-content">
-            <div class="promo-card bg-warning text-dark">Giảm đến 50% Laptop Gaming</div>
-            <div class="promo-card bg-danger text-white">Miễn phí ship từ 2 triệu</div>
-            <div class="promo-card bg-success text-white">Bảo hành 24 tháng</div>
-            <div class="promo-card bg-primary text-white">Trả góp 0%</div>
-            <div class="promo-card bg-info text-white">Ưu đãi sinh viên</div>
-            <div class="promo-card bg-warning text-dark">Giảm đến 50% Laptop Gaming</div>
-            <div class="promo-card bg-danger text-white">Miễn phí ship từ 2 triệu</div>
-            <div class="promo-card bg-success text-white">Bảo hành 24 tháng</div>
-            <div class="promo-card bg-primary text-white">Trả góp 0%</div>
-            <div class="promo-card bg-info text-white">Ưu đãi sinh viên</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SẢN PHẨM MỚI -->
-      <section class="section">
-        <h2 class="section__title">Sản Phẩm Mới</h2>
-        <div class="grid__row">
-              <span class="carousel__dot" onclick="currentSlide(1)"></span>
-              <span class="carousel__dot" onclick="currentSlide(2)"></span>
+        <div class="category-wrapper">
+            <button class="cat-nav-btn cat-prev" id="catPrev"><i class="bi bi-chevron-left"></i></button>
+            <div class="category__list" id="categoryList">
+              <?php 
+              if (!empty($categories)):
+                foreach ($categories as $c): 
+                  $catName = htmlspecialchars($c['name']);
+                  $catImage = !empty($c['image']) 
+                    ? 'admin/assets/images/uploads/categories/' . htmlspecialchars($c['image']) 
+                    : 'https://via.placeholder.com/100x100/e2e8f0/94a3b8?text=' . substr($catName, 0, 1);
+              ?>
+                <a href="user/pages/main/products.php?category=<?= urlencode($c['name']) ?>" class="category__item">
+                  <img src="<?= $catImage ?>" alt="<?= $catName ?>" class="category__img">
+                  <?= $catName ?>
+                </a>
+              <?php 
+                endforeach;
+              else:
+                echo '<p class="text-center text-muted w-100">Chưa có danh mục nào.</p>';
+              endif; 
+              ?>
             </div>
-          </div>
-        </div>
-        <div class="banner__right">
-          <div class="banner__static">
-            <a href="#"><img src="user/assets/images/banners/uu_dai.png" alt="Ưu đãi"></a>
-          </div>
-          <div class="banner__static">
-            <a href="#"><img src="user/assets/images/banners/giam_gia.png" alt="Miễn phí ship"></a>
-          </div>
-        </div>
-      </div>
-
-      <!-- DANH MỤC -->
-      <div class="category">
-        <h1 class="category__title">Danh mục</h1>
-        <div class="category__list">
-          <?php 
-          $cats = [
-            ['phone', 'dienthoai.jpg', 'Điện thoại'],
-            ['laptop', 'laptop.jpg', 'Laptop'],
-            ['tablet', 'tablet.jpg', 'Tablet'],
-            ['accessories', 'phu-kien.jpg', 'Phụ kiện'],
-            ['watch', 'dong-ho.jpg', 'Đồng hồ'],
-            ['pc', 'pc.jpg', 'PC'],
-          ];
-          foreach ($cats as $c): ?>
-            <a href="user/pages/main/products.php?category=<?= $c[0] ?>" class="category__item">
-              <img src="user/assets/images/main/<?= $c[1] ?>" alt="<?= $c[2] ?>" class="category__img">
-              <?= $c[2] ?>
-            </a>
-          <?php endforeach; ?>
-        </div>
-      </div>
-
-      <!-- PROMO -->
-      <div class="promo-banner">
-        <div class="marquee-container">
-            <a href="#"><img src="user/assets/images/banners/giam_gia.png" alt="Miễn phí ship"></a>
-          </div>
-        </div>
-      </div>
-
-      <!-- DANH MỤC -->
-      <div class="category">
-        <h1 class="category__title">Danh mục</h1>
-        <div class="category__list">
-          <?php 
-          $cats = [
-            ['phone', 'dienthoai.jpg', 'Điện thoại'],
-            ['laptop', 'laptop.jpg', 'Laptop'],
-            ['tablet', 'tablet.jpg', 'Tablet'],
-            ['accessories', 'phu-kien.jpg', 'Phụ kiện'],
-            ['watch', 'dong-ho.jpg', 'Đồng hồ'],
-            ['pc', 'pc.jpg', 'PC'],
-          ];
-          foreach ($cats as $c): ?>
-            <a href="user/pages/main/products.php?category=<?= $c[0] ?>" class="category__item">
-              <img src="user/assets/images/main/<?= $c[1] ?>" alt="<?= $c[2] ?>" class="category__img">
-              <?= $c[2] ?>
-            </a>
-          <?php endforeach; ?>
-        </div>
-      </div>
-
-      <!-- PROMO -->
-      <div class="promo-banner">
-        <div class="marquee-container">
-          <div class="marquee-content">
-            <div class="promo-card bg-warning text-dark">Giảm đến 50% Laptop Gaming</div>
-            <div class="promo-card bg-danger text-white">Miễn phí ship từ 2 triệu</div>
-            <div class="promo-card bg-success text-white">Bảo hành 24 tháng</div>
-            <div class="promo-card bg-primary text-white">Trả góp 0%</div>
-            <div class="promo-card bg-info text-white">Ưu đãi sinh viên</div>
-            <div class="promo-card bg-warning text-dark">Giảm đến 50% Laptop Gaming</div>
-            <div class="promo-card bg-danger text-white">Miễn phí ship từ 2 triệu</div>
-            <div class="promo-card bg-success text-white">Bảo hành 24 tháng</div>
-            <div class="promo-card bg-primary text-white">Trả góp 0%</div>
-            <div class="promo-card bg-info text-white">Ưu đãi sinh viên</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SẢN PHẨM MỚI -->
-      <section class="section">
-        <h2 class="section__title">Sản Phẩm Mới</h2>
-        <div class="grid__row">
-              <span class="carousel__dot active" onclick="currentSlide(0)"></span>
-              <span class="carousel__dot" onclick="currentSlide(1)"></span>
-              <span class="carousel__dot" onclick="currentSlide(2)"></span>
-            </div>
-          </div>
-        </div>
-        <div class="banner__right">
-          <div class="banner__static">
-            <a href="#"><img src="user/assets/images/banners/uu_dai.png" alt="Ưu đãi"></a>
-          </div>
-          <div class="banner__static">
-            <a href="#"><img src="user/assets/images/banners/giam_gia.png" alt="Miễn phí ship"></a>
-          </div>
-        </div>
-      </div>
-
-      <!-- DANH MỤC -->
-      <div class="category">
-        <h1 class="category__title">Danh mục</h1>
-        <div class="category__list">
-          <?php 
-          $cats = [
-            ['phone', 'dienthoai.jpg', 'Điện thoại'],
-            ['laptop', 'laptop.jpg', 'Laptop'],
-            ['tablet', 'tablet.jpg', 'Tablet'],
-            ['accessories', 'phu-kien.jpg', 'Phụ kiện'],
-            ['watch', 'dong-ho.jpg', 'Đồng hồ'],
-            ['pc', 'pc.jpg', 'PC'],
-          ];
-          foreach ($cats as $c): ?>
-            <a href="user/pages/main/products.php?category=<?= $c[0] ?>" class="category__item">
-              <img src="user/assets/images/main/<?= $c[1] ?>" alt="<?= $c[2] ?>" class="category__img">
-              <?= $c[2] ?>
-            </a>
-          <?php endforeach; ?>
+            <button class="cat-nav-btn cat-next" id="catNext"><i class="bi bi-chevron-right"></i></button>
         </div>
       </div>
 
@@ -550,6 +462,20 @@ $posts = getLatestPosts($db);
     function resetAuto() { clearInterval(autoSlide); autoPlay(); }
 
     showSlide(0); autoPlay();
+
+    // CATEGORY CAROUSEL LOGIC
+    const catList = document.getElementById('categoryList');
+    const catPrev = document.getElementById('catPrev');
+    const catNext = document.getElementById('catNext');
+    
+    if(catList) {
+        catNext.addEventListener('click', () => {
+            catList.scrollBy({ left: catList.clientWidth, behavior: 'smooth' });
+        });
+        catPrev.addEventListener('click', () => {
+            catList.scrollBy({ left: -catList.clientWidth, behavior: 'smooth' });
+        });
+    }
 
     // XỬ LÝ NÚT MUA / THÊM GIỎ
     $(document).on('click', '.action-btn', function(e) {
