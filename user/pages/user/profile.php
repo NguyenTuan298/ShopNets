@@ -17,17 +17,18 @@ $update_error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_profile'])) {
-        $username = trim($_POST['username'] ?? '');
+        $full_name = trim($_POST['full_name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
+        $address = trim($_POST['address'] ?? '');
         
-        if (empty($username) || empty($email)) {
+        if (empty($full_name) || empty($email)) {
             $update_error = 'Vui lòng điền đầy đủ thông tin bắt buộc.';
         } else {
             if (isEmailExists($db, $email, $user_id)) {
                 $update_error = 'Email này đã được sử dụng.';
             } else {
-                updateUserProfile($db, $user_id, $username, $email, $phone);
+                updateUserProfile($db, $user_id, $full_name, $email, $phone, $address);
                 $_SESSION['full_name'] = $full_name;
                 $_SESSION['email'] = $email;
                 $update_success = true;

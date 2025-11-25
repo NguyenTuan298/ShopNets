@@ -1,4 +1,10 @@
 <?php 
+session_start();
+// Set admin session for testing (remove in production)
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = 1;
+    $_SESSION['role'] = 'admin';
+}
 $pageTitle = 'Order Details - ShopNets';
 $currentPage = 'orders';
 $baseUrl = '../';
@@ -38,21 +44,21 @@ function getStatusBadgeClass($status) {
 
 function getStatusText($status) {
     $texts = [
-        'pending' => 'Pending',
-        'confirmed' => 'Confirmed',
-        'processing' => 'Processing',
-        'shipped' => 'Shipped',
-        'delivered' => 'Delivered',
-        'cancelled' => 'Cancelled'
+        'pending' => 'Chờ Duyệt',
+        'confirmed' => 'Đã Xác Nhận',
+        'processing' => 'Đang Xử Lý',
+        'shipped' => 'Đã Giao',
+        'delivered' => 'Hoàn Thành',
+        'cancelled' => 'Đã Hủy'
     ];
-    return $texts[$status] ?? 'Unknown';
+    return $texts[$status] ?? 'Không Xác Định';
 }
 
 function getPaymentMethodText($method) {
     $methods = [
-        'cod' => 'Cash on Delivery',
-        'bank_transfer' => 'Bank Transfer',
-        'momo' => 'MoMo Wallet',
+        'cod' => 'Thanh Toán Khi Nhận Hàng',
+        'bank_transfer' => 'Chuyển Khoản Ngân Hàng',
+        'momo' => 'Ví MoMo',
         'vnpay' => 'VNPay'
     ];
     return $methods[$method] ?? $method;
@@ -60,10 +66,10 @@ function getPaymentMethodText($method) {
 
 function getPaymentStatusText($status) {
     $statuses = [
-        'pending' => 'Pending Payment',
-        'paid' => 'Paid',
-        'failed' => 'Payment Failed',
-        'refunded' => 'Refunded'
+        'pending' => 'Chờ Thanh Toán',
+        'paid' => 'Đã Thanh Toán',
+        'failed' => 'Thanh Toán Thất Bại',
+        'refunded' => 'Đã Hoàn Tiền'
     ];
     return $statuses[$status] ?? $status;
 }
@@ -74,46 +80,46 @@ function getPaymentStatusText($status) {
     <div class="content-header">
         <div class="order-header-actions">
             <a href="index.php" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Back to All Orders
+                <i class="fas fa-arrow-left"></i> Quay Lại Danh Sách
             </a>
             <div class="order-title">
-                <h1>Order #<?= htmlspecialchars($order['order_number']) ?></h1>
-                <span class="order-date">Placed on <?= date('M d, Y \a\t H:i', strtotime($order['created_at'])) ?></span>
+                <h1>Đơn Hàng #<?= htmlspecialchars($order['order_number']) ?></h1>
+                <span class="order-date">Đặt lúc <?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></span>
             </div>
         </div>
         <div class="order-actions">
             <?php if (in_array($order['order_status'], ['pending', 'confirmed'])): ?>
                 <button class="btn btn-danger" onclick="cancelOrder(<?= $order['id'] ?>)">
-                    <i class="fas fa-times"></i> Cancel Order
+                    <i class="fas fa-times"></i> Hủy Đơn
                 </button>
             <?php endif; ?>
             
             <?php if ($order['order_status'] === 'pending'): ?>
                 <button class="btn btn-success" onclick="confirmOrder(<?= $order['id'] ?>)">
-                    <i class="fas fa-check"></i> Confirm Order
+                    <i class="fas fa-check"></i> Xác Nhận Đơn
                 </button>
             <?php endif; ?>
             
             <?php if ($order['order_status'] === 'confirmed'): ?>
                 <button class="btn btn-primary" onclick="processOrder(<?= $order['id'] ?>)">
-                    <i class="fas fa-cogs"></i> Start Processing
+                    <i class="fas fa-cogs"></i> Bắt Đầu Xử Lý
                 </button>
             <?php endif; ?>
             
             <?php if ($order['order_status'] === 'processing'): ?>
                 <button class="btn btn-info" onclick="shipOrder(<?= $order['id'] ?>)">
-                    <i class="fas fa-truck"></i> Ship Order
+                    <i class="fas fa-truck"></i> Giao Hàng
                 </button>
             <?php endif; ?>
             
             <?php if ($order['order_status'] === 'shipped'): ?>
                 <button class="btn btn-success" onclick="deliverOrder(<?= $order['id'] ?>)">
-                    <i class="fas fa-check-circle"></i> Mark Delivered
+                    <i class="fas fa-check-circle"></i> Đã Giao Hàng
                 </button>
             <?php endif; ?>
             
             <button class="btn btn-secondary" onclick="printOrder()">
-                <i class="fas fa-print"></i> Print Order
+                <i class="fas fa-print"></i> In Đơn Hàng
             </button>
         </div>
     </div>
@@ -122,37 +128,37 @@ function getPaymentStatusText($status) {
         <!-- Order Summary -->
         <div class="order-summary-card">
             <div class="card-header">
-                <h3>Order Information</h3>
+                <h3>Thông Tin Đơn Hàng</h3>
                 <span class="orders-badge <?= getStatusBadgeClass($order['order_status']) ?>">
                     <?= getStatusText($order['order_status']) ?>
                 </span>
             </div>
             <div class="order-summary-grid">
                 <div class="summary-item">
-                    <label>Order Number:</label>
+                    <label>Số Đơn Hàng:</label>
                     <span><?= htmlspecialchars($order['order_number']) ?></span>
                 </div>
                 <div class="summary-item">
-                    <label>Order Date:</label>
+                    <label>Ngày Đặt:</label>
                     <span><?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></span>
                 </div>
                 <div class="summary-item">
-                    <label>Payment Method:</label>
+                    <label>Phương Thức Thanh Toán:</label>
                     <span><?= getPaymentMethodText($order['payment_method']) ?></span>
                 </div>
                 <div class="summary-item">
-                    <label>Payment Status:</label>
+                    <label>Trạng Thái Thanh Toán:</label>
                     <span class="payment-status payment-<?= $order['payment_status'] ?>">
                         <?= getPaymentStatusText($order['payment_status']) ?>
                     </span>
                 </div>
                 <div class="summary-item">
-                    <label>Shipping Method:</label>
-                    <span><?= htmlspecialchars($order['shipping_method'] ?? 'Not specified') ?></span>
+                    <label>Phương Thức Vận Chuyển:</label>
+                    <span><?= htmlspecialchars($order['shipping_method'] ?? 'Chưa xác định') ?></span>
                 </div>
                 <?php if ($order['tracking_number']): ?>
                 <div class="summary-item">
-                    <label>Tracking Number:</label>
+                    <label>Mã Vận Đơn:</label>
                     <span><?= htmlspecialchars($order['tracking_number']) ?></span>
                 </div>
                 <?php endif; ?>
@@ -162,13 +168,13 @@ function getPaymentStatusText($status) {
         <!-- Customer Information -->
         <div class="customer-info-card">
             <div class="card-header">
-                <h3>Customer Information</h3>
+                <h3>Thông Tin Khách Hàng</h3>
             </div>
             <div class="customer-info-grid">
                 <div class="info-section">
-                    <h4>Contact Information</h4>
+                    <h4>Thông Tin Liên Hệ</h4>
                     <div class="info-item">
-                        <label>Full Name:</label>
+                        <label>Họ Tên:</label>
                         <span><?= htmlspecialchars($order['customer_name']) ?></span>
                     </div>
                     <div class="info-item">
@@ -176,12 +182,12 @@ function getPaymentStatusText($status) {
                         <span><?= htmlspecialchars($order['customer_email']) ?></span>
                     </div>
                     <div class="info-item">
-                        <label>Phone Number:</label>
-                        <span><?= htmlspecialchars($order['customer_phone'] ?? 'Not provided') ?></span>
+                        <label>Số Điện Thoại:</label>
+                        <span><?= htmlspecialchars($order['customer_phone'] ?? 'Chưa cung cấp') ?></span>
                     </div>
                 </div>
                 <div class="info-section">
-                    <h4>Shipping Address</h4>
+                    <h4>Địa Chỉ Giao Hàng</h4>
                     <div class="address">
                         <?= nl2br(htmlspecialchars($order['shipping_address'])) ?>
                     </div>
@@ -189,7 +195,7 @@ function getPaymentStatusText($status) {
             </div>
             <?php if ($order['notes']): ?>
             <div class="order-notes">
-                <h4>Order Notes:</h4>
+                <h4>Ghi Chú Đơn Hàng:</h4>
                 <p><?= nl2br(htmlspecialchars($order['notes'])) ?></p>
             </div>
             <?php endif; ?>
@@ -198,16 +204,16 @@ function getPaymentStatusText($status) {
         <!-- Order Items -->
         <div class="order-items-card">
             <div class="card-header">
-                <h3>Order Items</h3>
+                <h3>Sản Phẩm Trong Đơn</h3>
             </div>
             <div class="order-items-table">
                 <table>
                     <thead>
                         <tr>
-                            <th>Product</th>
-                            <th>Unit Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
+                            <th>Sản Phẩm</th>
+                            <th>Đơn Giá</th>
+                            <th>Số Lượng</th>
+                            <th>Thành Tiền</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -242,27 +248,27 @@ function getPaymentStatusText($status) {
             <!-- Order Totals -->
             <div class="order-totals">
                 <div class="totals-row">
-                    <label>Subtotal:</label>
+                    <label>Tạm Tính:</label>
                     <span><?= number_format($order['subtotal'], 0, ',', '.') ?> ₫</span>
                 </div>
                 <?php if ($order['discount_amount'] > 0): ?>
                 <div class="totals-row discount">
-                    <label>Discount:</label>
+                    <label>Giảm Giá:</label>
                     <span>-<?= number_format($order['discount_amount'], 0, ',', '.') ?> ₫</span>
                 </div>
                 <?php endif; ?>
                 <div class="totals-row">
-                    <label>Shipping Fee:</label>
+                    <label>Phí Vận Chuyển:</label>
                     <span><?= number_format($order['shipping_fee'], 0, ',', '.') ?> ₫</span>
                 </div>
                 <?php if ($order['tax_amount'] > 0): ?>
                 <div class="totals-row">
-                    <label>Tax:</label>
+                    <label>Thuế:</label>
                     <span><?= number_format($order['tax_amount'], 0, ',', '.') ?> ₫</span>
                 </div>
                 <?php endif; ?>
                 <div class="totals-row total">
-                    <label>Total:</label>
+                    <label>Tổng Cộng:</label>
                     <span><?= number_format($order['total_amount'], 0, ',', '.') ?> ₫</span>
                 </div>
             </div>
@@ -271,7 +277,7 @@ function getPaymentStatusText($status) {
         <!-- Order History -->
         <div class="order-history-card">
             <div class="card-header">
-                <h3>Order History</h3>
+                <h3>Lịch Sử Đơn Hàng</h3>
             </div>
             <div class="order-timeline">
                 <?php foreach ($orderHistory as $history): ?>
@@ -295,7 +301,7 @@ function getPaymentStatusText($status) {
 <div id="statusModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3><i class="fas fa-edit"></i> Update Order Status</h3>
+            <h3><i class="fas fa-edit"></i> Cập Nhật Trạng Thái Đơn Hàng</h3>
             <span class="close">&times;</span>
         </div>
         <div class="modal-body">
@@ -304,16 +310,16 @@ function getPaymentStatusText($status) {
                 <input type="hidden" id="newStatusInput">
                 
                 <div class="form-group">
-                    <label for="statusNote">Additional Notes (Optional):</label>
-                    <textarea id="statusNote" name="note" rows="3" placeholder="Add any notes about this status change..."></textarea>
+                    <label for="statusNote">Ghi Chú Thêm (Tùy Chọn):</label>
+                    <textarea id="statusNote" name="note" rows="3" placeholder="Thêm ghi chú về thay đổi trạng thái..."></textarea>
                 </div>
                 
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">
-                        <i class="fas fa-times"></i> Cancel
+                        <i class="fas fa-times"></i> Hủy
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-check"></i> Update Status
+                        <i class="fas fa-check"></i> Cập Nhật
                     </button>
                 </div>
             </form>
@@ -327,24 +333,24 @@ function getPaymentStatusText($status) {
 const orderId = <?= $order['id'] ?>;
 
 function confirmOrder(id) {
-    updateOrderStatus(id, 'confirmed', 'Order confirmed');
+    updateOrderStatus(id, 'confirmed', 'Đơn hàng đã được xác nhận');
 }
 
 function processOrder(id) {
-    updateOrderStatus(id, 'processing', 'Started processing order');
+    updateOrderStatus(id, 'processing', 'Bắt đầu xử lý đơn hàng');
 }
 
 function shipOrder(id) {
-    updateOrderStatus(id, 'shipped', 'Order shipped to carrier');
+    updateOrderStatus(id, 'shipped', 'Đơn hàng đã được giao cho đơn vị vận chuyển');
 }
 
 function deliverOrder(id) {
-    updateOrderStatus(id, 'delivered', 'Order delivered successfully');
+    updateOrderStatus(id, 'delivered', 'Đơn hàng đã được giao thành công');
 }
 
 function cancelOrder(id) {
-    if (confirm('Are you sure you want to cancel this order?')) {
-        updateOrderStatus(id, 'cancelled', 'Order has been cancelled');
+    if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+        updateOrderStatus(id, 'cancelled', 'Đơn hàng đã bị hủy');
     }
 }
 
@@ -380,15 +386,15 @@ document.getElementById('statusUpdateForm').addEventListener('submit', function(
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Status updated successfully!');
+            alert('Cập nhật trạng thái thành công!');
             location.reload();
         } else {
-            alert('Error: ' + data.message);
+            alert('Lỗi: ' + data.message);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while updating the status');
+        alert('Có lỗi xảy ra khi cập nhật trạng thái');
     });
     
     closeModal();

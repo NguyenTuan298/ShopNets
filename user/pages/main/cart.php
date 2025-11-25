@@ -26,7 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($quantity <= 0) {
                 unset($_SESSION['cart'][$product_id]);
             } else {
-                $_SESSION['cart'][$product_id]['quantity'] = $quantity;
+                if (!isset($_SESSION['cart'][$product_id]) || !is_array($_SESSION['cart'][$product_id])) {
+                    $_SESSION['cart'][$product_id] = [
+                        'product_id' => $product_id,
+                        'quantity' => $quantity
+                    ];
+                } else {
+                    $_SESSION['cart'][$product_id]['quantity'] = $quantity;
+                }
             }
         }
         $success = 'Giỏ hàng đã được cập nhật!';
@@ -52,7 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             if (isset($_SESSION['cart'][$product_id])) {
-                $_SESSION['cart'][$product_id]['quantity'] += $quantity;
+                if (is_array($_SESSION['cart'][$product_id])) {
+                    $_SESSION['cart'][$product_id]['quantity'] += $quantity;
+                } else {
+                    $_SESSION['cart'][$product_id] = [
+                        'product_id' => $product_id,
+                        'quantity' => $_SESSION['cart'][$product_id] + $quantity
+                    ];
+                }
             } else {
                 $_SESSION['cart'][$product_id] = [
                     'product_id' => $product_id,
@@ -70,7 +84,13 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
         if (function_exists('getProductById')) {
             $product = getProductById($db, $product_id);
             if ($product) {
-                $quantity = $cart_item['quantity'] ?? 1;
+                // Kiểm tra nếu cart_item là scalar (dữ liệu cũ)
+                if (!is_array($cart_item)) {
+                    $quantity = (int)$cart_item;
+                } else {
+                    $quantity = $cart_item['quantity'] ?? 1;
+                }
+                
                 $cart_items[] = [
                     'product' => $product,
                     'quantity' => $quantity

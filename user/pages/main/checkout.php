@@ -6,6 +6,7 @@ session_start();
 
 require_once '../../includes/database.php';
 require_once '../../includes/functions.php';
+require_once '../../includes/config.php';
 
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
@@ -38,10 +39,13 @@ if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
         $product = getProductById($db, $product_id);
         
         if ($product) {
+            $quantity = isset($_GET['quantity']) ? (int)$_GET['quantity'] : 1;
+            if ($quantity <= 0) $quantity = 1;
+
             $_SESSION['cart'] = [
                 $product_id => [
                     'product_id' => $product_id,
-                    'quantity' => 1
+                    'quantity' => $quantity
                 ]
             ];
             header('Location: checkout.php');
@@ -56,7 +60,13 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
         if (function_exists('getProductById')) {
             $product = getProductById($db, $product_id);
             if ($product) {
-                $quantity = $cart_item['quantity'] ?? 1;
+                // Kiểm tra nếu cart_item là scalar (dữ liệu cũ)
+                if (!is_array($cart_item)) {
+                    $quantity = (int)$cart_item;
+                } else {
+                    $quantity = $cart_item['quantity'] ?? 1;
+                }
+
                 $cart_items[] = [
                     'product' => $product,
                     'quantity' => $quantity
@@ -802,14 +812,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       <i class="bi bi-laptop"></i>
                     </div>
                     <div class="item-details">
-                      <div class="item-name"><?= htmlspecialchars($product['name']) ?></div>
-                      <div class="item-price"><?= number_format($product['price'], 0, ',', '.') ?>đ</div>
-                      <div class="item-quantity">Số lượng: <?= $item['quantity'] ?></div>
+                      <h5 class="item-name"><?= htmlspecialchars($product['name']) ?></h5>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="item-quantity">x<?= $item['quantity'] ?></span>
+                        <span class="item-price"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
+                      </div>
                     </div>
                   </div>
                   <?php endforeach; ?>
                 <?php else: ?>
-                  <p>Không có sản phẩm trong giỏ hàng</p>
+                  <p class="text-center text-muted">Không có sản phẩm nào trong giỏ hàng.</p>
                 <?php endif; ?>
               </div>
               
@@ -829,8 +841,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   </span>
                 </div>
                 <div class="total-row total-final">
-                  <span class="total-label">Tổng cộng:</span>
-                  <span class="total-value"><?= number_format($total, 0, ',', '.') ?>đ</span>
+                  <span>Tổng cộng:</span>
+                  <span><?= number_format($total, 0, ',', '.') ?>đ</span>
                 </div>
               </div>
             </div>
@@ -847,21 +859,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
   ?>
 
+  <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Xử lý chọn phương thức thanh toán
-    document.querySelectorAll('.payment-method').forEach(method => {
-      method.addEventListener('click', function() {
-        document.querySelectorAll('.payment-method').forEach(item => {
-          item.classList.remove('selected');
-        });
-        this.classList.add('selected');
-        document.getElementById('payment_method').value = this.getAttribute('data-method');
+    // Payment method selection
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    const paymentInput = document.getElementById('payment_method');
+
+    // Set default selection
+    const defaultMethod = document.querySelector('.payment-method[data-method="cod"]');
+    if (defaultMethod) defaultMethod.classList.add('selected');
+
+    paymentMethods.forEach(method => {
+      method.addEventListener('click', () => {
+        // Remove selected class from all
+        paymentMethods.forEach(m => m.classList.remove('selected'));
+        // Add selected class to clicked
+        method.classList.add('selected');
+        // Update hidden input
+        paymentInput.value = method.dataset.method;
       });
     });
-
-    // Chọn mặc định phương thức COD
-    document.querySelector('.payment-method[data-method="cod"]').classList.add('selected');
   </script>
 </body>
 </html>

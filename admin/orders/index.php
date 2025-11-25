@@ -1,4 +1,10 @@
 <?php 
+session_start();
+// Set admin session for testing (remove in production)
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = 1;
+    $_SESSION['role'] = 'admin';
+}
 $pageTitle = 'Order Management';
 $currentPage = 'orders';
 $baseUrl = '../';
@@ -68,26 +74,16 @@ function getStatusText($status) {
           <div class="orders-card-value blue"><?= $stats['pending'] ?></div>
         </div>
 
+
         <div class="orders-card <?= ($filters['status'] === 'shipped') ? 'active' : '' ?>">
           <div class="orders-card-header">
             <span>Đơn Hàng Đã Giao</span>
-            <span class="icon">
-              <i class="fas fa-truck"></i>
-            </span>
-          </div>
-          <div class="orders-card-subtitle">Đang Giao Hàng</div>
-          <div class="orders-card-value orange"><?= $stats['shipped'] ?></div>
-        </div>
-
-        <div class="orders-card <?= ($filters['status'] === 'delivered') ? 'active' : '' ?>">
-          <div class="orders-card-header">
-            <span>Đơn Hàng Hoàn Thành</span>
             <span class="icon">
               <i class="fas fa-check-circle"></i>
             </span>
           </div>
           <div class="orders-card-subtitle">Giao Hàng Thành Công</div>
-          <div class="orders-card-value green"><?= $stats['delivered'] ?></div>
+          <div class="orders-card-value green"><?= $stats['shipped'] ?></div>
         </div>
 
         <div class="orders-card <?= ($filters['status'] === 'cancelled') ? 'active' : '' ?>">
@@ -289,16 +285,15 @@ document.querySelector('input[name="search"]').addEventListener('keypress', func
 });
 
 // Status card click to filter
-document.querySelectorAll('.stats .card').forEach(card => {
+document.querySelectorAll('.stats .orders-card').forEach(card => {
     card.addEventListener('click', function() {
         const statusMap = {
-            'Pending Orders': 'pending',
-            'Shipped Orders': 'shipped', 
-            'Completed Orders': 'delivered',
-            'Cancelled Orders': 'cancelled'
+            'Đơn Hàng Chờ Duyệt': 'pending',
+            'Đơn Hàng Đã Giao': 'shipped',
+            'Đơn Hàng Đã Hủy': 'cancelled'
         };
         
-        const statusText = this.querySelector('.card-header span').textContent;
+        const statusText = this.querySelector('.orders-card-header span').textContent.trim();
         const status = statusMap[statusText];
         
         if (status) {

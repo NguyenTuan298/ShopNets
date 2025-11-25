@@ -48,13 +48,35 @@ if (!isset($_SESSION['cart'])) {
 }
 
 if (isset($_SESSION['cart'][$product_id])) {
-    $_SESSION['cart'][$product_id] += $quantity;
+    if (is_array($_SESSION['cart'][$product_id])) {
+        $_SESSION['cart'][$product_id]['quantity'] += $quantity;
+    } else {
+        // Chuyển đổi dữ liệu cũ (scalar) sang mảng mới
+        $old_quantity = (int)$_SESSION['cart'][$product_id];
+        $_SESSION['cart'][$product_id] = [
+            'product_id' => $product_id,
+            'quantity' => $old_quantity + $quantity
+        ];
+    }
 } else {
-    $_SESSION['cart'][$product_id] = $quantity;
+    $_SESSION['cart'][$product_id] = [
+        'product_id' => $product_id,
+        'quantity' => $quantity
+    ];
 }
 
 // Tính tổng số lượng trong giỏ hàng
-$cart_count = array_sum($_SESSION['cart']);
+$cart_count = 0;
+if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $item) {
+        if (is_array($item) && isset($item['quantity'])) {
+            $cart_count += $item['quantity'];
+        } elseif (is_numeric($item)) {
+             $cart_count += $item;
+        }
+    }
+}
+
 $response['success'] = true;
 $response['message'] = 'Đã thêm sản phẩm vào giỏ hàng!';
 $response['cart_count'] = $cart_count;

@@ -727,76 +727,10 @@ function hasReviewed($db, $user_id, $product_id, $order_item_id) {
         $stmt->execute([$user_id, $product_id, $order_item_id]);
         return $stmt->fetch() !== false;
     } catch (PDOException $e) {
+        error_log("Error checking review: " . $e->getMessage());
         return false;
     }
-}
-
-/**
- * Gửi đánh giá sản phẩm
- */
-function submitReview($db, $user_id, $product_id, $order_item_id, $rating, $comment) {
-    try {
-        $query = "INSERT INTO reviews (user_id, product_id, order_item_id, rating, comment, created_at) 
-                  VALUES (?, ?, ?, ?, ?, NOW())";
-        $stmt = $db->prepare($query);
-        return $stmt->execute([$user_id, $product_id, $order_item_id, $rating, $comment]);
-    } catch (PDOException $e) {
-        return false;
-    }
-}
-
-/**
- * Lấy chi tiết đơn hàng (cho trang profile)
- */
-function getOrderItemsForProfile($db, $order_id) {
-    $query = "SELECT oi.*, p.name as product_name 
-              FROM order_items oi 
-              JOIN products p ON oi.product_id = p.id 
-              WHERE oi.order_id = ?";
-    $stmt = $db->prepare($query);
-    $stmt->execute([$order_id]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-/**
- * Cập nhật thông tin người dùng
- */
-function updateUserProfile($db, $user_id, $username, $email, $phone = null) {
-    $query = "UPDATE users SET username = ?, email = ?, phone = ? WHERE id = ?";
-    $stmt = $db->prepare($query);
-    return $stmt->execute([$username, $email, $phone, $user_id]);
-}
-
-/**
- * Đổi mật khẩu người dùng
- */
-function changeUserPassword($db, $user_id, $new_password) {
-    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-    $query = "UPDATE users SET password = ? WHERE id = ?";
-    $stmt = $db->prepare($query);
-    return $stmt->execute([$hashed_password, $user_id]);
-}
-
-/**
- * Kiểm tra email đã tồn tại (trừ user hiện tại)
- */
-function isEmailExists($db, $email, $exclude_user_id = null) {
-    $query = "SELECT id FROM users WHERE email = ?";
-    $params = [$email];
-    
-    if ($exclude_user_id) {
-        $query .= " AND id != ?";
-        $params[] = $exclude_user_id;
-    }
-    
-    $stmt = $db->prepare($query);
-    $stmt->execute($params);
-    return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
-}
-
-/**
- * Lấy sản phẩm theo danh mục
- */
+}   
 function getProductsByCategory($db, $category_id, $limit = 12) {
     $limit = (int)$limit;
     $query = "SELECT p.*, c.name as category_name 

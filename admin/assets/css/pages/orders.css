@@ -260,8 +260,8 @@
 }
 
 .orders-badge-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 .orders-badge-confirmed {
@@ -663,8 +663,8 @@
 }
 
 .payment-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 .payment-paid {
@@ -737,7 +737,7 @@
   margin: 0 0 0.5rem 0;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #92400e;
+  color: #1e40af;
 }
 
 .order-notes p {

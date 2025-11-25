@@ -4,7 +4,7 @@ require_once '../includes/db_connect.php';
 require_once 'order_controller.php';
 
 // Check admin permissions
-if (!isset($_SESSION['admin_id'])) {
+if (!isset($_SESSION['admin_id']) && !isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;

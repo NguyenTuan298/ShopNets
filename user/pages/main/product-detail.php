@@ -63,8 +63,8 @@ $review_count = 0; // No reviews yet
             background: #f1f5f9; 
             color: #1e293b; 
             line-height: 1.7; 
-            padding-top: 136px; 
-            font-size: 1.5rem; /* Nội dung chính */
+            padding-top: 160px; 
+            font-size: 1rem; /* Nội dung chính - đã giảm từ 1.5rem */
         }
 
         .container { max-width: 1200px; }
@@ -80,6 +80,8 @@ $review_count = 0; // No reviews yet
             font-size: 1.7rem;
             font-weight: 500;
             margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
         }
         .breadcrumb-item a { 
             color: var(--primary-color); 
@@ -845,7 +847,7 @@ $review_count = 0; // No reviews yet
                     ?>
                     <?php if ($specs): ?>
                         <div class="specifications-section">
-                            <h5 class="spec-category-title"><?php echo htmlspecialchars($category_name); ?> - Thông số kỹ thuật</h5>
+                            <h5 class="spec-category-title">Thông số kỹ thuật</h5>
                             <table class="specs-table">
                                 <?php foreach ($specs as $s): ?>
                                 <tr>
@@ -895,13 +897,7 @@ $review_count = 0; // No reviews yet
             <h3 class="section-title">Sản phẩm liên quan</h3>
             <div class="row g-4">
                 <?php foreach ($related_products as $p): 
-                    $img_src = 'https://via.placeholder.com/300x200?text=No+Image';
-                    $stmt = $db->prepare("SELECT image_path FROM product_images WHERE product_id = ? AND is_primary = TRUE LIMIT 1");
-                    $stmt->execute([$p['id']]);
-                    $img = $stmt->fetch(PDO::FETCH_ASSOC);
-                    if ($img && file_exists('../../../assets/images/' . $img['image_path'])) {
-                        $img_src = '../../../assets/images/' . $img['image_path'];
-                    }
+                    $img_src = getProductImage($p['image'], 'product-card');
                 ?>
                 <div class="col-md-6 col-lg-3">
                     <div class="product-card">
