@@ -1,4 +1,9 @@
 <?php
+session_start();
+require_once '../../../config.php';
+require_once '../../includes/database.php';
+require_once '../../includes/functions.php';
+require_once '../../includes/config.php';
 require_once '../../includes/header.php';
 
 if (!isset($_SESSION['user_id'])) {

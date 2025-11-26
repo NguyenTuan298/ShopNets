@@ -28,7 +28,9 @@ if (function_exists('getCartCount')) {
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .header-spacing { padding-top: 150px; } /* Dành chỗ cho fixed header */
+        .header-spacing { 
+            padding-top: 100px; /* Tăng khoảng cách để tránh bị che nội dung */
+        }
 
         /* === TOP BAR === */
         .top-bar {
@@ -206,7 +208,7 @@ if (function_exists('getCartCount')) {
 
         /* === RESPONSIVE === */
         @media (max-width: 768px) {
-            .header-spacing { padding-top: 170px; }
+            .header-spacing { padding-top: 220px; }
             .top-bar__right { gap: 8px; font-size: 11px; }
             .header-with-search {
                 flex-wrap: wrap;
@@ -235,6 +237,9 @@ if (function_exists('getCartCount')) {
 
     </style>
 
+<!-- Thêm khoảng cách để tránh bị che nội dung -->
+<div class="header-spacing"></div>
+
 <!-- TOP BAR -->
 <div class="top-bar">
     <div class="container">
@@ -243,8 +248,8 @@ if (function_exists('getCartCount')) {
         </div>
         <div class="top-bar__right">
             <?php if (isset($_SESSION['user_id'])): ?>
-                <span class="top-bar__item">👤 <?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
-                    <a href="<?php echo $user_url; ?>pages/user/orders.php" class="top-bar__item">📦 Đơn hàng của tôi</a>
+                <a href="<?php echo $user_url; ?>pages/user/profile.php" class="top-bar__item">👤 <?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></a>
+                <a href="<?php echo $user_url; ?>pages/user/orders.php" class="top-bar__item">📦 Đơn hàng của tôi</a>
                 <a href="<?php echo $user_url; ?>auth/logout.php" class="top-bar__item">Đăng xuất</a>
             <?php else: ?>
                 <a href="<?php echo $user_url; ?>auth/login.php" class="top-bar__item">Đăng nhập</a>
@@ -290,30 +295,3 @@ if (function_exists('getCartCount')) {
         <a href="<?php echo $user_url; ?>pages/main/products.php?discount=1">🔥 Giảm giá</a>
     </div>
 </nav>
-<!-- END HEADER COMPONENT -->
-            <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
-            <button class="search-btn">🔍</button>
-        </div>
-        
-        <a href="<?php echo $user_url; ?>pages/main/cart.php" class="cart-link">
-            🛒
-            <?php if ($cart_count > 0): ?>
-                <span class="cart-badge"><?php echo $cart_count; ?></span>
-            <?php endif; ?>
-        </a>
-    </div>
-</header>
-
-<!-- CATEGORY NAV -->
-<nav class="category-nav">
-    <div class="container">
-        <a href="<?php echo $user_url; ?>pages/main/products.php?category=phone">📱 Điện thoại</a>
-        <a href="<?php echo $user_url; ?>pages/main/products.php?category=laptop">💻 Laptop</a>
-        <a href="<?php echo $user_url; ?>pages/main/products.php?category=tablet">📱 Tablet</a>
-        <a href="<?php echo $user_url; ?>pages/main/products.php?category=accessories">🎧 Phụ kiện</a>
-        <a href="<?php echo $user_url; ?>pages/main/products.php?category=watch">⌚ Đồng hồ</a>
-        <a href="<?php echo $user_url; ?>pages/main/products.php?new=1">🆕 Mới</a>
-        <a href="<?php echo $user_url; ?>pages/main/products.php?discount=1">🔥 Giảm giá</a>
-    </div>
-</nav>
-<!-- END HEADER COMPONENT -->
