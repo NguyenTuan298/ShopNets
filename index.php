@@ -35,7 +35,7 @@ $posts = getLatestPosts($db);
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { font-size: 62.5%; line-height: 1.6rem; font-family: 'Inter', 'Roboto', sans-serif; }
-  body { background: #f1f5f9; color: #1e293b; }
+  body { background: #f1f5f9; color: #1e293b;}
 
   :root {
     --primary: #2563eb; --primary-dark: #1d4ed8; --dark: #1e293b; --light: #f8fafc;
@@ -55,7 +55,7 @@ $posts = getLatestPosts($db);
   .col-12 { flex: 0 0 100%; max-width: 100%; }
 
   /* BANNER */
-  .banner { display: flex; gap: 16px; margin-bottom: 24px; border-radius: var(--radius); overflow: hidden; height: 280px; }
+  .banner { display: flex; gap: 16px; margin-bottom: 24px; border-radius: var(--radius); overflow: hidden; height: 280px; margin-top: 30px;}
   .banner__left { flex: 2; position: relative; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
   .carousel__slide { display: none; width: 100%; height: 100%; }
   .carousel__slide.active { display: block; animation: fadeIn 0.6s ease; }
@@ -233,7 +233,7 @@ $posts = getLatestPosts($db);
 </style>
 
 <body>
-  <div class="app header-spacing">
+  <div class="app">
     <?php include 'user/includes/header.php'; ?>
 
     <!-- Modal Đăng nhập -->
@@ -245,13 +245,13 @@ $posts = getLatestPosts($db);
         <div class="banner__left">
           <div class="banner__carousel" id="bannerCarousel">
             <div class="carousel__slide active">
-              <img src="user/assets/images/banners/banner1.webp" alt="Đồng Hồ Thông Minh" class="carousel__img">
+              <img src="user/assets/images/banners/banner.webp" alt="Đồng Hồ Thông Minh" class="carousel__img">
             </div>
             <div class="carousel__slide">
-              <img src="user/assets/images/banners/banner2.webp" alt="Iphone 17" class="carousel__img">
+              <img src="user/assets/images/banners/banner2.jpg" alt="Iphone 17" class="carousel__img">
             </div>
             <div class="carousel__slide">
-              <img src="user/assets/images/banners/banner3.webp" alt="Điện thoại mới" class="carousel__img">
+              <img src="user/assets/images/banners/banner3.png" alt="Điện thoại mới" class="carousel__img">
             </div>
             <button class="carousel__btn carousel__prev" onclick="changeSlide(-1)">❮</button>
             <button class="carousel__btn carousel__next" onclick="changeSlide(1)">❯</button>
@@ -264,10 +264,10 @@ $posts = getLatestPosts($db);
         </div>
         <div class="banner__right">
           <div class="banner__static">
-            <a href="#"><img src="user/assets/images/banners/uu_dai.png" alt="Ưu đãi"></a>
+            <a href="#"><img src="user/assets/images/banners/iphone.webp" alt="Ưu đãi"></a>
           </div>
           <div class="banner__static">
-            <a href="#"><img src="user/assets/images/banners/giam_gia.png" alt="Miễn phí ship"></a>
+            <a href="#"><img src="user/assets/images/banners/giamgia.webp" alt="Miễn phí ship"></a>
           </div>
         </div>
       </div>

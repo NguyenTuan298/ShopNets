@@ -63,7 +63,7 @@ $review_count = 0; // No reviews yet
             background: #f1f5f9; 
             color: #1e293b; 
             line-height: 1.7; 
-            padding-top: 160px; 
+            padding-top: 18px; 
             font-size: 1rem; /* Nội dung chính - đã giảm từ 1.5rem */
         }
 

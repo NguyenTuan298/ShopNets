@@ -345,7 +345,7 @@ if (!defined('BASE_URL')) {
         <!-- Bottom Section -->
         <div class="footer__bottom">
             <div class="grid">
-                <p class="footer__text text-dark">© 2025 TechShop. Tất cả quyền được bảo lưu.</p>
+                <p class="footer__text text-dark">© 2025 ShopNets. Tất cả quyền được bảo lưu.</p>
                 <div class="footer__links">
                     <a href="<?php echo BASE_URL; ?>pages/info/privacy-policy.php" class="footer__link">Chính sách bảo mật</a>
                     <a href="<?php echo BASE_URL; ?>pages/info/terms-of-service.php" class="footer__link">Điều khoản sử dụng</a>
@@ -354,7 +354,7 @@ if (!defined('BASE_URL')) {
                 <p class="footer__copyright">
                     Địa chỉ: Số 2, đường Võ Oanh, P. Thạnh Mỹ Tây, TP. HCM — 
                     Hotline: <a href="tel:+8412345678" style="color: var(--primary-color);">+84 123 456 78</a> — 
-                    Email: <a href="mailto:support@techshop.vn" style="color: var(--primary-color);">support@techshop.vn</a>
+                    Email: <a href="mailto:support@techshop.vn" style="color: var(--primary-color);">support@shopnets.vn</a>
                 </p>
                 <p class="footer__copyright">
                     Giấy phép ĐKKD: 0100123456 — Cấp ngày 12/10/2023

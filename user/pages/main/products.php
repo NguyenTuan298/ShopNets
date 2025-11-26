@@ -1,13 +1,32 @@
 <?php
 session_start();
-require_once '../../includes/database.php';
-require_once '../../includes/functions.php';
-require_once '../../includes/config.php';
+
+// Xác định đường dẫn gốc
+$root_dir = dirname(__DIR__, 2); // Lùi 2 cấp từ user/pages/main/
+
+require_once $root_dir . '/includes/database.php';
+require_once $root_dir . '/includes/functions.php';
+require_once $root_dir . '/includes/config.php';
 
 $db = (new Database())->getConnection();
 
+// Định nghĩa BASE_URL
+if (!defined('BASE_URL')) {
+    // Tự động xác định BASE_URL
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'];
+    $script_path = dirname($_SERVER['SCRIPT_NAME']);
+    define('BASE_URL', $protocol . '://' . $host . $script_path . '/');
+}
+
 // === THAM SỐ LỌC ===
-$cat    = $_GET['category'] ?? '';
+$cat_param = $_GET['category'] ?? '';
+// Đảm bảo $cat là string, nếu là array thì lấy phần tử đầu tiên hoặc chuỗi rỗng
+if (is_array($cat_param)) {
+    $cat = !empty($cat_param) ? (string)$cat_param[0] : '';
+} else {
+    $cat = (string)$cat_param;
+}
 $search = $_GET['search'] ?? '';
 $min    = $_GET['min_price'] ?? '';
 $max    = $_GET['max_price'] ?? '';
@@ -18,12 +37,21 @@ $limit_per_page = 12;
 $offset = ($page - 1) * $limit_per_page;
 
 // === LẤY DỮ LIỆU ===
-$categories = getCategories($db);
+// Sửa hàm getCategories nếu chưa có
+$categories = getAllCategories($db);
 
 // Lấy sản phẩm theo bộ lọc
 $products = getFilteredProducts($db, $cat, $search, $min, $max, $sort, $offset, $limit_per_page);
 $total_products = getFilteredProductCount($db, $cat, $search, $min, $max);
 $pages = ceil($total_products / $limit_per_page);
+
+// === HÀM LẤY DANH MỤC ===
+function getAllCategories($db) {
+    // Nếu không có cột is_active, lấy tất cả categories
+    $stmt = $db->prepare("SELECT id, name FROM categories ORDER BY name");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 // === HÀM LẤY SẢN PHẨM CÓ LỌC ===
 function getFilteredProducts($db, $cat, $search, $min, $max, $sort, $offset, $limit) {
@@ -35,7 +63,10 @@ function getFilteredProducts($db, $cat, $search, $min, $max, $sort, $offset, $li
     ";
     $params = [];
 
-    if ($cat) { $sql .= " AND c.name = ?"; $params[] = $cat; }
+    if ($cat && is_string($cat) && !empty(trim($cat))) { 
+        $sql .= " AND c.name = ?"; 
+        $params[] = trim($cat); 
+    }
     if ($search) {
         $s = "%$search%";
         $sql .= " AND (p.name LIKE ? OR p.description LIKE ?)";
@@ -79,7 +110,10 @@ function getFilteredProductCount($db, $cat, $search, $min, $max) {
         WHERE p.quantity > 0";
     $params = [];
 
-    if ($cat) { $sql .= " AND c.name = ?"; $params[] = $cat; }
+    if ($cat && is_string($cat) && !empty(trim($cat))) { 
+        $sql .= " AND c.name = ?"; 
+        $params[] = trim($cat); 
+    }
     if ($search) {
         $s = "%$search%";
         $sql .= " AND (p.name LIKE ? OR p.description LIKE ?)";
@@ -148,7 +182,7 @@ if (!defined('BASE_URL')) {
             background: #f1f5f9; 
             color: #1e293b; 
             line-height: 1.7; 
-            padding-top: 136px; 
+            padding-top: 28px; 
             font-size: 1.5rem;
         }
 
@@ -539,19 +573,6 @@ if (!defined('BASE_URL')) {
             <div>
                 <h1 class="display-5 fw-bold mb-0">Sản Phẩm</h1>
             </div>
-            <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
-                    <i class="bi bi-grid-3x3-gap"></i> Danh mục
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item <?php echo !$cat ? 'active' : ''; ?>" href="?<?php echo buildUrl(['category'=>null]); ?>">Tất cả</a></li>
-                    <?php foreach ($categories as $c): ?>
-                        <li><a class="dropdown-item <?php echo $cat===$c['name']?'active':''; ?>" href="?<?php echo buildUrl(['category'=>$c['name']]); ?>">
-                            <?php echo htmlspecialchars($c['name']); ?>
-                        </a></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
         </div>
     </div>
 </section>
@@ -567,7 +588,7 @@ if (!defined('BASE_URL')) {
                     <strong class="d-block mb-2">Danh mục</strong>
                     <a href="?<?php echo buildUrl(['category'=>null]); ?>" class="filter-item <?php echo !$cat?'active':''; ?>">Tất cả</a>
                     <?php foreach ($categories as $c): ?>
-                        <a href="?<?php echo buildUrl(['category'=>$c['name']]); ?>" class="filter-item <?php echo $cat===$c['name']?'active':''; ?>">
+                        <a href="?<?php echo buildUrl(['category'=>$c['name']]); ?>" class="filter-item <?php echo ($cat === $c['name']) ? 'active' : ''; ?>">
                             <?php echo htmlspecialchars($c['name']); ?>
                         </a>
                     <?php endforeach; ?>
@@ -595,7 +616,7 @@ if (!defined('BASE_URL')) {
             <?php if (!empty($products)): ?>
                 <div class="mb-4">
                     <h2 class="section-title">Sản phẩm 
-                        <?php if ($cat): ?>
+                        <?php if (!empty($cat) && is_string($cat)): ?>
                             - <?= htmlspecialchars(ucfirst($cat)) ?>
                         <?php endif; ?>
                         (<?= $total_products ?> sản phẩm)
@@ -608,7 +629,7 @@ if (!defined('BASE_URL')) {
                         $discount = ($compare_price > $price && $compare_price > 0) 
                             ? round((($compare_price - $price) / $compare_price) * 100) : 0;
                         
-                        // Xử lý hình ảnh
+                        // Sửa dòng này:
                         $img_src = getProductImage($p['image'], 'user-pages');
                     ?>
                         <div class="col-md-6 col-lg-4 col-xl-3">

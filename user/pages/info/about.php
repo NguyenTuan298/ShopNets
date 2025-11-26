@@ -11,6 +11,7 @@ if (!defined('BASE_URL')) {
 }
 // ========================================================
 
+// SỬA ĐƯỜNG DẪN NÀY
 require_once '../../../user/includes/database.php';
 require_once '../../../user/includes/functions.php';
 $database = new Database();
@@ -143,16 +144,11 @@ $brands = getBrands($db);
     background: var(--primary); border-radius: 2px;
   }
 
-  /* ABOUT HERO */
+  /* ABOUT HERO - ĐÃ SỬA */
   .about-hero {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white; padding: 60px 0; border-radius: var(--radius); margin-bottom: 32px;
     box-shadow: var(--shadow-lg); overflow: hidden; position: relative;
-  }
-  .about-hero::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: url('assets/images/main/banner1.jpg') center/cover no-repeat;
-    opacity: 0.15; z-index: 0;
   }
   .about-hero > * { position: relative; z-index: 1; }
   .about-hero h1 {
@@ -164,6 +160,7 @@ $brands = getBrands($db);
     margin-bottom: 24px; opacity: 0.9; 
   }
 
+  /* Các style khác giữ nguyên... */
   /* INFO CARD */
   .info-card {
     background: white; border-radius: var(--radius); padding: 24px;
@@ -293,6 +290,7 @@ $brands = getBrands($db);
 
 <body>
   <div class="app">
+    <!-- SỬA ĐƯỜNG DẪN HEADER -->
     <?php include '../../../user/includes/header.php'; ?>
 
     <!-- Modal Đăng nhập -->
@@ -304,7 +302,7 @@ $brands = getBrands($db);
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-            <a href="<?php echo BASE_URL; ?>../../index.php">Trang chủ</a>
+            <a href="<?php echo BASE_URL; ?>index.php">Trang chủ</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">Giới Thiệu</li>
         </ol>
@@ -335,6 +333,7 @@ $brands = getBrands($db);
         </div>
       </section>
 
+      <!-- Các section khác giữ nguyên... -->
       <!-- THỐNG KÊ ĐƠN GIẢN -->
       <section class="section">
         <h2 class="section__title">ShopNets Trong Số Liệu</h2>
@@ -448,6 +447,7 @@ $brands = getBrands($db);
 
     </div> <!-- END .grid -->
 
+    <!-- SỬA ĐƯỜNG DẪN FOOTER -->
     <?php include '../../../user/includes/footer.php'; ?>
   </div>
 

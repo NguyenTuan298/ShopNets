@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding-top: 80px;
+            padding-top: 20px;
         }
 
         :root {
@@ -616,14 +616,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
             </ol>
         </nav>
     </div>
-
-    <!-- PAGE HEADER -->
-    <section class="page-header">
-        <div class="container">
-            <h1 class="page-title">Đơn Hàng Của Tôi</h1>
-            <p class="page-subtitle">Theo dõi và quản lý đơn hàng của bạn</p>
-        </div>
-    </section>
 
     <!-- ORDERS SECTION -->
     <section class="orders-section">

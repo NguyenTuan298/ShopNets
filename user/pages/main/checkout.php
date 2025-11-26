@@ -3,7 +3,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 session_start();
 
-
 require_once '../../includes/database.php';
 require_once '../../includes/functions.php';
 require_once '../../includes/config.php';
@@ -110,8 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $order_number = 'ORD' . date('YmdHis') . rand(1000, 9999);
             }
             
-            $query = "INSERT INTO orders (order_number, user_id, customer_name, customer_email, customer_phone, shipping_address, payment_method, notes, subtotal, shipping_fee, total_amount) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            // Tạo đơn hàng với payment_status là pending
+            $query = "INSERT INTO orders (order_number, user_id, customer_name, customer_email, customer_phone, shipping_address, payment_method, payment_status, notes, subtotal, shipping_fee, total_amount) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)";
             $stmt = $db->prepare($query);
             $stmt->execute([
                 $order_number, 
@@ -129,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $order_id = $db->lastInsertId();
             
+            // Thêm sản phẩm vào order_items
             foreach ($cart_items as $item) {
                 $product = $item['product'];
                 $product_id = $product['id'];
@@ -143,13 +144,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$order_id, $product_id, $product_name, $price, $quantity, $total_price]);
             }
             
-            unset($_SESSION['cart']);
+            // COMMIT TRANSACTION TRƯỚC KHI CHUYỂN HƯỚNG
             $db->commit();
-            $order_success = true;
+            
+            // DEBUG: Verify order exists after commit
+            error_log("Order created - ID: " . $order_id . ", Number: " . $order_number);
+            $verify_stmt = $db->prepare("SELECT COUNT(*) as count FROM orders WHERE id = ?");
+            $verify_stmt->execute([$order_id]);
+            $verified = $verify_stmt->fetch(PDO::FETCH_ASSOC);
+            error_log("Order verification: " . $verified['count']);
+            
+            // Nếu thanh toán bằng MoMo, chuyển hướng đến cổng thanh toán MoMo
+            if ($payment_method === 'momo') {
+                // Lưu order_id vào session để sử dụng sau khi thanh toán
+                $_SESSION['current_order_id'] = $order_id;
+                $_SESSION['current_order_number'] = $order_number;
+                
+                // Verify one more time before redirect
+                $check_order = $db->prepare("SELECT id FROM orders WHERE id = ?");
+                $check_order->execute([$order_id]);
+                if ($check_order->fetch()) {
+                    error_log("SUCCESS: Order verified, redirecting to MoMo...");
+                    header('Location: ' . BASE_URL . 'pages/main/momo_payment.php?order_id=' . $order_id);
+                    exit;
+                } else {
+                    error_log("ERROR: Order not found after commit!");
+                    $order_error = 'Lỗi hệ thống: Đơn hàng không được tạo thành công.';
+                }
+            } else {
+                // Nếu là COD, xóa giỏ hàng và hiển thị thông báo thành công
+                unset($_SESSION['cart']);
+                $order_success = true;
+            }
             
         } catch (PDOException $e) {
             $db->rollBack();
             $order_error = 'Lỗi hệ thống: ' . $e->getMessage();
+            error_log("Database error: " . $e->getMessage());
         }
     }
 }
@@ -180,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-top: 80px;
+    padding-top: 20px;
   }
 
   :root {
@@ -340,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   /* PAYMENT METHODS */
   .payment-methods {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
   }
@@ -610,13 +641,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   @media (max-width: 768px) {
     .checkout-header { flex-direction: column; gap: 1.5rem; text-align: center; padding: 1.8rem; }
     .checkout-title { font-size: 2rem; }
-    .payment-methods { grid-template-columns: 1fr 1fr; }
+    .payment-methods { grid-template-columns: 1fr; }
     .success-actions { flex-direction: column; align-items: center; }
     .btn-success-custom { width: 100%; max-width: 250px; }
   }
 
   @media (max-width: 576px) {
-    .payment-methods { grid-template-columns: 1fr; }
     .checkout-steps { flex-direction: column; gap: 1rem; }
     .step { justify-content: center; }
     .order-item { flex-direction: column; text-align: center; gap: 1rem; }
@@ -765,23 +795,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       </div>
                       <div class="payment-name">Thanh toán khi nhận hàng</div>
                     </div>
-                    <div class="payment-method" data-method="bank_transfer">
-                      <div class="payment-icon">
-                        <i class="bi bi-bank"></i>
-                      </div>
-                      <div class="payment-name">Chuyển khoản ngân hàng</div>
-                    </div>
                     <div class="payment-method" data-method="momo">
                       <div class="payment-icon">
                         <i class="bi bi-wallet2"></i>
                       </div>
                       <div class="payment-name">Ví MoMo</div>
-                    </div>
-                    <div class="payment-method" data-method="vnpay">
-                      <div class="payment-icon">
-                        <i class="bi bi-qr-code-scan"></i>
-                      </div>
-                      <div class="payment-name">VNPay</div>
                     </div>
                   </div>
                   

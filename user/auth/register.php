@@ -64,23 +64,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html {
+  html, body {
+    height: 100%;
     font-size: 62.5%;
     line-height: 1.6rem;
     font-family: 'Inter', 'Roboto', sans-serif;
+    overflow: hidden;
   }
   body {
-    background: #f1f5f9;
+    background: 
+      linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.9)),
+      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(56, 189, 248, 0.2)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/><g fill="rgba(56, 189, 248, 0.1)"><circle cx="200" cy="150" r="4"/><circle cx="800" cy="300" r="6"/><circle cx="400" cy="700" r="5"/><circle cx="900" cy="600" r="3"/><circle cx="150" cy="800" r="7"/></g></svg>'),
+      #0f172a;
+    background-size: cover;
     color: #1e293b;
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-top: 0;
+    position: relative;
+  }
+
+  /* Hiệu ứng particles */
+  .particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  .particle {
+    position: absolute;
+    background: rgba(56, 189, 248, 0.3);
+    border-radius: 50%;
+    animation: float 15s infinite linear;
+  }
+  @keyframes float {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
   }
 
   :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --primary-light: #60a5fa;
     --dark: #1e293b;
     --light: #f8fafc;
     --gray: #94a3b8;
@@ -97,60 +125,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     --transition: all 0.3s ease;
   }
 
-  /* GRID */
-  .grid {
-    width: 1200px;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 15px;
-  }
-
   /* REGISTER PAGE */
   .register-wrapper {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+    margin-top: 30px; /* Thêm khoảng cách từ logo */
   }
-  .register-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
+  .register-container {
+    display: flex;
     width: 100%;
-    max-width: 800px;
+    max-width: 1100px;
+    height: 620px; /* Giảm chiều cao xuống một chút */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 10px; /* Đẩy khung xuống thêm một chút */
+  }
+  .register-side {
+    flex: 1;
+    background: 
+      linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(37, 99, 235, 0.8)),
+      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+    background-size: cover;
+    color: white;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .register-side::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,100 L100,0 L100,100 Z" fill="rgba(255,255,255,0.05)"/></svg>');
+    background-size: cover;
+  }
+  .register-side-content {
+    position: relative;
+    z-index: 1;
+  }
+  .register-side h2 {
+    font-size: 2.6rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    line-height: 1.2;
+  }
+  .register-side p {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .benefits-list {
+    list-style: none;
+    margin-top: 2rem;
+  }
+  .benefits-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    backdrop-filter: blur(5px);
     transition: var(--transition);
   }
-  .register-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+  .benefits-list li:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+  }
+  .benefits-list i {
+    margin-right: 1.2rem;
+    font-size: 1.8rem;
+    background: rgba(255, 255, 255, 0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 
+  .register-main {
+    flex: 1.2;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+  }
   .register-header {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    padding: 2.8rem 2rem;
     text-align: center;
+    margin-bottom: 2rem;
   }
   .register-header h1 {
     font-size: 2.4rem;
     font-weight: 700;
-    margin-bottom: .5rem;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
   }
   .register-header p {
-    opacity: .9;
-    font-size: 1.45rem;
-  }
-  .register-header .logo-icon {
-    font-size: 3.2rem;
-    margin-bottom: .8rem;
-    display: block;
+    color: var(--gray);
+    font-size: 1.4rem;
   }
 
-  .register-body {
-    padding: 2.8rem 2rem;
-  }
   .form-group {
     margin-bottom: 1.6rem;
   }
@@ -169,45 +264,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
   .form-control {
     border-radius: var(--radius);
-    padding: .9rem 1rem .9rem 3.2rem;
+    padding: 0.9rem 1rem 0.9rem 4rem;
     border: 1px solid var(--border);
     font-size: 1.4rem;
     background: var(--light);
     transition: var(--transition);
+    height: 46px;
     width: 100%;
   }
   .form-control:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
     background: white;
   }
   .input-icon {
     position: absolute;
-    left: 1rem;
+    left: 1.5rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--gray);
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    transition: var(--transition);
   }
   .password-toggle {
     position: absolute;
-    right: 1rem;
+    right: 1.5rem;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     color: var(--gray);
     cursor: pointer;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    transition: var(--transition);
   }
   .password-toggle:hover { color: var(--primary); }
 
   .form-text { font-size: 1.25rem; color: var(--gray); margin-top: .4rem; }
 
   .password-strength {
-    height: 6px;
+    height: 5px;
     border-radius: 3px;
-    margin-top: .6rem;
+    margin-top: .5rem;
     background: #e2e8f0;
     overflow: hidden;
   }
@@ -224,14 +322,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   .form-check {
-    margin-bottom: 1.8rem;
+    margin-bottom: 1.6rem;
   }
   .form-check-input:checked {
     background-color: var(--primary);
     border-color: var(--primary);
   }
   .form-check-label {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     color: var(--dark);
   }
   .form-check-label a {
@@ -247,23 +345,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     color: white;
     border: none;
     border-radius: var(--radius);
-    padding: 1rem;
+    padding: 1.1rem;
     font-weight: 600;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     width: 100%;
     transition: var(--transition);
     box-shadow: var(--shadow);
+    margin-bottom: 1.2rem;
   }
   .btn-register:hover {
-    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
   }
 
   .links {
     text-align: center;
     font-size: 1.4rem;
-    margin-top: 1.6rem;
+    margin-top: 1.4rem;
   }
   .links a {
     color: var(--primary);
@@ -277,25 +375,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   .alert {
     border-radius: var(--radius);
-    padding: 1rem 1.2rem;
+    padding: 1rem;
     margin-bottom: 1.6rem;
     display: flex;
     align-items: center;
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     border: none;
   }
   .alert-danger { background: rgba(239,68,68,.1); color: var(--danger); }
   .alert-success { background: rgba(16,185,129,.1); color: var(--success); }
-  .alert i { margin-right: .8rem; }
+  .alert i { margin-right: 0.8rem; }
 
-  /* LOGO GÓC TRÁI */
+  /* LOGO */
   .site-logo {
-    position: fixed;
-    top: 16px;
-    left: 16px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
     z-index: 1000;
-    background: white;
-    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 8px 12px;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     display: flex;
@@ -305,10 +404,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     transition: var(--transition);
     font-size: 1.4rem;
     line-height: 1;
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   .site-logo:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
+    background: white;
   }
   .site-logo .logo-img {
     height: 28px;
@@ -319,45 +420,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   .site-logo span {
     font-weight: 700;
     color: var(--dark);
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 
   /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .register-wrapper { padding: 20px 15px; }
-    .register-header { padding: 2.2rem 1.5rem; }
-    .register-header h1 { font-size: 2.1rem; }
-    .register-body { padding: 2.2rem 1.5rem; }
-    .row > div { margin-bottom: 0; }
+  @media (max-width: 992px) {
+    .register-side {
+      display: none;
+    }
+    .register-container {
+      max-width: 500px;
+      height: 560px;
+    }
+    .register-main {
+      overflow-y: visible;
+    }
   }
   @media (max-width: 576px) {
     .site-logo {
-      top: 12px;
-      left: 12px;
-      padding: 5px 8px;
-      gap: 6px;
+      top: 15px;
+      left: 15px;
+      padding: 6px 10px;
     }
-    .site-logo .logo-img { height: 24px; }
-    .site-logo span { font-size: 1.35rem; }
+    .site-logo .logo-img {
+      height: 24px;
+    }
+    .site-logo span {
+      font-size: 1.4rem;
+    }
+    .register-main {
+      padding: 2rem;
+    }
+    .register-container {
+      height: auto;
+      max-height: 85vh;
+      margin-top: 20px;
+    }
+    .register-wrapper {
+      margin-top: 20px;
+      padding: 15px;
+    }
   }
 </style>
 
 <body>
-  <!-- LOGO GÓC TRÁI -->
+  <!-- Hiệu ứng particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- LOGO -->
   <a href="../index.php" class="site-logo">
     <img src="../assets/images/logo.png" alt="ShopNets Logo" class="logo-img">
     <span>ShopNets</span>
   </a>
 
   <div class="register-wrapper">
-    <div class="register-card">
-      <div class="register-header">
-        <i class="bi bi-rocket logo-icon"></i>
-        <h1>Đăng Ký Tài Khoản</h1>
-        <p>Tham gia cộng đồng ShopNets ngay hôm nay</p>
+    <div class="register-container">
+      <div class="register-side">
+        <div class="register-side-content">
+          <h2>Bắt Đầu Hành Trình Mua Sắm Thông Minh</h2>
+          <p>Tham gia cộng đồng ShopNets để khám phá những ưu đãi độc quyền và trải nghiệm dịch vụ tốt nhất.</p>
+          
+          <ul class="benefits-list">
+            <li>
+              <i class="bi bi-tags"></i>
+              <span>Ưu đãi đặc biệt cho thành viên mới</span>
+            </li>
+            <li>
+              <i class="bi bi-truck"></i>
+              <span>Miễn phí vận chuyển cho đơn hàng đầu tiên</span>
+            </li>
+            <li>
+              <i class="bi bi-shield-check"></i>
+              <span>Bảo mật thông tin cá nhân tuyệt đối</span>
+            </li>
+            <li>
+              <i class="bi bi-lightning"></i>
+              <span>Tích lũy điểm thưởng và đổi quà</span>
+            </li>
+          </ul>
+        </div>
       </div>
+      
+      <div class="register-main">
+        <div class="register-header">
+          <h1>Đăng Ký Tài Khoản</h1>
+          <p>Tạo tài khoản mới để bắt đầu mua sắm</p>
+        </div>
 
-      <div class="register-body">
         <?php if ($error): ?>
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i>
@@ -460,7 +609,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-check">
             <input type="checkbox" class="form-check-input" id="agree_terms" name="agree_terms" required>
             <label class="form-check-label" for="agree_terms">
-              Tôi đồng ý với <a href="../info/privacy-policy.php">Điều khoản dịch vụ</a> và <a href="../info/terms-of-service.php">Chính sách bảo mật</a>
+              Tôi đồng ý với <a href="../pages/info/privacy-policy.php">Điều khoản dịch vụ</a> và <a href="../pages/info/terms-of-service.php">Chính sách bảo mật</a>
             </label>
           </div>
 
@@ -476,12 +625,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 
-  <?php include '../includes/footer.php'; ?>
-
   <!-- JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // Tạo hiệu ứng particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Kích thước ngẫu nhiên
+        const size = Math.random() * 5 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Vị trí ngẫu nhiên
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100 + 100}%`;
+        
+        // Thời gian animation ngẫu nhiên
+        const duration = Math.random() * 20 + 15;
+        particle.style.animationDuration = `${duration}s`;
+        
+        // Độ trễ ngẫu nhiên
+        const delay = Math.random() * 5;
+        particle.style.animationDelay = `${delay}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
     // Toggle password
     ['togglePassword', 'toggleConfirmPassword'].forEach(id => {
       document.getElementById(id).addEventListener('click', function () {
@@ -500,8 +677,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Focus icon
     document.querySelectorAll('.form-control').forEach(input => {
       const icon = input.parentElement.querySelector('.input-icon');
-      input.addEventListener('focus', () => icon.style.color = 'var(--primary)');
-      input.addEventListener('blur', () => icon.style.color = 'var(--gray)');
+      input.addEventListener('focus', () => {
+        icon.style.color = 'var(--primary)';
+        input.style.borderColor = 'var(--primary)';
+      });
+      input.addEventListener('blur', () => {
+        icon.style.color = 'var(--gray)';
+        input.style.borderColor = '#e2e8f0';
+      });
     });
 
     // Password strength
@@ -547,6 +730,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Focus username
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('username').focus();
+      createParticles();
     });
 
     // Form validate
@@ -557,6 +741,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         alert('Vui lòng đồng ý với Điều khoản dịch vụ và Chính sách bảo mật!');
       }
     });
+
+    // Ngăn cuộn trang
+    document.body.style.overflow = 'hidden';
   </script>
 </body>
 </html>

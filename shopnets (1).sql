@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 25, 2025 lúc 04:16 PM
--- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: Nov 26, 2025 at 07:10 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `shopnets`
+-- Database: `shopnets`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `admin`
+-- Table structure for table `admin`
 --
 
 CREATE TABLE `admin` (
@@ -38,7 +38,7 @@ CREATE TABLE `admin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `admin`
+-- Dumping data for table `admin`
 --
 
 INSERT INTO `admin` (`id`, `email`, `phone`, `avatar`, `password`, `role`, `created_at`) VALUES
@@ -47,7 +47,7 @@ INSERT INTO `admin` (`id`, `email`, `phone`, `avatar`, `password`, `role`, `crea
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `categories`
+-- Table structure for table `categories`
 --
 
 CREATE TABLE `categories` (
@@ -60,7 +60,7 @@ CREATE TABLE `categories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `categories`
+-- Dumping data for table `categories`
 --
 
 INSERT INTO `categories` (`id`, `name`, `description`, `image`, `created_at`, `updated_at`) VALUES
@@ -80,7 +80,7 @@ INSERT INTO `categories` (`id`, `name`, `description`, `image`, `created_at`, `u
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `orders`
+-- Table structure for table `orders`
 --
 
 CREATE TABLE `orders` (
@@ -108,7 +108,7 @@ CREATE TABLE `orders` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `orders`
+-- Dumping data for table `orders`
 --
 
 INSERT INTO `orders` (`id`, `order_number`, `user_id`, `customer_email`, `customer_name`, `customer_phone`, `shipping_address`, `billing_address`, `subtotal`, `shipping_fee`, `tax_amount`, `discount_amount`, `total_amount`, `payment_method`, `payment_status`, `order_status`, `shipping_method`, `tracking_number`, `notes`, `created_at`, `updated_at`) VALUES
@@ -120,12 +120,13 @@ INSERT INTO `orders` (`id`, `order_number`, `user_id`, `customer_email`, `custom
 (6, 'ORD202511251533016830', 1, 'john@example.com', 'Nguyen Tuan', '0984831424', '2 tô ký trung chánh', NULL, 456789.00, 30000.00, 0.00, 0.00, 486789.00, 'momo', 'pending', 'cancelled', NULL, NULL, 'vvvv', '2025-11-25 14:33:01', '2025-11-25 14:33:52'),
 (7, 'ORD202511251534307778', 1, 'john@example.com', 'Nguyen Tuan', '0984831424', '2 tô ký trung chánh', NULL, 1232774.00, 30000.00, 0.00, 0.00, 1262774.00, 'momo', 'pending', 'cancelled', NULL, NULL, '', '2025-11-25 14:34:30', '2025-11-25 14:43:37'),
 (8, 'ORD202511251541133653', 1, 'john@example.com', 'Nguyen Tuan', '0984831424', '2 tô ký trung chánh', NULL, 15248174.00, 0.00, 0.00, 0.00, 15248174.00, 'cod', 'pending', 'cancelled', NULL, NULL, '', '2025-11-25 14:41:13', '2025-11-25 14:43:39'),
-(9, 'ORD202511251615488042', 1, 'john@example.com', 'Nguyen Tuan', '0984831424', '2 tô ký trung chánh', NULL, 456789.00, 30000.00, 0.00, 0.00, 486789.00, 'cod', 'pending', 'pending', NULL, NULL, '', '2025-11-25 15:15:48', '2025-11-25 15:15:48');
+(9, 'ORD202511251615488042', 1, 'john@example.com', 'Nguyen Tuan', '0984831424', '2 tô ký trung chánh', NULL, 456789.00, 30000.00, 0.00, 0.00, 486789.00, 'cod', 'pending', 'confirmed', NULL, NULL, '', '2025-11-25 15:15:48', '2025-11-26 05:43:21'),
+(10, 'ORD202511260644302436', 1, 'john@example.com', '123', '123', '12312', NULL, 9054968.00, 0.00, 0.00, 0.00, 9054968.00, 'momo', 'pending', 'pending', NULL, NULL, '123', '2025-11-26 05:44:30', '2025-11-26 05:44:30');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `order_items`
+-- Table structure for table `order_items`
 --
 
 CREATE TABLE `order_items` (
@@ -142,19 +143,20 @@ CREATE TABLE `order_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `order_items`
+-- Dumping data for table `order_items`
 --
 
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `image`, `product_name`, `product_price`, `quantity`, `total_price`, `attributes`, `created_at`) VALUES
 (8, 6, 94, NULL, 'Trà túi lọc', 456789.00, 1, 456789.00, NULL, '2025-11-25 14:33:01'),
 (9, 7, 31, NULL, 'iPad 9', 1232774.00, 1, 1232774.00, NULL, '2025-11-25 14:34:30'),
 (10, 8, 38, NULL, 'Camera WiFi', 15248174.00, 1, 15248174.00, NULL, '2025-11-25 14:41:13'),
-(11, 9, 94, NULL, 'Trà túi lọc', 456789.00, 1, 456789.00, NULL, '2025-11-25 15:15:48');
+(11, 9, 94, NULL, 'Trà túi lọc', 456789.00, 1, 456789.00, NULL, '2025-11-25 15:15:48'),
+(12, 10, 24, NULL, 'MacBook Air', 9054968.00, 1, 9054968.00, NULL, '2025-11-26 05:44:30');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `order_status_history`
+-- Table structure for table `order_status_history`
 --
 
 CREATE TABLE `order_status_history` (
@@ -166,7 +168,7 @@ CREATE TABLE `order_status_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `order_status_history`
+-- Dumping data for table `order_status_history`
 --
 
 INSERT INTO `order_status_history` (`id`, `order_id`, `status`, `note`, `created_at`) VALUES
@@ -187,12 +189,13 @@ INSERT INTO `order_status_history` (`id`, `order_id`, `status`, `note`, `created
 (15, 5, 'processing', 'Đã giao', '2025-11-24 16:09:49'),
 (16, 5, 'shipped', '', '2025-11-24 16:09:56'),
 (17, 2, 'confirmed', '', '2025-11-24 16:11:06'),
-(18, 2, 'cancelled', '', '2025-11-24 16:11:42');
+(18, 2, 'cancelled', '', '2025-11-24 16:11:42'),
+(19, 9, 'confirmed', '', '2025-11-26 05:43:21');
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `products`
+-- Table structure for table `products`
 --
 
 CREATE TABLE `products` (
@@ -214,7 +217,7 @@ CREATE TABLE `products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `products`
+-- Dumping data for table `products`
 --
 
 INSERT INTO `products` (`id`, `name`, `category_id`, `price`, `compare_price`, `quantity`, `description`, `specifications`, `short_description`, `image`, `slug`, `featured`, `is_active`, `created_at`, `updated_at`) VALUES
@@ -307,7 +310,7 @@ INSERT INTO `products` (`id`, `name`, `category_id`, `price`, `compare_price`, `
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `settings`
+-- Table structure for table `settings`
 --
 
 CREATE TABLE `settings` (
@@ -320,7 +323,7 @@ CREATE TABLE `settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `settings`
+-- Dumping data for table `settings`
 --
 
 INSERT INTO `settings` (`id`, `category`, `setting_key`, `setting_value`, `created_at`, `updated_at`) VALUES
@@ -343,7 +346,7 @@ INSERT INTO `settings` (`id`, `category`, `setting_key`, `setting_value`, `creat
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -355,6 +358,8 @@ CREATE TABLE `users` (
   `address` text DEFAULT NULL,
   `avatar` varchar(255) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_token_expires` datetime DEFAULT NULL,
   `role` enum('admin','user') NOT NULL DEFAULT 'user',
   `status` enum('active','inactive') NOT NULL DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -362,30 +367,31 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `users`
+-- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `full_name`, `phone`, `address`, `avatar`, `password`, `role`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'john_doe', 'john@example.com', NULL, NULL, NULL, NULL, '6e0b7076126a29d5dfcbd54835387b7b', 'user', 'active', '2025-11-07 16:42:57', '2025-11-07 16:42:57'),
-(2, 'sarah_johnson', 'sarah@example.com', NULL, '0902345678', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
-(3, 'mike_brown', 'mike@example.com', NULL, '0903456789', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
-(4, 'emily_davis', 'emily@example.com', NULL, '0904567890', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
-(5, 'david_wilson', 'david@example.com', NULL, '0905678901', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
-(6, 'TuanNguyen', 'tungnguyenbt298@gmail.com', 'Nguyen Tuan', '0984831424', '495/Quốc Lộ 13', NULL, '$2y$10$nW2btTt1vdvBm4j1o8ZK5ec8kMotg6hd.ev8xqorohps0VrURnTAC', 'user', 'active', '2025-11-17 09:47:07', '2025-11-17 09:47:07');
+INSERT INTO `users` (`id`, `username`, `email`, `full_name`, `phone`, `address`, `avatar`, `password`, `reset_token`, `reset_token_expires`, `role`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'john_doe', 'john@example.com', NULL, NULL, NULL, NULL, '6e0b7076126a29d5dfcbd54835387b7b', NULL, NULL, 'user', 'active', '2025-11-07 16:42:57', '2025-11-07 16:42:57'),
+(2, 'sarah_johnson', 'sarah@example.com', NULL, '0902345678', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
+(3, 'mike_brown', 'mike@example.com', NULL, '0903456789', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
+(4, 'emily_davis', 'emily@example.com', NULL, '0904567890', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
+(5, 'david_wilson', 'david@example.com', NULL, '0905678901', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
+(6, 'TuanNguyen', 'tungnguyenbt298@gmail.com', 'Nguyen Tuan', '0984831424', '495/Quốc Lộ 13', NULL, '$2y$10$nW2btTt1vdvBm4j1o8ZK5ec8kMotg6hd.ev8xqorohps0VrURnTAC', NULL, NULL, 'user', 'active', '2025-11-17 09:47:07', '2025-11-17 09:47:07'),
+(7, 'test1', 'test1@gmail.comte', 'test1', '123', '12412', NULL, '$2y$10$tnWYUhOqQQj8GKLX3MiYLOkphA8raSHIxAXLTB0MUklfe5r8wmWLS', NULL, NULL, 'user', 'active', '2025-11-26 06:03:22', '2025-11-26 06:03:22');
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `admin`
+-- Indexes for table `admin`
 --
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Chỉ mục cho bảng `categories`
+-- Indexes for table `categories`
 --
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`),
@@ -393,7 +399,7 @@ ALTER TABLE `categories`
   ADD KEY `idx_categories_name` (`name`);
 
 --
--- Chỉ mục cho bảng `orders`
+-- Indexes for table `orders`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
@@ -403,7 +409,7 @@ ALTER TABLE `orders`
   ADD KEY `idx_orders_created` (`created_at`);
 
 --
--- Chỉ mục cho bảng `order_items`
+-- Indexes for table `order_items`
 --
 ALTER TABLE `order_items`
   ADD PRIMARY KEY (`id`),
@@ -411,7 +417,7 @@ ALTER TABLE `order_items`
   ADD KEY `idx_order_items_product` (`product_id`);
 
 --
--- Chỉ mục cho bảng `order_status_history`
+-- Indexes for table `order_status_history`
 --
 ALTER TABLE `order_status_history`
   ADD PRIMARY KEY (`id`),
@@ -419,7 +425,7 @@ ALTER TABLE `order_status_history`
   ADD KEY `idx_status_history_created` (`created_at`);
 
 --
--- Chỉ mục cho bảng `products`
+-- Indexes for table `products`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`id`),
@@ -431,14 +437,14 @@ ALTER TABLE `products`
   ADD KEY `idx_products_created_at` (`created_at`);
 
 --
--- Chỉ mục cho bảng `settings`
+-- Indexes for table `settings`
 --
 ALTER TABLE `settings`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_setting` (`category`,`setting_key`);
 
 --
--- Chỉ mục cho bảng `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
@@ -448,82 +454,82 @@ ALTER TABLE `users`
   ADD KEY `status` (`status`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `admin`
+-- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT cho bảng `categories`
+-- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
 
 --
--- AUTO_INCREMENT cho bảng `orders`
+-- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT cho bảng `order_items`
+-- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT cho bảng `order_status_history`
+-- AUTO_INCREMENT for table `order_status_history`
 --
 ALTER TABLE `order_status_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
--- AUTO_INCREMENT cho bảng `products`
+-- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=260;
 
 --
--- AUTO_INCREMENT cho bảng `settings`
+-- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT cho bảng `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- Các ràng buộc cho các bảng đã đổ
+-- Constraints for dumped tables
 --
 
 --
--- Các ràng buộc cho bảng `orders`
+-- Constraints for table `orders`
 --
 ALTER TABLE `orders`
   ADD CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
--- Các ràng buộc cho bảng `order_items`
+-- Constraints for table `order_items`
 --
 ALTER TABLE `order_items`
   ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `order_status_history`
+-- Constraints for table `order_status_history`
 --
 ALTER TABLE `order_status_history`
   ADD CONSTRAINT `order_status_history_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE;
 
 --
--- Các ràng buộc cho bảng `products`
+-- Constraints for table `products`
 --
 ALTER TABLE `products`
   ADD CONSTRAINT `fk_products_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;

@@ -67,23 +67,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html {
+  html, body {
+    height: 100%;
     font-size: 62.5%;
     line-height: 1.6rem;
     font-family: 'Inter', 'Roboto', sans-serif;
+    overflow: hidden;
   }
   body {
-    background: #f1f5f9;
+    background: 
+      linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.9)),
+      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(56, 189, 248, 0.2)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/><g fill="rgba(56, 189, 248, 0.1)"><circle cx="200" cy="150" r="4"/><circle cx="800" cy="300" r="6"/><circle cx="400" cy="700" r="5"/><circle cx="900" cy="600" r="3"/><circle cx="150" cy="800" r="7"/></g></svg>'),
+      #0f172a;
+    background-size: cover;
     color: #1e293b;
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-top: 0;               /* không có header */
+    position: relative;
+  }
+
+  /* Hiệu ứng particles */
+  .particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  .particle {
+    position: absolute;
+    background: rgba(56, 189, 248, 0.3);
+    border-radius: 50%;
+    animation: float 15s infinite linear;
+  }
+  @keyframes float {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
   }
 
   :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --primary-light: #60a5fa;
     --dark: #1e293b;
     --light: #f8fafc;
     --gray: #94a3b8;
@@ -99,67 +127,130 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     --transition: all 0.3s ease;
   }
 
-  /* GRID & CONTAINER */
-  .grid {
-    width: 1200px;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 15px;
-  }
-
   /* LOGIN PAGE */
   .login-wrapper {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
   }
-  .login-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
+  .login-container {
+    display: flex;
     width: 100%;
-    max-width: 420px;
+    max-width: 1000px;
+    height: 580px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .login-side {
+    flex: 1;
+    background: 
+      linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(37, 99, 235, 0.8)),
+      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+    background-size: cover;
+    color: white;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .login-side::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,100 L100,0 L100,100 Z" fill="rgba(255,255,255,0.05)"/></svg>');
+    background-size: cover;
+  }
+  .login-side-content {
+    position: relative;
+    z-index: 1;
+  }
+  .login-side h2 {
+    font-size: 2.6rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    line-height: 1.2;
+  }
+  .login-side p {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .features-list {
+    list-style: none;
+    margin-top: 2rem;
+  }
+  .features-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    backdrop-filter: blur(5px);
     transition: var(--transition);
   }
-  .login-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+  .features-list li:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+  }
+  .features-list i {
+    margin-right: 1.2rem;
+    font-size: 1.8rem;
+    background: rgba(255, 255, 255, 0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 
+  .login-main {
+    flex: 1;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
   .login-header {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    padding: 2.5rem 2rem;
     text-align: center;
-    position: relative;
+    margin-bottom: 2.5rem;
   }
   .login-header h1 {
-    font-size: 2.2rem;
+    font-size: 2.4rem;
     font-weight: 700;
-    margin-bottom: .5rem;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
   }
   .login-header p {
-    opacity: .9;
-    font-size: 1.4rem;
-  }
-  .login-header .logo-icon {
-    font-size: 3rem;
-    margin-bottom: .8rem;
-    display: block;
+    color: var(--gray);
+    font-size: 1.5rem;
   }
 
-  .login-body {
-    padding: 2.5rem 2rem;
-  }
   .form-group {
-    margin-bottom: 1.6rem;
+    margin-bottom: 1.8rem;
   }
   .form-label {
     font-weight: 600;
-    margin-bottom: .6rem;
+    margin-bottom: .8rem;
     display: flex;
     align-items: center;
     color: var(--dark);
@@ -172,35 +263,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
   .form-control {
     border-radius: var(--radius);
-    padding: .9rem 1rem .9rem 3.2rem;
+    padding: 1rem 1rem 1rem 4rem;
     border: 1px solid var(--border);
     font-size: 1.4rem;
     background: var(--light);
     transition: var(--transition);
+    height: 48px;
   }
   .form-control:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
     background: white;
   }
   .input-icon {
     position: absolute;
-    left: 1rem;
+    left: 1.5rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--gray);
-    font-size: 1.3rem;
+    font-size: 1.5rem;
+    transition: var(--transition);
   }
   .password-toggle {
     position: absolute;
-    right: 1rem;
+    right: 1.5rem;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     color: var(--gray);
     cursor: pointer;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
+    transition: var(--transition);
   }
   .password-toggle:hover { color: var(--primary); }
 
@@ -208,8 +302,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.6rem;
-    font-size: 1.35rem;
+    margin-bottom: 1.8rem;
+    font-size: 1.4rem;
   }
   .form-check { margin: 0; }
   .form-check-input:checked { background-color: var(--primary); border-color: var(--primary); }
@@ -219,25 +313,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     color: white;
     border: none;
     border-radius: var(--radius);
-    padding: .9rem;
+    padding: 1.2rem;
     font-weight: 600;
-    font-size: 1.45rem;
+    font-size: 1.5rem;
     width: 100%;
     transition: var(--transition);
     box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
   }
   .btn-login:hover {
-    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+  }
+  .btn-login:active {
+    transform: translateY(0);
   }
 
   .divider {
     display: flex;
     align-items: center;
-    margin: 1.8rem 0;
+    margin: 2rem 0;
     color: var(--gray);
-    font-size: 1.35rem;
+    font-size: 1.4rem;
   }
   .divider::before,
   .divider::after {
@@ -246,18 +343,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     height: 1px;
     background: var(--border);
   }
-  .divider span { padding: 0 1rem; }
+  .divider span { padding: 0 1.5rem; }
 
   .social-login {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 1.6rem;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
   }
   .btn-social {
     flex: 1;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: .75rem;
+    padding: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -266,6 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     font-weight: 500;
     text-decoration: none;
     transition: var(--transition);
+    font-size: 1.4rem;
   }
   .btn-social:hover {
     border-color: var(--primary);
@@ -273,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     transform: translateY(-2px);
     box-shadow: var(--shadow);
   }
-  .btn-social i { margin-right: .5rem; }
+  .btn-social i { margin-right: .6rem; font-size: 1.5rem; }
 
   .links {
     text-align: center;
@@ -288,83 +386,138 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   .alert {
     border-radius: var(--radius);
-    padding: 1rem 1.2rem;
-    margin-bottom: 1.6rem;
+    padding: 1.2rem;
+    margin-bottom: 1.8rem;
     display: flex;
     align-items: center;
-    font-size: 1.35rem;
+    font-size: 1.4rem;
     background: rgba(239,68,68,.1);
     color: var(--danger);
     border: none;
   }
-  .alert i { margin-right: .8rem; }
-/* LOGO GÓC TRÁI - DÙNG ẢNH NHỎ GỌN */
-.site-logo {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 1000;
-  background: white;
-  padding: 6px 10px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  transition: var(--transition);
-  font-size: 1.4rem;
-  line-height: 1;
-}
-.site-logo:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-.site-logo .logo-img {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
-  display: block;
-}
-.site-logo span {
-  font-weight: 700;
-  color: var(--dark);
-  font-size: 1.5rem;
-}
+  .alert i { margin-right: 1rem; }
 
-/* RESPONSIVE */
-@media (max-width: 576px) {
+  /* LOGO */
   .site-logo {
-    top: 12px;
-    left: 12px;
-    padding: 5px 8px;
-    gap: 6px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: var(--transition);
+    font-size: 1.4rem;
+    line-height: 1;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .site-logo:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: white;
   }
   .site-logo .logo-img {
-    height: 24px;
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+    display: block;
   }
   .site-logo span {
-    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 1.6rem;
   }
-}
+
+  /* RESPONSIVE */
+  @media (max-width: 992px) {
+    .login-side {
+      display: none;
+    }
+    .login-container {
+      max-width: 450px;
+      height: 520px;
+    }
+  }
+  @media (max-width: 576px) {
+    .site-logo {
+      top: 15px;
+      left: 15px;
+      padding: 6px 10px;
+    }
+    .site-logo .logo-img {
+      height: 24px;
+    }
+    .site-logo span {
+      font-size: 1.4rem;
+    }
+    .login-main {
+      padding: 2rem;
+    }
+    .social-login {
+      flex-direction: column;
+    }
+    .remember-forgot {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .login-container {
+      height: auto;
+      max-height: 90vh;
+    }
+  }
 </style>
 
 <body>
-  <!--  LOGO  -->
-    <a href="../index.php" class="site-logo">
+  <!-- Hiệu ứng particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- LOGO -->
+  <a href="../index.php" class="site-logo">
     <img src="../assets/images/logo.png" alt="ShopNets Logo" class="logo-img">
     <span>ShopNets</span>
-    </a>
+  </a>
 
   <div class="login-wrapper">
-    <div class="login-card">
-      <div class="login-header">
-        <i class="bi bi-box-arrow-in-right logo-icon"></i>
-        <h1>Đăng Nhập</h1>
-        <p>Chào mừng trở lại với ShopNets</p>
+    <div class="login-container">
+      <div class="login-side">
+        <div class="login-side-content">
+          <h2>Nền tảng Thương mại Điện tử Thế hệ Mới</h2>
+          <p>Trải nghiệm mua sắm trực tuyến với công nghệ tiên tiến, bảo mật tối đa và giao diện thông minh.</p>
+          
+          <ul class="features-list">
+            <li>
+              <i class="bi bi-cart-check"></i>
+              <span>Hệ thống thanh toán đa kênh an toàn</span>
+            </li>
+            <li>
+              <i class="bi bi-shield-lock"></i>
+              <span>Bảo mật dữ liệu với công nghệ mã hóa</span>
+            </li>
+            <li>
+              <i class="bi bi-graph-up-arrow"></i>
+              <span>AI đề xuất sản phẩm thông minh</span>
+            </li>
+            <li>
+              <i class="bi bi-lightning-charge"></i>
+              <span>Tốc độ xử lý siêu nhanh với cloud</span>
+            </li>
+          </ul>
+        </div>
       </div>
+      
+      <div class="login-main">
+        <div class="login-header">
+          <h1>Đăng Nhập</h1>
+          <p>Truy cập vào nền tảng thương mại điện tử ShopNets</p>
+        </div>
 
-      <div class="login-body">
         <?php if ($error): ?>
           <div class="alert alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i>
@@ -375,7 +528,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form method="POST" action="">
           <div class="form-group">
-            <label class="form-label"><i class="bi bi-person"></i> Tên đăng nhập hoặc Email</label>
+            <label class="form-label"><i class="bi bi-person-badge"></i> Tên đăng nhập hoặc Email</label>
             <div class="input-group">
               <input type="text" class="form-control" name="username" id="username"
                      value="<?= htmlspecialchars($_POST['username'] ?? '') ?>"
@@ -385,7 +538,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
           <div class="form-group">
-            <label class="form-label"><i class="bi bi-lock"></i> Mật khẩu</label>
+            <label class="form-label"><i class="bi bi-key"></i> Mật khẩu</label>
             <div class="input-group">
               <input type="password" class="form-control" name="password" id="password"
                      placeholder="Nhập mật khẩu" required>
@@ -399,16 +552,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="remember-forgot">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="remember_me" name="remember_me">
-              <label class="form-check-label" for="remember_me">Ghi nhớ đăng nhập</label>
+              <label class="form-check-label" for="remember_me">Ghi nhớ</label>
             </div>
-            <a href="forgot-password.php">Quên mật khẩu?</a>
+            <a style='text-decoration: none;'href="forgot-password.php">Quên mật khẩu?</a>
           </div>
 
           <button type="submit" class="btn-login">
-            <i class="bi bi-box-arrow-in-right"></i> Đăng Nhập
+            Đăng Nhập
           </button>
 
-          <div class="divider"><span>Hoặc đăng nhập với</span></div>
+          <div class="divider"><span>Đăng nhập nhanh</span></div>
 
           <div class="social-login">
             <a href="#" class="btn-social btn-google"><i class="bi bi-google"></i> Google</a>
@@ -416,19 +569,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
           <div class="links">
-            Chưa có tài khoản? <a href="register.php">Đăng ký ngay</a>
+            Chưa có tài khoản? <a href="register.php">Đăng ký tài khoản mới</a>
           </div>
         </form>
       </div>
     </div>
   </div>
 
-  <?php include '../includes/footer.php'; ?>
-
   <!-- JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // Tạo hiệu ứng particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 15;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Kích thước ngẫu nhiên
+        const size = Math.random() * 5 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Vị trí ngẫu nhiên
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100 + 100}%`;
+        
+        // Thời gian animation ngẫu nhiên
+        const duration = Math.random() * 20 + 15;
+        particle.style.animationDuration = `${duration}s`;
+        
+        // Độ trễ ngẫu nhiên
+        const delay = Math.random() * 5;
+        particle.style.animationDelay = `${delay}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
     // Hiển thị/ẩn mật khẩu
     document.getElementById('togglePassword').addEventListener('click', function () {
       const input = document.getElementById('password');
@@ -445,13 +626,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Focus icon khi input được focus
     document.querySelectorAll('.form-control').forEach(input => {
       const icon = input.parentElement.querySelector('.input-icon');
-      input.addEventListener('focus', () => icon.style.color = 'var(--primary)');
-      input.addEventListener('blur', () => icon.style.color = 'var(--gray)');
+      input.addEventListener('focus', () => {
+        icon.style.color = 'var(--primary)';
+      });
+      input.addEventListener('blur', () => {
+        icon.style.color = 'var(--gray)';
+      });
     });
 
     // Focus vào username khi load
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('username').focus();
+      createParticles();
     });
 
     // Demo social login
@@ -461,6 +647,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         alert('Tính năng đang phát triển. Vui lòng đăng nhập bằng tài khoản.');
       });
     });
+
+    // Ngăn cuộn trang
+    document.body.style.overflow = 'hidden';
   </script>
 </body>
 </html>

@@ -238,32 +238,7 @@ function getCartCount() {
 /**
  * Lấy hình ảnh sản phẩm
  */
-/**
- * Trả về đường dẫn ảnh sản phẩm hợp lệ
- * @param string|null $image_path
- * @return string
- */
-function getProductImage($image_path, $context = 'product-detail') {
-    if (empty($image_path)) {
-        return 'https://via.placeholder.com/400x400/e2e8f0/64748b?text=No+Image';
-    }
 
-    // Clean the image path - chỉ lấy tên file
-    $image_name = basename($image_path);
-    
-    // Xác định đường dẫn dựa vào context
-    switch ($context) {
-        case 'index': // Từ root index.php
-            return 'admin/assets/images/uploads/' . $image_name;
-            
-        case 'user-pages': // Từ user/pages/main/
-            return '../../../admin/assets/images/uploads/' . $image_name;
-            
-        case 'product-detail': // Từ user/pages/main/product-detail.php (default)
-        default:
-            return '../../../admin/assets/images/uploads/' . $image_name;
-    }
-}
 
 // Flash sale products - use random products with discounted prices
 function getFlashSaleProducts($db, $limit = 8) {
@@ -298,52 +273,49 @@ function getFlashSaleProducts($db, $limit = 8) {
 }
 
 /**
- * LẤY TẤT CẢ ẢNH CỦA SẢN PHẨM
- * @param PDO $db
- * @param int $product_id
- * @return array
+ * Lấy danh sách hình ảnh sản phẩm - Fix tạm thời
  */
 function getProductImages($db, $product_id) {
     try {
-        // Try to get from product_images table first
-        $query = "SELECT * FROM product_images 
-                  WHERE product_id = ? 
-                  ORDER BY is_primary DESC, id ASC";
+        $query = "SELECT image FROM products WHERE id = ?";
         $stmt = $db->prepare($query);
         $stmt->execute([$product_id]);
-        $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        // If no images found or table doesn't exist, fallback to main product image
-        if (empty($images)) {
-            $productQuery = "SELECT image FROM products WHERE id = ?";
-            $productStmt = $db->prepare($productQuery);
-            $productStmt->execute([$product_id]);
-            $product = $productStmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($product && !empty($product['image'])) {
-                return [['image_path' => $product['image'], 'is_primary' => 1]];
-            } else {
-                // Return placeholder if no image at all
-                return [['image_path' => '', 'is_primary' => 1]];
-            }
+        if ($product && !empty($product['image'])) {
+            return [
+                [
+                    'image_path' => $product['image']
+                ]
+            ];
         }
         
-        return $images;
-    } catch (PDOException $e) {
-        // If product_images table doesn't exist, get main product image
-        try {
-            $productQuery = "SELECT image FROM products WHERE id = ?";
-            $productStmt = $db->prepare($productQuery);
-            $productStmt->execute([$product_id]);
-            $product = $productStmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($product && $product['image']) {
-                return [['image_path' => $product['image'], 'is_primary' => 1]];
-            }
-        } catch (PDOException $e2) {
-            error_log("Lỗi getProductImages: " . $e2->getMessage());
-        }
         return [];
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
+/**
+ * Trả về đường dẫn ảnh sản phẩm hợp lệ
+ */
+function getProductImage($image_path, $context = 'product-detail') {
+    if (empty($image_path)) {
+        return 'https://via.placeholder.com/400x400/e2e8f0/64748b?text=No+Image';
+    }
+
+    $image_name = basename($image_path);
+    
+    switch ($context) {
+        case 'index': // Từ root index.php
+            return 'admin/assets/images/uploads/' . $image_name;
+            
+        case 'user-pages': // Từ user/pages/main/
+            return '../../../admin/assets/images/uploads/' . $image_name;
+            
+        case 'product-detail': // Từ user/pages/main/product-detail.php (default)
+        default:
+            return '../../../admin/assets/images/uploads/' . $image_name;
     }
 }
 
@@ -959,7 +931,7 @@ function getProductCountByCategory($db, $category_id) {
  */
 function getCategoryBySlug($db, $slug) {
     try {
-        $stmt = $db->prepare("SELECT * FROM categories WHERE slug = ? AND is_active = 1 LIMIT 1");  // Sửa từ 'status = active' thành 'is_active = 1'
+        $stmt = $db->prepare("SELECT * FROM categories WHERE slug = ? LIMIT 1");
         $stmt->execute([$slug]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
@@ -967,13 +939,12 @@ function getCategoryBySlug($db, $slug) {
         return false;
     }
 }
-
 /**
  * Lấy thương hiệu theo slug
  */
 function getBrandBySlug($db, $slug) {
     try {
-        $stmt = $db->prepare("SELECT * FROM brands WHERE slug = ? AND is_active = 1 LIMIT 1");  // Sửa từ 'status = active' thành 'is_active = 1'
+        $stmt = $db->prepare("SELECT * FROM brands WHERE slug = ? LIMIT 1");
         $stmt->execute([$slug]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     } catch (Exception $e) {

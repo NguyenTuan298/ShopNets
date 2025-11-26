@@ -57,7 +57,7 @@ foreach ($products as $p):
                     -<?= $discount_percent ?>%
                 </div>
                 <div class="product-overlay">
-                    <a href="pages/main/product-detail.php?id=<?= $p['id'] ?>" class="btn-view-detail">
+                    <a href="user/pages/main/product-detail.php?id=<?= $p['id'] ?>" class="btn-view-detail">
                         Xem chi tiết
                     </a>
                 </div>

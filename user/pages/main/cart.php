@@ -149,7 +149,7 @@ if (isset($_GET['buy_now']) && is_numeric($_GET['buy_now'])) {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-top: 80px;
+    padding-top: 20px;
   }
 
   :root {

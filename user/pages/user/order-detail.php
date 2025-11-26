@@ -104,7 +104,7 @@ $order_status_history = getOrderStatusHistory($db, $order_id);
             min-height: 100vh; 
             display: flex; 
             flex-direction: column; 
-            padding-top: 80px;
+            padding-top: 20px;
         }
 
         .container { max-width: 1200px; }
@@ -558,7 +558,7 @@ $order_status_history = getOrderStatusHistory($db, $order_id);
     <?php include '../../includes/header.php'; ?>
 
     <!-- Breadcrumb -->
-    <div class="container mt-3">
+    <div class="container mt-3" >
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>index.php">Trang chủ</a></li>

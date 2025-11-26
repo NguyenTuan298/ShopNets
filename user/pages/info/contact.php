@@ -1,8 +1,20 @@
 <?php
 // pages/contact.php
 session_start();
-require_once '../../includes/database.php';
-require_once '../../includes/functions.php';
+
+// === THÊM ĐOẠN NÀY ĐỂ KHỞI TẠO BASE_URL (BẮT BUỘC) ===
+if (!defined('BASE_URL')) {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ? "https://" : "http://";
+    $domain = $_SERVER['HTTP_HOST'];
+    $folder = dirname($_SERVER['SCRIPT_NAME']); // tự động lấy thư mục gốc
+    $folder = $folder === '/' ? '' : rtrim($folder, '/') . '/';
+    define('BASE_URL', $protocol . $domain . $folder);
+}
+// ========================================================
+
+// SỬA ĐƯỜNG DẪN NÀY
+require_once '../../../user/includes/database.php';
+require_once '../../../user/includes/functions.php';
 
 $database = new Database();
 $db = $database->getConnection();
@@ -35,7 +47,7 @@ $brands = getBrands($db);
   body {
     background: #f1f5f9;
     color: #1e293b;
-    padding-top: 136px;
+    padding-top: 30px;
   }
 
   :root {
@@ -119,16 +131,11 @@ $brands = getBrands($db);
     background: var(--primary); border-radius: 2px;
   }
 
-  /* CONTACT HERO */
+  /* CONTACT HERO - ĐÃ SỬA */
   .contact-hero {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white; padding: 60px 0; border-radius: var(--radius); margin-bottom: 32px;
     box-shadow: var(--shadow-lg); overflow: hidden; position: relative;
-  }
-  .contact-hero::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: url('assets/images/main/banner1.jpg') center/cover no-repeat;
-    opacity: 0.15; z-index: 0;
   }
   .contact-hero > * { position: relative; z-index: 1; }
   .contact-hero h1 {
@@ -338,7 +345,8 @@ $brands = getBrands($db);
 
 <body>
   <div class="app">
-    <?php include '../../includes/header.php'; ?>
+    <!-- SỬA ĐƯỜNG DẪN HEADER -->
+    <?php include '../../../user/includes/header.php'; ?>
 
     <!-- Modal Đăng nhập -->
     <div id="authModal"></div>
@@ -499,7 +507,8 @@ $brands = getBrands($db);
 
     </div> <!-- END .grid -->
 
-    <?php include '../../includes/footer.php'; ?>
+    <!-- SỬA ĐƯỜNG DẪN FOOTER -->
+    <?php include '../../../user/includes/footer.php'; ?>
   </div>
 
   <!-- Map Modal -->
