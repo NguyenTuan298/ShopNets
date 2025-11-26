@@ -244,6 +244,7 @@ if (function_exists('getCartCount')) {
         <div class="top-bar__right">
             <?php if (isset($_SESSION['user_id'])): ?>
                 <span class="top-bar__item">👤 <?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
+                    <a href="<?php echo $user_url; ?>pages/user/orders.php" class="top-bar__item">📦 Đơn hàng của tôi</a>
                 <a href="<?php echo $user_url; ?>auth/logout.php" class="top-bar__item">Đăng xuất</a>
             <?php else: ?>
                 <a href="<?php echo $user_url; ?>auth/login.php" class="top-bar__item">Đăng nhập</a>
@@ -264,6 +265,32 @@ if (function_exists('getCartCount')) {
         </a>
         
         <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
+            <button class="search-btn">🔍</button>
+        </div>
+        
+        <a href="<?php echo $user_url; ?>pages/main/cart.php" class="cart-link">
+            🛒
+            <?php if ($cart_count > 0): ?>
+                <span class="cart-badge"><?php echo $cart_count; ?></span>
+            <?php endif; ?>
+        </a>
+    </div>
+</header>
+
+<!-- CATEGORY NAV -->
+<nav class="category-nav">
+    <div class="container">
+        <a href="<?php echo $user_url; ?>pages/main/products.php?category=phone">📱 Điện thoại</a>
+        <a href="<?php echo $user_url; ?>pages/main/products.php?category=laptop">💻 Laptop</a>
+        <a href="<?php echo $user_url; ?>pages/main/products.php?category=tablet">📱 Tablet</a>
+        <a href="<?php echo $user_url; ?>pages/main/products.php?category=accessories">🎧 Phụ kiện</a>
+        <a href="<?php echo $user_url; ?>pages/main/products.php?category=watch">⌚ Đồng hồ</a>
+        <a href="<?php echo $user_url; ?>pages/main/products.php?new=1">🆕 Mới</a>
+        <a href="<?php echo $user_url; ?>pages/main/products.php?discount=1">🔥 Giảm giá</a>
+    </div>
+</nav>
+<!-- END HEADER COMPONENT -->
             <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
             <button class="search-btn">🔍</button>
         </div>

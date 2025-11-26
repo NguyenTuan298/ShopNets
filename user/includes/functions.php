@@ -524,25 +524,20 @@ function getOrderById($db, $order_id, $user_id) {
     }
 }
 
-// Lấy lịch sử trạng thái đơn hàng
 function getOrderStatusHistory($db, $order_id) {
     try {
-        $sql = "SELECT status, created_at FROM order_status_history WHERE order_id = ? ORDER BY created_at ASC";
-        $stmt = $db->prepare($sql);
+        $query = "SELECT * FROM order_status_history WHERE order_id = ? ORDER BY created_at DESC";
+        $stmt = $db->prepare($query);
         $stmt->execute([$order_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Error getting order status history: " . $e->getMessage());
         return [];
     }
 }
 
-/**
- * Lấy danh sách sản phẩm trong đơn hàng với thông tin chi tiết
- */
 function getOrderItemsWithDetails($db, $order_id) {
     try {
-        $query = "SELECT oi.*, p.name as product_name, p.sku, c.name as category_name 
+        $query = "SELECT oi.*, p.name as product_name, p.sku, c.name as category_name, p.image as product_image
                   FROM order_items oi 
                   LEFT JOIN products p ON oi.product_id = p.id 
                   LEFT JOIN categories c ON p.category_id = c.id 
@@ -554,16 +549,6 @@ function getOrderItemsWithDetails($db, $order_id) {
         error_log("Error getting order items with details: " . $e->getMessage());
         return [];
     }
-}
-
-/**
- * Ghi log lượt xem sản phẩm
- */
-function logProductView($db, $product_id, $user_id = null, $session_id = null, $ip_address = null, $user_agent = null) {
-    $query = "INSERT INTO product_views (product_id, user_id, session_id, ip_address, user_agent) 
-              VALUES (?, ?, ?, ?, ?)";
-    $stmt = $db->prepare($query);
-    return $stmt->execute([$product_id, $user_id, $session_id, $ip_address, $user_agent]);
 }
 
 /**

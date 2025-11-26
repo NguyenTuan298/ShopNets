@@ -661,7 +661,15 @@ $order_status_history = getOrderStatusHistory($db, $order_id);
                             <?php foreach ($order_items as $item): ?>
                             <div class="order-item">
                                 <div class="item-image">
-                                    <i class="fas fa-laptop"></i>
+                                    <?php 
+                                    $img_path = $item['image'] ?? $item['product_image'] ?? '';
+                                    if (!empty($img_path)): 
+                                        $img_src = getProductImage($img_path, 'user-pages');
+                                    ?>
+                                        <img src="<?php echo htmlspecialchars($img_src); ?>" alt="<?php echo htmlspecialchars($item['product_name']); ?>" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-sm);">
+                                    <?php else: ?>
+                                        <i class="fas fa-laptop"></i>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="item-details">
                                     <h6 class="item-name"><?php echo htmlspecialchars($item['product_name']); ?></h6>
@@ -789,8 +797,6 @@ $order_status_history = getOrderStatusHistory($db, $order_id);
                         </div>
                     </div>
                     <?php endif; ?>
-                </div>
-            </div>
         </div>
     </section>
 

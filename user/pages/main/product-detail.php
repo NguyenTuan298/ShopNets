@@ -825,17 +825,18 @@ $review_count = 0; // No reviews yet
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="desc">
                     <?php if (!empty($product['description'])): ?>
-                        <?php echo $product['description']; ?>
-                    <?php else: ?>
+                        <div class="product-description">
+                            <?php echo $product['description']; ?>
+                        </div>
+                    <?php elseif (!empty($product['short_description'])): ?>
                         <div class="p-4 bg-light rounded">
-                            <h5 class="text-primary"><?php echo htmlspecialchars($product['name']); ?></h5>
-                            <p><strong><?php echo htmlspecialchars($product['short_description']); ?></strong></p>
-                            <ul class="mt-3">
-                                <li>Hiệu năng mạnh mẽ với chip mới nhất</li>
-                                <li>Camera chuyên nghiệp, quay 4K</li>
-                                <li>Pin trâu, sạc nhanh 65W</li>
-                                <li>Thiết kế cao cấp, chống nước IP68</li>
-                            </ul>
+                            <p><?php echo nl2br(htmlspecialchars($product['short_description'])); ?></p>
+                        </div>
+                    <?php else: ?>
+                        <div class="p-4 bg-light rounded text-center">
+                            <i class="bi bi-info-circle text-muted mb-3" style="font-size: 3rem;"></i>
+                            <p class="text-muted">Chưa có mô tả chi tiết cho sản phẩm này.</p>
+                            <small class="text-muted">Thông tin chi tiết sẽ được cập nhật sớm nhất.</small>
                         </div>
                     <?php endif; ?>
                 </div>
