@@ -21,8 +21,8 @@ try {
     $stmt = $pdo->query("SELECT COUNT(*) as total FROM users WHERE role = 'user'");
     $totalUsers = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
     
-    // Revenue (from delivered orders)
-    $stmt = $pdo->query("SELECT SUM(total_amount) as revenue FROM orders WHERE order_status = 'delivered'");
+    // Revenue (from delivered and shipped orders)
+    $stmt = $pdo->query("SELECT SUM(total_amount) as revenue FROM orders WHERE order_status IN ('delivered', 'shipped')");
     $revenue = $stmt->fetch(PDO::FETCH_ASSOC)['revenue'] ?? 0;
     
 } catch (Exception $e) {
