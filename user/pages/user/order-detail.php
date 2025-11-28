@@ -569,14 +569,6 @@ $order_status_history = getOrderStatusHistory($db, $order_id);
         </nav>
     </div>
 
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <h1 class="page-title">Chi Tiết Đơn Hàng</h1>
-            <p class="page-subtitle">Mã đơn hàng: #<?php echo htmlspecialchars($order['order_number']); ?></p>
-        </div>
-    </section>
-
     <!-- Order Detail Section -->
     <section class="order-detail-section">
         <div class="container">

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 26, 2025 at 07:10 AM
+-- Generation Time: Nov 26, 2025 at 03:30 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -121,7 +121,8 @@ INSERT INTO `orders` (`id`, `order_number`, `user_id`, `customer_email`, `custom
 (7, 'ORD202511251534307778', 1, 'john@example.com', 'Nguyen Tuan', '0984831424', '2 tô ký trung chánh', NULL, 1232774.00, 30000.00, 0.00, 0.00, 1262774.00, 'momo', 'pending', 'cancelled', NULL, NULL, '', '2025-11-25 14:34:30', '2025-11-25 14:43:37'),
 (8, 'ORD202511251541133653', 1, 'john@example.com', 'Nguyen Tuan', '0984831424', '2 tô ký trung chánh', NULL, 15248174.00, 0.00, 0.00, 0.00, 15248174.00, 'cod', 'pending', 'cancelled', NULL, NULL, '', '2025-11-25 14:41:13', '2025-11-25 14:43:39'),
 (9, 'ORD202511251615488042', 1, 'john@example.com', 'Nguyen Tuan', '0984831424', '2 tô ký trung chánh', NULL, 456789.00, 30000.00, 0.00, 0.00, 486789.00, 'cod', 'pending', 'confirmed', NULL, NULL, '', '2025-11-25 15:15:48', '2025-11-26 05:43:21'),
-(10, 'ORD202511260644302436', 1, 'john@example.com', '123', '123', '12312', NULL, 9054968.00, 0.00, 0.00, 0.00, 9054968.00, 'momo', 'pending', 'pending', NULL, NULL, '123', '2025-11-26 05:44:30', '2025-11-26 05:44:30');
+(24, 'ORD202511260954327608', 8, 'test@gmail.com', 'test', '123', '123', NULL, 6824895.00, 0.00, 0.00, 0.00, 6824895.00, 'momo', 'paid', 'confirmed', NULL, NULL, '', '2025-11-26 08:54:32', '2025-11-26 08:54:32'),
+(25, 'ORD202511261041272429', 8, 'test@gmail.com', 'test', '123', '123', NULL, 345678.00, 30000.00, 0.00, 0.00, 375678.00, 'cod', 'pending', 'confirmed', NULL, NULL, '', '2025-11-26 09:41:27', '2025-11-26 10:27:43');
 
 -- --------------------------------------------------------
 
@@ -151,7 +152,9 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `image`, `product_nam
 (9, 7, 31, NULL, 'iPad 9', 1232774.00, 1, 1232774.00, NULL, '2025-11-25 14:34:30'),
 (10, 8, 38, NULL, 'Camera WiFi', 15248174.00, 1, 15248174.00, NULL, '2025-11-25 14:41:13'),
 (11, 9, 94, NULL, 'Trà túi lọc', 456789.00, 1, 456789.00, NULL, '2025-11-25 15:15:48'),
-(12, 10, 24, NULL, 'MacBook Air', 9054968.00, 1, 9054968.00, NULL, '2025-11-26 05:44:30');
+(36, 24, 13, NULL, 'Xiaomi 13', 6479217.00, 1, 6479217.00, NULL, '2025-11-26 08:54:32'),
+(37, 24, 93, NULL, 'Dầu ăn', 345678.00, 1, 345678.00, NULL, '2025-11-26 08:54:32'),
+(38, 25, 93, NULL, 'Dầu ăn', 345678.00, 1, 345678.00, NULL, '2025-11-26 09:41:27');
 
 -- --------------------------------------------------------
 
@@ -190,7 +193,25 @@ INSERT INTO `order_status_history` (`id`, `order_id`, `status`, `note`, `created
 (16, 5, 'shipped', '', '2025-11-24 16:09:56'),
 (17, 2, 'confirmed', '', '2025-11-24 16:11:06'),
 (18, 2, 'cancelled', '', '2025-11-24 16:11:42'),
-(19, 9, 'confirmed', '', '2025-11-26 05:43:21');
+(19, 9, 'confirmed', '', '2025-11-26 05:43:21'),
+(21, 25, 'confirmed', '', '2025-11-26 10:27:43');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_logs`
+--
+
+CREATE TABLE `payment_logs` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `payment_method` varchar(50) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `status` varchar(20) NOT NULL,
+  `transaction_id` varchar(100) DEFAULT NULL,
+  `response_data` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -377,7 +398,8 @@ INSERT INTO `users` (`id`, `username`, `email`, `full_name`, `phone`, `address`,
 (4, 'emily_davis', 'emily@example.com', NULL, '0904567890', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
 (5, 'david_wilson', 'david@example.com', NULL, '0905678901', NULL, NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NULL, 'user', 'active', '2025-11-14 11:38:52', '2025-11-14 11:38:52'),
 (6, 'TuanNguyen', 'tungnguyenbt298@gmail.com', 'Nguyen Tuan', '0984831424', '495/Quốc Lộ 13', NULL, '$2y$10$nW2btTt1vdvBm4j1o8ZK5ec8kMotg6hd.ev8xqorohps0VrURnTAC', NULL, NULL, 'user', 'active', '2025-11-17 09:47:07', '2025-11-17 09:47:07'),
-(7, 'test1', 'test1@gmail.comte', 'test1', '123', '12412', NULL, '$2y$10$tnWYUhOqQQj8GKLX3MiYLOkphA8raSHIxAXLTB0MUklfe5r8wmWLS', NULL, NULL, 'user', 'active', '2025-11-26 06:03:22', '2025-11-26 06:03:22');
+(7, 'test1', 'test1@gmail.comte', 'test1', '123', '12412', NULL, '$2y$10$tnWYUhOqQQj8GKLX3MiYLOkphA8raSHIxAXLTB0MUklfe5r8wmWLS', NULL, NULL, 'user', 'active', '2025-11-26 06:03:22', '2025-11-26 06:03:22'),
+(8, 'test', 'testnha@gmail.com', 'testna3123', '123', '22 lkajwp', NULL, '$2y$10$gEEA.b6GNMNtHBSfLF/2/uDKgJGuuL1rexjF.DNryw/vALIyHihky', NULL, NULL, 'user', 'active', '2025-11-26 06:24:02', '2025-11-26 14:19:25');
 
 --
 -- Indexes for dumped tables
@@ -423,6 +445,13 @@ ALTER TABLE `order_status_history`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_status_history_order` (`order_id`),
   ADD KEY `idx_status_history_created` (`created_at`);
+
+--
+-- Indexes for table `payment_logs`
+--
+ALTER TABLE `payment_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_id` (`order_id`);
 
 --
 -- Indexes for table `products`
@@ -473,19 +502,25 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `order_status_history`
 --
 ALTER TABLE `order_status_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `payment_logs`
+--
+ALTER TABLE `payment_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -503,7 +538,7 @@ ALTER TABLE `settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
@@ -527,6 +562,12 @@ ALTER TABLE `order_items`
 --
 ALTER TABLE `order_status_history`
   ADD CONSTRAINT `order_status_history_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `payment_logs`
+--
+ALTER TABLE `payment_logs`
+  ADD CONSTRAINT `payment_logs_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `products`

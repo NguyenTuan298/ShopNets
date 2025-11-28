@@ -493,7 +493,7 @@ $posts = getLatestPosts($db);
                 showNotification('Đã thêm vào giỏ hàng!', 'success');
                 updateCartBadge();
               } else {
-                window.location.href = 'user/pages/main/checkout.php';
+                window.location.href = 'user/pages/payment/checkout.php';
               }
             } else {
               showNotification(res.message || 'Lỗi thêm vào giỏ hàng!', 'error');

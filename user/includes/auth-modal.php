@@ -34,11 +34,11 @@
         </div>
 
         <div class="action-buttons">
-          <a href="auth/login.php" class="btn btn-primary btn-login">
+          <a href="user/auth/login.php" class="btn btn-primary btn-login">
             <i class="bi bi-box-arrow-in-right"></i>
             Đăng nhập ngay
           </a>
-          <a href="auth/register.php" class="btn btn-outline-primary btn-register">
+          <a href="user/auth/register.php" class="btn btn-outline-primary btn-register">
             <i class="bi bi-person-plus"></i>
             Tạo tài khoản mới
           </a>

@@ -319,6 +319,9 @@ function getProductImage($image_path, $context = 'product-detail') {
     }
 }
 
+
+
+
 /**
  * Lấy thuộc tính sản phẩm
  */
@@ -416,6 +419,42 @@ function createUser($db, $username, $email, $password, $full_name, $phone = null
  */
 function verifyPassword($password, $hashed_password) {
     return password_verify($password, $hashed_password);
+}
+
+/**
+ * Kiểm tra email đã tồn tại chưa (cho update profile)
+ */
+function isEmailExists($db, $email, $exclude_user_id = null) {
+    $sql = "SELECT id FROM users WHERE email = ?";
+    $params = [$email];
+    
+    if ($exclude_user_id) {
+        $sql .= " AND id != ?";
+        $params[] = $exclude_user_id;
+    }
+    
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetch() !== false;
+}
+
+/**
+ * Cập nhật thông tin user profile
+ */
+function updateUserProfile($db, $user_id, $full_name, $email, $phone, $address) {
+    $sql = "UPDATE users SET full_name = ?, email = ?, phone = ?, address = ?, updated_at = NOW() WHERE id = ?";
+    $stmt = $db->prepare($sql);
+    return $stmt->execute([$full_name, $email, $phone, $address, $user_id]);
+}
+
+/**
+ * Thay đổi mật khẩu user
+ */
+function changeUserPassword($db, $user_id, $new_password) {
+    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+    $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?";
+    $stmt = $db->prepare($sql);
+    return $stmt->execute([$hashed_password, $user_id]);
 }
 
 /**
